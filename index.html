@@ -605,8 +605,8 @@
                 return { success: true, message: `Переведено ${amount.toLocaleString()} ₽` };
             }
             
-            // ========== ИСПРАВЛЕННАЯ ЛОГИКА ВХОДА ==========
-            // login - это ВХОД (существующий пользователь)
+            // ========== ИСПРАВЛЕННАЯ ЛОГИКА ==========
+            // Логин (вход в существующий аккаунт)
             async function login(username, password, remember) {
                 const doc = await db.collection('users').doc(username).get();
                 if (doc.exists && doc.data().password === password) {
@@ -622,14 +622,15 @@
                     loadChat();
                     return true;
                 }
+                alert("Неверный логин или пароль");
                 return false;
             }
             
-            // register - это РЕГИСТРАЦИЯ (новый пользователь)
+            // Регистрация (создание нового аккаунта)
             async function register(username, password, remember) {
                 const doc = await db.collection('users').doc(username).get();
                 if (doc.exists) {
-                    alert("Пользователь уже существует!");
+                    alert("Пользователь с таким ником уже существует!");
                     return false;
                 }
                 const newUser = {
@@ -639,7 +640,7 @@
                 };
                 await db.collection('users').doc(username).set(newUser);
                 alert("Регистрация успешна! Теперь войдите.");
-                return false;
+                return true;
             }
             
             function adminLogin(password) {
@@ -653,6 +654,7 @@
                     updateUI();
                     return true;
                 }
+                alert("Неверный пароль администратора");
                 return false;
             }
             
@@ -1096,22 +1098,33 @@
             function showTransferModal() { document.getElementById('transferModal').style.display = 'flex'; }
             function closeTransferModal() { document.getElementById('transferModal').style.display = 'none'; }
             
-            // ========== ПРОСТЫЕ РАБОЧИЕ КНОПКИ ВХОДА (ИСПРАВЛЕНЫ) ==========
-            // Кнопка "Войти" вызывает login
+            // ========== ОБРАБОТЧИКИ КНОПОК (ИСПРАВЛЕНЫ) ==========
+            // Кнопка "Войти" — всегда выполняет login
             document.getElementById('authSubmitBtn').onclick = async () => {
                 const u = document.getElementById('authUsername').value;
                 const p = document.getElementById('authPassword').value;
                 const remember = document.getElementById('rememberMe').checked;
-                if (document.getElementById('authTitle').innerText === 'Вход') {
+                const isLoginMode = document.getElementById('authTitle').innerText === 'Вход';
+                
+                if (isLoginMode) {
+                    // Режим "Вход" — вызываем login
                     const success = await login(u, p, remember);
                     if (success) closeAuthModal();
-                    else alert('Неверный логин или пароль');
                 } else {
-                    // Кнопка переключилась на "Зарегистрироваться" — вызываем register
-                    await register(u, p, remember);
+                    // Режим "Регистрация" — вызываем register
+                    const success = await register(u, p, remember);
+                    if (success) {
+                        // После успешной регистрации очищаем поля и переключаем на вход
+                        document.getElementById('authTitle').innerText = 'Вход';
+                        document.getElementById('switchAuth').innerHTML = 'Нет аккаунта? Зарегистрироваться';
+                        document.getElementById('authSubmitBtn').innerText = 'Войти';
+                        document.getElementById('authUsername').value = '';
+                        document.getElementById('authPassword').value = '';
+                    }
                 }
             };
             
+            // Переключение между режимами "Вход" и "Регистрация"
             document.getElementById('switchAuth').onclick = () => {
                 const title = document.getElementById('authTitle');
                 if (title.innerText === 'Вход') {
@@ -1128,7 +1141,6 @@
             document.getElementById('adminLoginBtn').onclick = async () => {
                 const pwd = document.getElementById('adminPasswordInput').value;
                 if (adminLogin(pwd)) closeAuthModal();
-                else alert('Неверный пароль администратора');
             };
             
             document.getElementById('showTransferBtn').onclick = showTransferModal;
