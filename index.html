@@ -555,11 +555,11 @@
                 return { success: true, message: `Переведено ${amount.toLocaleString()} ₽` };
             }
             
-            // ========== ИСПРАВЛЕННАЯ ЛОГИКА ВХОДА ==========
+            // ========== НОВАЯ ПРОСТАЯ ЛОГИКА ВХОДА ==========
             async function login(username, password, remember) {
                 const doc = await db.collection('users').doc(username).get();
                 if (!doc.exists) {
-                    alert("❌ Пользователь не найден! Зарегистрируйтесь.");
+                    alert("❌ Пользователь не найден!");
                     return false;
                 }
                 if (doc.data().password !== password) {
@@ -585,7 +585,7 @@
             async function register(username, password, remember) {
                 const doc = await db.collection('users').doc(username).get();
                 if (doc.exists) {
-                    alert("❌ Пользователь с таким ником уже существует!");
+                    alert("❌ Пользователь уже существует!");
                     return false;
                 }
                 const newUser = {
@@ -1047,7 +1047,7 @@
             function showTransferModal() { document.getElementById('transferModal').style.display = 'flex'; }
             function closeTransferModal() { document.getElementById('transferModal').style.display = 'none'; }
             
-            // ========== ИСПРАВЛЕННЫЕ ОБРАБОТЧИКИ ==========
+            // ========== ПРОСТЫЕ И ПОНЯТНЫЕ ОБРАБОТЧИКИ ==========
             document.getElementById('authSubmitBtn').onclick = async () => {
                 const u = document.getElementById('authUsername').value;
                 const p = document.getElementById('authPassword').value;
@@ -1059,7 +1059,7 @@
                 } else {
                     const success = await register(u, p, remember);
                     if (success) {
-                        // Очищаем поля и переключаем на вход
+                        // После успешной регистрации переключаемся на вход
                         document.getElementById('authTitle').innerText = 'Вход';
                         document.getElementById('switchAuth').innerHTML = 'Нет аккаунта? Зарегистрироваться';
                         document.getElementById('authSubmitBtn').innerText = 'Войти';
