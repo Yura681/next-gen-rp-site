@@ -101,7 +101,6 @@
         .policy-btn { background: #ff3c00; padding: 12px 30px; font-size: 16px; color: white; }
         .logout-btn { background: #ff3c00; border: none; padding: 4px 12px; border-radius: 20px; color: white; cursor: pointer; font-size: 11px; }
         
-        /* Таблица игроков */
         .players-table {
             width: 100%;
             border-collapse: collapse;
@@ -342,21 +341,6 @@
         </div>
     </div>
 
-    <!-- Модалка назначения ролей (только для создателя) -->
-    <div id="roleModal" class="modal">
-        <div class="modal-content">
-            <h2>👑 Назначение роли</h2>
-            <input type="text" id="roleTargetUser" placeholder="Никнейм игрока">
-            <select id="roleSelect">
-                <option value="player">Игрок</option>
-                <option value="moderator">Модератор</option>
-                <option value="admin">Администратор</option>
-            </select>
-            <button id="assignRoleBtn" class="auth-btn">Назначить роль</button>
-            <div class="switch-auth" onclick="closeRoleModal()">Отмена</div>
-        </div>
-    </div>
-
     <div class="container" id="mainContent" style="display: none;">
         <div class="navbar">
             <div class="logo"><i class="fas fa-car-crash"></i> NEXT<span style="color:#ff5e2c;">GEN</span> RP</div>
@@ -483,7 +467,7 @@
                 <div class="admin-tabs">
                     <div class="admin-tab active" data-tab="players">Игроки</div>
                     <div class="admin-tab" data-tab="roles">Роли</div>
-                    <div class="admin-tab" data-tab="money">Выдача денег</div>
+                    <div class="admin-tab" data-tab="money">Управление</div>
                 </div>
                 <div id="playersTab">
                     <h3>Список игроков</h3>
@@ -497,7 +481,7 @@
                     </div>
                 </div>
                 <div id="rolesTab" style="display: none;">
-                    <h3>Назначение ролей</h3>
+                    <h3>Назначение ролей (только для создателя)</h3>
                     <div class="admin-input-group">
                         <input type="text" id="roleUser" placeholder="Никнейм игрока">
                         <select id="roleType">
@@ -559,11 +543,9 @@
             document.getElementById('authModal').style.display = 'flex';
         };
         
-        // Открытие модалки Beatles
         function showBeatlesModal() { document.getElementById('beatlesModal').style.display = 'flex'; }
         function closeBeatlesModal() { document.getElementById('beatlesModal').style.display = 'none'; }
         
-        // Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyAJeBC0bgStvXZlNGpF0M1J9MwUoM57yNw",
             authDomain: "brickrp-site.firebaseapp.com",
@@ -579,7 +561,6 @@
         let userData = null;
         let allUsers = [];
         
-        // Роли и их теги
         const roleTags = {
             "creator": "[создатель проекта ⭐]",
             "admin": "[админ 🛡️]",
@@ -587,7 +568,6 @@
             "player": "[игрок 🎮]"
         };
         
-        // Вопросы ПДД
         const pddQuestions = [
             { text: "Что означает красный сигнал светофора?", options: ["Движение разрешено", "Движение запрещено", "Приготовиться к движению", "Уступить дорогу"], correct: 1 },
             { text: "Что означает жёлтый сигнал светофора?", options: ["Движение запрещено", "Движение разрешено", "Предупреждение о смене сигнала", "Стоп-линия"], correct: 2 },
@@ -688,7 +668,7 @@
             async function loadAllUsers() {
                 const snapshot = await db.collection('users').get();
                 allUsers = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                if (isAdmin && (currentUserRole === 'admin' || currentUserRole === 'creator')) {
+                if ((currentUserRole === 'admin' || currentUserRole === 'creator') && (currentUser === 'Yura' || currentUserRole === 'admin')) {
                     renderPlayersTable();
                 }
             }
@@ -707,6 +687,7 @@
                             ${(currentUserRole === 'admin' || currentUserRole === 'creator') && user.username !== 'Yura' ? `
                                 <button class="admin-btn" onclick="adminTakeMoney('${user.username}')">Забрать деньги</button>
                                 <button class="admin-btn" onclick="adminGiveCar('${user.username}')">Дать машину</button>
+                                ${!user.isBanned ? `<button class="admin-btn" onclick="banUser('${user.username}')">Забанить</button>` : `<button class="admin-btn" onclick="unbanUser('${user.username}')">Разбанить</button>`}
                             ` : ''}
                             ${currentUserRole === 'creator' && user.username !== 'Yura' ? `
                                 <button class="admin-btn" onclick="openRoleModal('${user.username}')">Назначить роль</button>
@@ -717,11 +698,12 @@
             }
             
             window.adminTakeMoney = async function(username) {
+                if (currentUserRole !== 'admin' && currentUserRole !== 'creator') return;
                 const amount = parseInt(prompt("Сколько денег забрать?"));
                 if (isNaN(amount)) return;
                 const user = allUsers.find(u => u.username === username);
                 if (user) {
-                    user.balance = (user.balance || 0) - amount;
+                    user.balance = Math.max(0, (user.balance || 0) - amount);
                     await db.collection('users').doc(username).set(user);
                     await loadAllUsers();
                     if (currentUser === username && userData) userData.balance = user.balance;
@@ -730,6 +712,7 @@
             };
             
             window.adminGiveCar = async function(username) {
+                if (currentUserRole !== 'admin' && currentUserRole !== 'creator') return;
                 const carName = prompt("Введите название машины (например, Mercedes-Benz C63 AMG):");
                 if (!carName) return;
                 const user = allUsers.find(u => u.username === username);
@@ -739,6 +722,29 @@
                     await db.collection('users').doc(username).set(user);
                     await loadAllUsers();
                     alert(`✅ Выдана машина ${carName} игроку ${username}`);
+                }
+            };
+            
+            window.banUser = async function(username) {
+                if (currentUserRole !== 'admin' && currentUserRole !== 'creator') return;
+                if (username === 'Yura') { alert("Нельзя забанить создателя!"); return; }
+                const user = allUsers.find(u => u.username === username);
+                if (user) {
+                    user.isBanned = true;
+                    await db.collection('users').doc(username).set(user);
+                    await loadAllUsers();
+                    alert(`✅ ${username} забанен`);
+                }
+            };
+            
+            window.unbanUser = async function(username) {
+                if (currentUserRole !== 'admin' && currentUserRole !== 'creator') return;
+                const user = allUsers.find(u => u.username === username);
+                if (user) {
+                    user.isBanned = false;
+                    await db.collection('users').doc(username).set(user);
+                    await loadAllUsers();
+                    alert(`✅ ${username} разбанен`);
                 }
             };
             
@@ -775,6 +781,7 @@
                 if (doc.exists) {
                     userData = doc.data();
                     currentUserRole = userData.role || 'player';
+                    if (username === 'Yura') currentUserRole = 'creator';
                 } else {
                     userData = {
                         username: username,
@@ -826,7 +833,7 @@
                 return Math.floor(Math.random() * 9000000000 + 1000000000).toString();
             }
             
-            // Функции для чата с ролями и закреплением
+            // Чат с закреплением
             let pinnedMessages = [];
             async function loadPinnedMessages() {
                 const snapshot = await db.collection('pinnedMessages').orderBy('timestamp', 'asc').get();
@@ -1133,7 +1140,6 @@
                 return false;
             }
             
-            // Админские функции
             async function giveMoney(target, amount) {
                 if (currentUserRole !== 'admin' && currentUserRole !== 'creator') return;
                 const doc = await db.collection('users').doc(target).get();
@@ -1204,32 +1210,6 @@
                 }
             }
             
-            async function banUser(target) {
-                if (currentUserRole !== 'admin' && currentUserRole !== 'creator') return;
-                if (target === 'Yura') { alert("Нельзя забанить создателя!"); return; }
-                const doc = await db.collection('users').doc(target).get();
-                if (doc.exists) {
-                    await db.collection('users').doc(target).update({ isBanned: true });
-                    alert(`✅ ${target} забанен`);
-                    await loadAllUsers();
-                } else {
-                    alert("Игрок не найден!");
-                }
-            }
-            
-            async function unbanUser(target) {
-                if (currentUserRole !== 'admin' && currentUserRole !== 'creator') return;
-                const doc = await db.collection('users').doc(target).get();
-                if (doc.exists) {
-                    await db.collection('users').doc(target).update({ isBanned: false });
-                    alert(`✅ ${target} разбанен`);
-                    await loadAllUsers();
-                } else {
-                    alert("Игрок не найден!");
-                }
-            }
-            
-            // Рендер функций
             function renderBuildings() {
                 const container = document.getElementById('buildingsGrid');
                 if (container) container.innerHTML = buildings.map(b => `<div class="showcase-card"><div class="showcase-img" style="background-image: url('${b.image}'); background-size: cover;"></div><div class="showcase-info"><h4>${b.name}</h4><p>${b.desc}</p></div></div>`).join('');
@@ -1522,7 +1502,6 @@
             function showTransferModal() { document.getElementById('transferModal').style.display = 'flex'; }
             function closeTransferModal() { document.getElementById('transferModal').style.display = 'none'; }
             
-            // Обработчики
             document.getElementById('doLoginBtn').onclick = doLogin;
             document.getElementById('doRegisterBtn').onclick = doRegister;
             document.getElementById('adminLoginBtn').onclick = doAdminLogin;
@@ -1542,7 +1521,6 @@
             document.getElementById('submitPddBtn').onclick = submitPddTest;
             document.getElementById('sendChatBtn').onclick = sendChatMessage;
             
-            // Админ-панель табы
             document.querySelectorAll('.admin-tab').forEach(tab => {
                 tab.onclick = () => {
                     document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
@@ -1564,7 +1542,6 @@
             document.getElementById('takeMoneyBtnPanel').onclick = () => takeMoney(document.getElementById('targetUser').value, parseInt(document.getElementById('moneyAmount').value));
             document.getElementById('givePropertyBtn').onclick = () => giveProperty(document.getElementById('targetUser').value, document.getElementById('propertyType').value, document.getElementById('propertyName').value);
             document.getElementById('takePropertyBtn').onclick = () => takeProperty(document.getElementById('targetUser').value, document.getElementById('propertyType').value, document.getElementById('propertyName').value);
-            document.getElementById('assignRoleBtn').onclick = () => assignRole(document.getElementById('roleTargetUser').value, document.getElementById('roleSelect').value);
             
             window.closeRoleModal = closeRoleModal;
             window.replyToTicket = replyToTicket;
@@ -1573,10 +1550,6 @@
             window.logout = logout;
             window.showAuthModal = showAuthModal;
             window.closeTransferModal = closeTransferModal;
-            window.giveMoney = giveMoney;
-            window.takeMoney = takeMoney;
-            window.banUser = banUser;
-            window.unbanUser = unbanUser;
             
             restoreSession();
         }
