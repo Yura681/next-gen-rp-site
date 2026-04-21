@@ -51,7 +51,6 @@
         .modal-content button { width: 100%; padding: 12px; background: #ff3c00; border: none; border-radius: 30px; color: white; font-weight: bold; cursor: pointer; margin-top: 10px; }
         .checkbox-row { display: flex; align-items: center; gap: 8px; margin: 10px 0; }
         
-        /* Стили кнопок */
         .auth-btn {
             background: #ff3c00;
             border: none;
@@ -66,14 +65,14 @@
         }
         .auth-btn:hover { background: #ff5e2c; }
         
-        .bank-btn, .buy-btn, .job-btn, .test-btn, .chat-send, .download-btn, .policy-btn, .business-btn {
+        .bank-btn, .buy-btn, .job-btn, .test-btn, .chat-send, .download-btn, .policy-btn, .business-btn, .doc-btn {
             transition: all 0.2s ease;
             cursor: pointer;
             font-weight: 600;
             border: none;
             border-radius: 30px;
         }
-        .bank-btn:hover, .buy-btn:hover, .job-btn:hover, .test-btn:hover, .chat-send:hover, .download-btn:hover, .policy-btn:hover, .business-btn:hover {
+        .bank-btn:hover, .buy-btn:hover, .job-btn:hover, .test-btn:hover, .chat-send:hover, .download-btn:hover, .policy-btn:hover, .business-btn:hover, .doc-btn:hover {
             transform: scale(1.02);
             filter: brightness(1.1);
         }
@@ -87,9 +86,9 @@
         }
         .bank-btn:hover { background: #ff3c00; }
         
-        .buy-btn, .business-btn { background: #2a6e3a; padding: 10px 16px; font-size: 13px; color: white; }
-        .buy-btn:hover, .business-btn:hover { background: #3a8e4a; }
-        .buy-btn:disabled, .business-btn:disabled { background: #555; cursor: not-allowed; transform: none; }
+        .buy-btn, .business-btn, .doc-btn { background: #2a6e3a; padding: 10px 16px; font-size: 13px; color: white; }
+        .buy-btn:hover, .business-btn:hover, .doc-btn:hover { background: #3a8e4a; }
+        .buy-btn:disabled, .business-btn:disabled, .doc-btn:disabled { background: #555; cursor: not-allowed; transform: none; }
         
         .job-btn { background: #1a1e2a; border: 1px solid #ff5e2c; padding: 8px 18px; font-size: 12px; color: white; }
         .job-btn:hover { background: #ff5e2c; }
@@ -100,6 +99,41 @@
         .download-btn { background: #2a6e3a; padding: 14px 32px; font-size: 18px; display: inline-block; text-decoration: none; color: white; }
         .policy-btn { background: #ff3c00; padding: 12px 30px; font-size: 16px; color: white; }
         .logout-btn { background: #ff3c00; border: none; padding: 4px 12px; border-radius: 20px; color: white; cursor: pointer; font-size: 11px; }
+        
+        /* Документы */
+        .documents-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+        .doc-card {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid #ffaa00;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+        .doc-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #ffaa00;
+        }
+        .doc-header i { font-size: 32px; color: #ffaa00; }
+        .doc-title { font-size: 18px; font-weight: bold; color: #ffaa00; }
+        .doc-field { margin: 10px 0; font-size: 13px; }
+        .doc-label { color: #888; display: inline-block; width: 100px; }
+        .doc-value { color: #fff; font-weight: 500; }
+        .doc-stamp {
+            margin-top: 15px;
+            text-align: right;
+            font-family: monospace;
+            color: #ffaa00;
+            font-size: 11px;
+        }
         
         .card-container { perspective: 1000px; margin: 30px auto; max-width: 400px; }
         .bank-card {
@@ -200,13 +234,20 @@
         }
         .policy-box p { margin: 12px 0; font-size: 13px; color: #bbb; }
         
+        /* Модалка ПДД */
+        .pdd-modal .modal-content {
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
         @media (max-width: 768px) {
             .navbar { flex-direction: column; text-align: center; }
             .nav-links { justify-content: center; }
             .section-title { font-size: 24px; }
         }
         @media (max-width: 480px) {
-            .showcase-grid, .tests-grid, .vehicles-grid, .achievements-grid, .businesses-grid { grid-template-columns: 1fr; }
+            .showcase-grid, .tests-grid, .vehicles-grid, .achievements-grid, .businesses-grid, .documents-grid { grid-template-columns: 1fr; }
             .bank-actions { flex-direction: column; align-items: center; }
             .job-buttons { gap: 8px; }
         }
@@ -226,7 +267,6 @@
         </div>
     </div>
 
-    <!-- МОДАЛЬНОЕ ОКНО ВХОДА/РЕГИСТРАЦИИ -->
     <div id="authModal" class="modal" style="display: none;">
         <div class="modal-content">
             <h2>🔐 Вход в аккаунт</h2>
@@ -253,6 +293,27 @@
         </div>
     </div>
 
+    <!-- Модалка для заполнения паспортных данных -->
+    <div id="passportModal" class="modal">
+        <div class="modal-content">
+            <h2>📘 Оформление паспорта РФ</h2>
+            <input type="text" id="passportFullName" placeholder="ФИО полностью">
+            <input type="number" id="passportBirthYear" placeholder="Год рождения">
+            <input type="text" id="passportAddress" placeholder="Место жительства">
+            <button id="savePassportBtn" class="auth-btn">Сохранить паспорт</button>
+        </div>
+    </div>
+
+    <!-- Модалка для теста ПДД -->
+    <div id="pddModal" class="modal pdd-modal">
+        <div class="modal-content" id="pddContent">
+            <h2>🚦 Тест ПДД</h2>
+            <div id="pddQuestions"></div>
+            <button id="submitPddBtn" class="auth-btn">Сдать экзамен</button>
+            <div id="pddResult"></div>
+        </div>
+    </div>
+
     <div id="transferModal" class="modal">
         <div class="modal-content">
             <h2>💸 Перевод средств</h2>
@@ -268,6 +329,7 @@
             <div class="logo"><i class="fas fa-car-crash"></i> NEXT<span style="color:#ff5e2c;">GEN</span> RP</div>
             <div class="nav-links" id="navLinks">
                 <a onclick="ifLoggedIn(() => showSection('main'))">Главная</a>
+                <a onclick="ifLoggedIn(() => showSection('documents'))">Документы</a>
                 <a onclick="ifLoggedIn(() => showSection('businesses'))">Бизнес</a>
                 <a onclick="ifLoggedIn(() => showSection('buildings'))">Постройки</a>
                 <a onclick="ifLoggedIn(() => showSection('shop'))">Магазин</a>
@@ -326,6 +388,16 @@
                 <a href="#" target="_blank">BrickMountains</a> | 
                 <a href="#" target="_blank">EternityRP</a> | 
                 <a href="#" target="_blank">RandomClothes</a>
+            </div>
+        </div>
+
+        <!-- ДОКУМЕНТЫ -->
+        <div id="documentsSection" style="display: none;">
+            <div class="section-title">📋 Мои <span>документы</span></div>
+            <div id="documentsGrid" class="documents-grid"></div>
+            <div style="text-align: center; margin-top: 20px;">
+                <button id="applyPassportBtn" class="doc-btn">📘 Оформить паспорт</button>
+                <button id="applyLicenseBtn" class="doc-btn" style="margin-left: 10px;">🚗 Сдать на права</button>
             </div>
         </div>
 
@@ -421,6 +493,20 @@
         let isAdmin = false;
         let userData = null;
         
+        // Вопросы ПДД
+        const pddQuestions = [
+            { text: "Что означает красный сигнал светофора?", options: ["Движение разрешено", "Движение запрещено", "Приготовиться к движению", "Уступить дорогу"], correct: 1 },
+            { text: "Что означает жёлтый сигнал светофора?", options: ["Движение запрещено", "Движение разрешено", "Предупреждение о смене сигнала", "Стоп-линия"], correct: 2 },
+            { text: "Разрешено ли обгонять на пешеходном переходе?", options: ["Да", "Нет", "Только если нет пешеходов", "Разрешено, если не создаёт помех"], correct: 1 },
+            { text: "Что такое «опасный груз»?", options: ["Крупногабаритный груз", "Взрывчатые, легковоспламеняющиеся вещества", "Тяжёлый груз", "Груз, мешающий обзору"], correct: 1 },
+            { text: "Кто должен уступить дорогу при одновременном перестроении?", options: ["Тот, кто слева", "Тот, кто справа", "Тот, кто быстрее", "Тот, кто первый начал манёвр"], correct: 1 },
+            { text: "Можно ли перевозить детей до 12 лет на переднем сиденье?", options: ["Да, всегда", "Нет, только на заднем", "Да, только в специальном кресле", "Нет, запрещено"], correct: 2 },
+            { text: "Что означает знак «Кирпич»?", options: ["Въезд запрещён", "Стоянка запрещена", "Одностороннее движение", "Тупик"], correct: 0 },
+            { text: "Какой документ даёт право управления транспортным средством?", options: ["Паспорт", "Водительское удостоверение", "Медицинская книжка", "Свидетельство о регистрации"], correct: 1 },
+            { text: "При каком уровне алкоголя в крови запрещено вождение?", options: ["Любое содержание алкоголя", "Более 0.1 промилле", "Более 0.5 промилле", "Более 1 промилле"], correct: 0 },
+            { text: "Что нужно сделать при ДТП?", options: ["Уехать с места аварии", "Остановиться, включить аварийку, вызвать ГИБДД", "Позвонить друзьям", "Продолжить движение"], correct: 1 }
+        ];
+        
         const businessesList = [
             { id: "auto", name: "Автосалон", icon: "fa-car", price: 500000, income: 25000, level: 1 },
             { id: "restaurant", name: "Ресторан", icon: "fa-utensils", price: 300000, income: 15000, level: 1 },
@@ -474,6 +560,8 @@
         const achievementsList = [
             { id: "first_car", title: "Первый автомобиль", desc: "Купить первую машину", icon: "fa-car", check: (d) => d.garage?.length > 0 },
             { id: "first_business", title: "Первый бизнес", desc: "Купить первый бизнес", icon: "fa-store", check: (d) => d.businesses?.length > 0 },
+            { id: "first_passport", title: "Гражданин РФ", desc: "Получить паспорт", icon: "fa-passport", check: (d) => d.passport !== null },
+            { id: "first_license", title: "Водитель", desc: "Получить водительские права", icon: "fa-id-card", check: (d) => d.license !== null },
             { id: "million", title: "Миллионер", desc: "Накопить 1 000 000 ₽", icon: "fa-coins", check: (d) => d.balance >= 1000000 },
             { id: "test_master", title: "Мастер тестов", desc: "Сдать все три теста", icon: "fa-graduation-cap", check: (d) => d.policeTest === 'passed' && d.cashierTest === 'passed' && d.mayorTest === 'passed' },
             { id: "job_master", title: "Трудоголик", desc: "Устроиться на работу", icon: "fa-briefcase", check: (d) => d.job !== null },
@@ -519,7 +607,10 @@
                         cashierTest: null,
                         mayorTest: null,
                         achievements: [],
-                        isBanned: false
+                        isBanned: false,
+                        passport: null,
+                        license: null,
+                        licenseCooldown: null
                     };
                     await db.collection('users').doc(username).set(userData);
                 }
@@ -527,6 +618,8 @@
                 if (!userData.businesses) userData.businesses = [];
                 if (!userData.businessLevels) userData.businessLevels = {};
                 if (!userData.lastBusinessTime) userData.lastBusinessTime = Date.now();
+                if (!userData.passport) userData.passport = null;
+                if (!userData.license) userData.license = null;
                 updateCardUI();
                 updateUI();
                 renderShop();
@@ -535,6 +628,282 @@
                 renderJobStatus();
                 renderBusinesses();
                 renderMyBusinesses();
+                renderDocuments();
+            }
+            
+            async function saveUserData() {
+                if (!userData) return;
+                await db.collection('users').doc(userData.username).set(userData);
+            }
+            
+            function generateRandomId() {
+                return Math.floor(Math.random() * 9000000000 + 1000000000).toString();
+            }
+            
+            async function savePassport() {
+                if (!userData) return;
+                const fullName = document.getElementById('passportFullName').value.trim();
+                const birthYear = parseInt(document.getElementById('passportBirthYear').value);
+                const address = document.getElementById('passportAddress').value.trim();
+                
+                if (!fullName || !birthYear || !address) {
+                    alert("Заполните все поля!");
+                    return;
+                }
+                if (birthYear < 1920 || birthYear > 2010) {
+                    alert("Введите корректный год рождения (1920-2010)");
+                    return;
+                }
+                
+                userData.passport = {
+                    fullName: fullName,
+                    birthYear: birthYear,
+                    address: address,
+                    id: generateRandomId(),
+                    issuedDate: new Date().toLocaleDateString()
+                };
+                await saveUserData();
+                await updateAchievements();
+                renderDocuments();
+                closePassportModal();
+                alert("✅ Паспорт успешно оформлен!");
+            }
+            
+            async function saveLicense() {
+                if (!userData) return;
+                if (!userData.passport) {
+                    alert("❌ Сначала оформите паспорт!");
+                    return;
+                }
+                
+                // Проверка на пересдачу
+                if (userData.licenseCooldown && Date.now() < userData.licenseCooldown) {
+                    const remaining = Math.ceil((userData.licenseCooldown - Date.now()) / 60000);
+                    alert(`⏳ Пересдача через ${remaining} минут!`);
+                    return;
+                }
+                
+                // Открываем модалку с тестом
+                showPddModal();
+            }
+            
+            function showPddModal() {
+                const container = document.getElementById('pddQuestions');
+                container.innerHTML = pddQuestions.map((q, idx) => `
+                    <div class="question">
+                        <p>${idx+1}. ${q.text}</p>
+                        ${q.options.map((opt, oi) => `<label><input type="radio" name="pdd_${idx}" value="${oi}"> ${opt}</label><br>`).join('')}
+                    </div>
+                `).join('');
+                document.getElementById('pddModal').style.display = 'flex';
+            }
+            
+            async function submitPddTest() {
+                let correct = 0;
+                for (let i = 0; i < pddQuestions.length; i++) {
+                    const selected = document.querySelector(`input[name="pdd_${i}"]:checked`);
+                    if (selected && parseInt(selected.value) === pddQuestions[i].correct) {
+                        correct++;
+                    }
+                }
+                const wrongCount = pddQuestions.length - correct;
+                if (wrongCount <= 5) {
+                    // Сдал!
+                    userData.license = {
+                        id: generateRandomId(),
+                        passportId: userData.passport.id,
+                        issueDate: new Date().toLocaleDateString(),
+                        categories: "A, B, C, M"
+                    };
+                    userData.licenseCooldown = null;
+                    await saveUserData();
+                    await updateAchievements();
+                    renderDocuments();
+                    document.getElementById('pddModal').style.display = 'none';
+                    alert(`✅ Поздравляем! Вы сдали экзамен ПДД (${correct}/${pddQuestions.length} правильных). Права выданы!`);
+                } else {
+                    // Не сдал
+                    userData.licenseCooldown = Date.now() + 5 * 60 * 1000;
+                    await saveUserData();
+                    document.getElementById('pddModal').style.display = 'none';
+                    alert(`❌ Экзамен не сдан! (${correct}/${pddQuestions.length} правильных). Пересдача через 5 минут.`);
+                }
+            }
+            
+            function renderDocuments() {
+                const container = document.getElementById('documentsGrid');
+                if (!container) return;
+                
+                let html = '';
+                
+                // Паспорт
+                if (userData.passport) {
+                    html += `
+                        <div class="doc-card">
+                            <div class="doc-header">
+                                <i class="fas fa-passport"></i>
+                                <span class="doc-title">ПАСПОРТ РФ</span>
+                            </div>
+                            <div class="doc-field"><span class="doc-label">ФИО:</span> <span class="doc-value">${userData.passport.fullName}</span></div>
+                            <div class="doc-field"><span class="doc-label">Год рождения:</span> <span class="doc-value">${userData.passport.birthYear}</span></div>
+                            <div class="doc-field"><span class="doc-label">Место жительства:</span> <span class="doc-value">${userData.passport.address}</span></div>
+                            <div class="doc-field"><span class="doc-label">Серия/номер:</span> <span class="doc-value">${userData.passport.id}</span></div>
+                            <div class="doc-field"><span class="doc-label">Дата выдачи:</span> <span class="doc-value">${userData.passport.issuedDate}</span></div>
+                            <div class="doc-stamp">✓ Действителен</div>
+                        </div>
+                    `;
+                } else {
+                    html += `
+                        <div class="doc-card" style="border-color: #555;">
+                            <div class="doc-header">
+                                <i class="fas fa-passport"></i>
+                                <span class="doc-title">ПАСПОРТ РФ</span>
+                            </div>
+                            <div class="doc-field">❌ Паспорт не оформлен</div>
+                            <div class="doc-field">Нажмите кнопку ниже</div>
+                        </div>
+                    `;
+                }
+                
+                // Медицинская книжка (связана с паспортом)
+                if (userData.passport) {
+                    const medId = generateRandomId();
+                    html += `
+                        <div class="doc-card">
+                            <div class="doc-header">
+                                <i class="fas fa-notes-medical"></i>
+                                <span class="doc-title">МЕДИЦИНСКАЯ КНИЖКА</span>
+                            </div>
+                            <div class="doc-field"><span class="doc-label">Номер:</span> <span class="doc-value">${medId}</span></div>
+                            <div class="doc-field"><span class="doc-label">Привязана к паспорту:</span> <span class="doc-value">${userData.passport.id}</span></div>
+                            <div class="doc-field"><span class="doc-label">Годен до:</span> <span class="doc-value">${new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toLocaleDateString()}</span></div>
+                            <div class="doc-stamp">✓ Действительна</div>
+                        </div>
+                    `;
+                } else {
+                    html += `
+                        <div class="doc-card" style="border-color: #555;">
+                            <div class="doc-header">
+                                <i class="fas fa-notes-medical"></i>
+                                <span class="doc-title">МЕДИЦИНСКАЯ КНИЖКА</span>
+                            </div>
+                            <div class="doc-field">❌ Требуется паспорт</div>
+                        </div>
+                    `;
+                }
+                
+                // Водительские права
+                if (userData.license) {
+                    html += `
+                        <div class="doc-card">
+                            <div class="doc-header">
+                                <i class="fas fa-id-card"></i>
+                                <span class="doc-title">ВОДИТЕЛЬСКОЕ УДОСТОВЕРЕНИЕ</span>
+                            </div>
+                            <div class="doc-field"><span class="doc-label">Номер ВУ:</span> <span class="doc-value">${userData.license.id}</span></div>
+                            <div class="doc-field"><span class="doc-label">Категории:</span> <span class="doc-value">${userData.license.categories}</span></div>
+                            <div class="doc-field"><span class="doc-label">Дата выдачи:</span> <span class="doc-value">${userData.license.issueDate}</span></div>
+                            <div class="doc-stamp">✓ Действительно</div>
+                        </div>
+                    `;
+                } else if (userData.licenseCooldown && Date.now() < userData.licenseCooldown) {
+                    const remaining = Math.ceil((userData.licenseCooldown - Date.now()) / 60000);
+                    html += `
+                        <div class="doc-card" style="border-color: #ffaa66;">
+                            <div class="doc-header">
+                                <i class="fas fa-id-card"></i>
+                                <span class="doc-title">ВОДИТЕЛЬСКОЕ УДОСТОВЕРЕНИЕ</span>
+                            </div>
+                            <div class="doc-field">⏳ Пересдача через ${remaining} минут</div>
+                        </div>
+                    `;
+                } else {
+                    html += `
+                        <div class="doc-card" style="border-color: #555;">
+                            <div class="doc-header">
+                                <i class="fas fa-id-card"></i>
+                                <span class="doc-title">ВОДИТЕЛЬСКОЕ УДОСТОВЕРЕНИЕ</span>
+                            </div>
+                            <div class="doc-field">❌ Не получено</div>
+                            <div class="doc-field">Требуется сдать экзамен ПДД</div>
+                        </div>
+                    `;
+                }
+                
+                container.innerHTML = html;
+            }
+            
+            function showPassportModal() {
+                if (userData.passport) {
+                    alert("Паспорт уже оформлен!");
+                    return;
+                }
+                document.getElementById('passportModal').style.display = 'flex';
+            }
+            
+            function closePassportModal() {
+                document.getElementById('passportModal').style.display = 'none';
+                document.getElementById('passportFullName').value = '';
+                document.getElementById('passportBirthYear').value = '';
+                document.getElementById('passportAddress').value = '';
+            }
+            
+            async function updateAchievements() {
+                if (!userData) return;
+                let changed = false;
+                for (const ach of achievementsList) {
+                    if (!userData.achievements?.includes(ach.id) && ach.check(userData)) {
+                        if (!userData.achievements) userData.achievements = [];
+                        userData.achievements.push(ach.id);
+                        changed = true;
+                    }
+                }
+                if (changed) {
+                    await db.collection('users').doc(userData.username).update({ achievements: userData.achievements });
+                    renderAchievements();
+                }
+            }
+            
+            async function loadUserData(username) {
+                const doc = await db.collection('users').doc(username).get();
+                if (doc.exists) {
+                    userData = doc.data();
+                } else {
+                    userData = {
+                        username: username,
+                        balance: 50000,
+                        garage: [],
+                        businesses: [],
+                        businessLevels: {},
+                        job: null,
+                        lastPayTime: Date.now(),
+                        lastBusinessTime: Date.now(),
+                        policeTest: null,
+                        cashierTest: null,
+                        mayorTest: null,
+                        achievements: [],
+                        isBanned: false,
+                        passport: null,
+                        license: null,
+                        licenseCooldown: null
+                    };
+                    await db.collection('users').doc(username).set(userData);
+                }
+                if (userData.isBanned) throw new Error("BANNED");
+                if (!userData.businesses) userData.businesses = [];
+                if (!userData.businessLevels) userData.businessLevels = {};
+                if (!userData.lastBusinessTime) userData.lastBusinessTime = Date.now();
+                if (!userData.passport) userData.passport = null;
+                if (!userData.license) userData.license = null;
+                updateCardUI();
+                updateUI();
+                renderShop();
+                renderTests();
+                renderAchievements();
+                renderJobStatus();
+                renderBusinesses();
+                renderMyBusinesses();
+                renderDocuments();
             }
             
             async function saveUserData() {
@@ -567,7 +936,6 @@
                 return { success: true, message: `Переведено ${amount.toLocaleString()} ₽` };
             }
             
-            // ========== ОТДЕЛЬНЫЕ ФУНКЦИИ ДЛЯ ВХОДА И РЕГИСТРАЦИИ ==========
             async function doLogin() {
                 const username = document.getElementById('loginUsername').value;
                 const password = document.getElementById('loginPassword').value;
@@ -621,11 +989,11 @@
                 const newUser = {
                     username, password, balance: 50000, garage: [], businesses: [], businessLevels: {},
                     job: null, lastPayTime: Date.now(), lastBusinessTime: Date.now(),
-                    policeTest: null, cashierTest: null, mayorTest: null, achievements: [], isBanned: false
+                    policeTest: null, cashierTest: null, mayorTest: null, achievements: [], isBanned: false,
+                    passport: null, license: null, licenseCooldown: null
                 };
                 await db.collection('users').doc(username).set(newUser);
                 alert("✅ Регистрация успешна! Теперь войдите.");
-                // Очищаем поля входа
                 document.getElementById('loginUsername').value = username;
                 document.getElementById('loginPassword').value = '';
                 document.getElementById('registerUsername').value = '';
@@ -655,7 +1023,6 @@
                 document.getElementById('mainContent').style.display = 'none';
                 document.getElementById('adminPanel').style.display = 'none';
                 document.getElementById('authModal').style.display = 'flex';
-                // Очищаем поля
                 document.getElementById('loginUsername').value = '';
                 document.getElementById('loginPassword').value = '';
                 document.getElementById('registerUsername').value = '';
@@ -1068,6 +1435,7 @@
             
             function showSection(section) {
                 document.getElementById('mainSection').style.display = section === 'main' ? 'block' : 'none';
+                document.getElementById('documentsSection').style.display = section === 'documents' ? 'block' : 'none';
                 document.getElementById('businessesSection').style.display = section === 'businesses' ? 'block' : 'none';
                 document.getElementById('buildingsSection').style.display = section === 'buildings' ? 'block' : 'none';
                 document.getElementById('shopSection').style.display = section === 'shop' ? 'block' : 'none';
@@ -1080,6 +1448,7 @@
                 if (section === 'shop') renderShop();
                 if (section === 'tests') renderTests();
                 if (section === 'achievements') renderAchievements();
+                if (section === 'documents') renderDocuments();
             }
             
             function showAuthModal() { document.getElementById('authModal').style.display = 'flex'; }
@@ -1087,7 +1456,6 @@
             function showTransferModal() { document.getElementById('transferModal').style.display = 'flex'; }
             function closeTransferModal() { document.getElementById('transferModal').style.display = 'none'; }
             
-            // ========== ПРИВЯЗКА КНОПОК ==========
             document.getElementById('doLoginBtn').onclick = doLogin;
             document.getElementById('doRegisterBtn').onclick = doRegister;
             document.getElementById('adminLoginBtn').onclick = doAdminLogin;
@@ -1105,6 +1473,12 @@
             document.getElementById('banUserBtn').onclick = banUser;
             document.getElementById('unbanUserBtn').onclick = unbanUser;
             document.getElementById('createTicketBtn').onclick = createTicket;
+            
+            // Документы
+            document.getElementById('applyPassportBtn').onclick = showPassportModal;
+            document.getElementById('applyLicenseBtn').onclick = saveLicense;
+            document.getElementById('savePassportBtn').onclick = savePassport;
+            document.getElementById('submitPddBtn').onclick = submitPddTest;
             
             window.showSection = showSection;
             window.ifLoggedIn = (cb) => { if (currentUser || isAdmin) cb(); else showAuthModal(); };
