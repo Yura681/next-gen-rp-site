@@ -49,9 +49,9 @@
         }
         .modal-content input { width: 100%; padding: 12px; margin: 10px 0; background: #0a0c12; border: 1px solid #333; border-radius: 12px; color: white; font-size: 14px; }
         .modal-content button { width: 100%; padding: 12px; background: #ff3c00; border: none; border-radius: 30px; color: white; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        .switch-auth { text-align: center; margin-top: 15px; color: #ff9a6e; cursor: pointer; font-size: 13px; }
         .checkbox-row { display: flex; align-items: center; gap: 8px; margin: 10px 0; }
         
+        /* Стили кнопок */
         .auth-btn {
             background: #ff3c00;
             border: none;
@@ -226,21 +226,30 @@
         </div>
     </div>
 
+    <!-- МОДАЛЬНОЕ ОКНО ВХОДА/РЕГИСТРАЦИИ -->
     <div id="authModal" class="modal" style="display: none;">
         <div class="modal-content">
-            <h2 id="authTitle">🔐 Вход</h2>
-            <input type="text" id="authUsername" placeholder="Никнейм">
-            <input type="password" id="authPassword" placeholder="Пароль">
+            <h2>🔐 Вход в аккаунт</h2>
+            <input type="text" id="loginUsername" placeholder="Никнейм">
+            <input type="password" id="loginPassword" placeholder="Пароль">
             <div class="checkbox-row">
                 <input type="checkbox" id="rememberMe">
                 <label for="rememberMe">Запомнить меня</label>
             </div>
-            <button id="authSubmitBtn" class="auth-btn">Войти</button>
-            <div id="switchAuth" class="switch-auth">Нет аккаунта? Зарегистрироваться</div>
-            <div style="margin-top: 15px; border-top: 1px solid #333; padding-top: 15px;">
-                <input type="password" id="adminPasswordInput" placeholder="Пароль администратора">
-                <button id="adminLoginBtn" class="auth-btn">Войти как Админ</button>
-            </div>
+            <button id="doLoginBtn" class="auth-btn">Войти</button>
+            
+            <hr style="margin: 15px 0; border-color: #333;">
+            
+            <h2>📝 Регистрация</h2>
+            <input type="text" id="registerUsername" placeholder="Никнейм">
+            <input type="password" id="registerPassword" placeholder="Пароль">
+            <button id="doRegisterBtn" class="auth-btn">Зарегистрироваться</button>
+            
+            <hr style="margin: 15px 0; border-color: #333;">
+            
+            <h2>👑 Администратор</h2>
+            <input type="password" id="adminPasswordInput" placeholder="Пароль администратора">
+            <button id="adminLoginBtn" class="auth-btn">Войти как Админ</button>
         </div>
     </div>
 
@@ -376,6 +385,7 @@
     </div>
 
     <script>
+        // Частицы фона
         for(let i = 0; i < 80; i++) {
             let p = document.createElement('span');
             p.style.left = Math.random() * 100 + '%';
@@ -385,6 +395,7 @@
             document.getElementById('particles').appendChild(p);
         }
         
+        // Политика
         if (localStorage.getItem('policyAccepted') === 'true') {
             document.getElementById('policyOverlay').style.display = 'none';
             document.getElementById('authModal').style.display = 'flex';
@@ -395,6 +406,7 @@
             document.getElementById('authModal').style.display = 'flex';
         };
         
+        // Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyAJeBC0bgStvXZlNGpF0M1J9MwUoM57yNw",
             authDomain: "brickrp-site.firebaseapp.com",
@@ -555,21 +567,31 @@
                 return { success: true, message: `Переведено ${amount.toLocaleString()} ₽` };
             }
             
-            // ========== НОВАЯ ПРОСТАЯ ЛОГИКА ВХОДА ==========
-            async function login(username, password, remember) {
+            // ========== ОТДЕЛЬНЫЕ ФУНКЦИИ ДЛЯ ВХОДА И РЕГИСТРАЦИИ ==========
+            async function doLogin() {
+                const username = document.getElementById('loginUsername').value;
+                const password = document.getElementById('loginPassword').value;
+                const remember = document.getElementById('rememberMe').checked;
+                
+                if (!username || !password) {
+                    alert("Введите никнейм и пароль!");
+                    return;
+                }
+                
                 const doc = await db.collection('users').doc(username).get();
                 if (!doc.exists) {
                     alert("❌ Пользователь не найден!");
-                    return false;
+                    return;
                 }
                 if (doc.data().password !== password) {
                     alert("❌ Неверный пароль!");
-                    return false;
+                    return;
                 }
                 if (doc.data().isBanned) {
                     alert("⛔ Аккаунт забанен!");
-                    return false;
+                    return;
                 }
+                
                 currentUser = username;
                 document.getElementById('mainContent').style.display = 'block';
                 document.getElementById('authModal').style.display = 'none';
@@ -579,15 +601,23 @@
                 renderJobStatus();
                 loadTickets();
                 loadChat();
-                return true;
             }
             
-            async function register(username, password, remember) {
+            async function doRegister() {
+                const username = document.getElementById('registerUsername').value;
+                const password = document.getElementById('registerPassword').value;
+                
+                if (!username || !password) {
+                    alert("Введите никнейм и пароль!");
+                    return;
+                }
+                
                 const doc = await db.collection('users').doc(username).get();
                 if (doc.exists) {
-                    alert("❌ Пользователь уже существует!");
-                    return false;
+                    alert("❌ Пользователь с таким ником уже существует!");
+                    return;
                 }
+                
                 const newUser = {
                     username, password, balance: 50000, garage: [], businesses: [], businessLevels: {},
                     job: null, lastPayTime: Date.now(), lastBusinessTime: Date.now(),
@@ -595,11 +625,16 @@
                 };
                 await db.collection('users').doc(username).set(newUser);
                 alert("✅ Регистрация успешна! Теперь войдите.");
-                return true;
+                // Очищаем поля входа
+                document.getElementById('loginUsername').value = username;
+                document.getElementById('loginPassword').value = '';
+                document.getElementById('registerUsername').value = '';
+                document.getElementById('registerPassword').value = '';
             }
             
-            function adminLogin(password) {
-                if (password === '5638Yyy') {
+            function doAdminLogin() {
+                const pwd = document.getElementById('adminPasswordInput').value;
+                if (pwd === '5638Yyy') {
                     isAdmin = true;
                     currentUser = 'ADMIN';
                     document.getElementById('mainContent').style.display = 'block';
@@ -607,10 +642,9 @@
                     document.getElementById('adminPanel').style.display = 'block';
                     loadTickets();
                     updateUI();
-                    return true;
+                } else {
+                    alert("❌ Неверный пароль администратора");
                 }
-                alert("❌ Неверный пароль администратора");
-                return false;
             }
             
             function logout() {
@@ -621,6 +655,12 @@
                 document.getElementById('mainContent').style.display = 'none';
                 document.getElementById('adminPanel').style.display = 'none';
                 document.getElementById('authModal').style.display = 'flex';
+                // Очищаем поля
+                document.getElementById('loginUsername').value = '';
+                document.getElementById('loginPassword').value = '';
+                document.getElementById('registerUsername').value = '';
+                document.getElementById('registerPassword').value = '';
+                document.getElementById('adminPasswordInput').value = '';
             }
             
             async function restoreSession() {
@@ -1047,45 +1087,10 @@
             function showTransferModal() { document.getElementById('transferModal').style.display = 'flex'; }
             function closeTransferModal() { document.getElementById('transferModal').style.display = 'none'; }
             
-            // ========== ПРОСТЫЕ И ПОНЯТНЫЕ ОБРАБОТЧИКИ ==========
-            document.getElementById('authSubmitBtn').onclick = async () => {
-                const u = document.getElementById('authUsername').value;
-                const p = document.getElementById('authPassword').value;
-                const remember = document.getElementById('rememberMe').checked;
-                const isLoginMode = document.getElementById('authTitle').innerText === 'Вход';
-                
-                if (isLoginMode) {
-                    await login(u, p, remember);
-                } else {
-                    const success = await register(u, p, remember);
-                    if (success) {
-                        // После успешной регистрации переключаемся на вход
-                        document.getElementById('authTitle').innerText = 'Вход';
-                        document.getElementById('switchAuth').innerHTML = 'Нет аккаунта? Зарегистрироваться';
-                        document.getElementById('authSubmitBtn').innerText = 'Войти';
-                        document.getElementById('authUsername').value = '';
-                        document.getElementById('authPassword').value = '';
-                    }
-                }
-            };
-            
-            document.getElementById('switchAuth').onclick = () => {
-                const title = document.getElementById('authTitle');
-                if (title.innerText === 'Вход') {
-                    title.innerText = 'Регистрация';
-                    document.getElementById('switchAuth').innerHTML = 'Уже есть аккаунт? Войти';
-                    document.getElementById('authSubmitBtn').innerText = 'Зарегистрироваться';
-                } else {
-                    title.innerText = 'Вход';
-                    document.getElementById('switchAuth').innerHTML = 'Нет аккаунта? Зарегистрироваться';
-                    document.getElementById('authSubmitBtn').innerText = 'Войти';
-                }
-            };
-            
-            document.getElementById('adminLoginBtn').onclick = async () => {
-                const pwd = document.getElementById('adminPasswordInput').value;
-                if (adminLogin(pwd)) closeAuthModal();
-            };
+            // ========== ПРИВЯЗКА КНОПОК ==========
+            document.getElementById('doLoginBtn').onclick = doLogin;
+            document.getElementById('doRegisterBtn').onclick = doRegister;
+            document.getElementById('adminLoginBtn').onclick = doAdminLogin;
             
             document.getElementById('showTransferBtn').onclick = showTransferModal;
             document.getElementById('refreshBalanceBtn').onclick = () => { if (userData) updateCardUI(); };
