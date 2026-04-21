@@ -308,7 +308,18 @@
         <div id="shopSection" style="display: none;"><div class="section-title">🏪 Магазин <span>транспорта</span></div><div class="vehicles-grid" id="vehicleList"></div><div style="margin-top:20px; padding:18px; background:#0f131c; border-radius:20px;"><h3>🚗 Мой гараж</h3><div id="garageContent"></div></div></div>
         <div id="testsSection" style="display: none;"><div class="section-title">📝 Квалификационные <span>тесты</span></div><div class="tests-grid" id="testsContainer"></div></div>
         <div id="achievementsSection" style="display: none;"><div class="section-title">🏆 Ваши <span>достижения</span></div><div class="achievements-grid" id="achievementsGrid"></div></div>
-        <div id="forumSection" style="display: none;"><div class="section-title">💬 Форум поддержки</div><div class="forum-section"><div class="create-ticket"><h3>Создать обращение</h3><textarea id="ticketTitle" placeholder="Тема" rows="2"></textarea><textarea id="ticketText" placeholder="Опишите проблему..." rows="3"></textarea><button id="createTicketBtn" class="bank-btn">Отправить</button></div><div id="ticketsList" class="tickets-list"></div></div></div>
+        <div id="forumSection" style="display: none;">
+            <div class="section-title">💬 Форум поддержки</div>
+            <div class="forum-section">
+                <div class="create-ticket">
+                    <h3>Создать обращение</h3>
+                    <textarea id="ticketTitle" placeholder="Тема" rows="2"></textarea>
+                    <textarea id="ticketText" placeholder="Опишите проблему..." rows="3"></textarea>
+                    <button id="createTicketBtn" class="bank-btn">Отправить</button>
+                </div>
+                <div id="ticketsList" class="tickets-list"></div>
+            </div>
+        </div>
         
         <div id="chatSection" style="display: none;">
             <div class="section-title">💬 Общий <span>чат</span></div>
@@ -372,6 +383,10 @@
         let currentUser = null;
         let isAdmin = false;
         let userData = null;
+        
+        // Переменные для реального времени
+        let unsubscribeChat = null;
+        let unsubscribeTickets = null;
         
         const businessesList = [
             { id: "auto", name: "Автосалон", icon: "fa-car", price: 500000, income: 25000, level: 1 },
@@ -519,7 +534,6 @@
                 return { success: true, message: `Переведено ${amount.toLocaleString()} ₽` };
             }
             
-            // ЛОГИН - только вход для существующего пользователя
             async function login(username, password, remember) {
                 const doc = await db.collection('users').doc(username).get();
                 if (!doc.exists) {
@@ -541,12 +555,12 @@
                 if (remember) localStorage.setItem('rememberedUser', username);
                 else localStorage.removeItem('rememberedUser');
                 renderJobStatus();
-                loadTickets();
-                loadChat();
+                // Подписываемся на обновления чата и форума
+                subscribeToChat();
+                subscribeToTickets();
                 return true;
             }
             
-            // РЕГИСТРАЦИЯ - только создание нового пользователя
             async function register(username, password, remember) {
                 const doc = await db.collection('users').doc(username).get();
                 if (doc.exists) {
@@ -570,7 +584,7 @@
                     document.getElementById('mainContent').style.display = 'block';
                     document.getElementById('authModal').style.display = 'none';
                     document.getElementById('adminPanel').style.display = 'block';
-                    loadTickets();
+                    subscribeToTickets();
                     updateUI();
                     return true;
                 }
@@ -586,6 +600,9 @@
                 document.getElementById('mainContent').style.display = 'none';
                 document.getElementById('adminPanel').style.display = 'none';
                 document.getElementById('authModal').style.display = 'flex';
+                // Отписываемся от обновлений
+                if (unsubscribeChat) unsubscribeChat();
+                if (unsubscribeTickets) unsubscribeTickets();
             }
             
             async function restoreSession() {
@@ -597,12 +614,113 @@
                         document.getElementById('mainContent').style.display = 'block';
                         document.getElementById('authModal').style.display = 'none';
                         await loadUserData(remembered);
-                        loadTickets();
-                        loadChat();
+                        subscribeToChat();
+                        subscribeToTickets();
                         return true;
                     }
                 }
                 return false;
+            }
+            
+            // ========== РЕАЛЬНОЕ ВРЕМЯ ДЛЯ ЧАТА ==========
+            function subscribeToChat() {
+                if (unsubscribeChat) unsubscribeChat();
+                unsubscribeChat = db.collection('globalChat')
+                    .orderBy('timestamp', 'asc')
+                    .limit(100)
+                    .onSnapshot((snapshot) => {
+                        const messages = [];
+                        snapshot.forEach(doc => messages.push(doc.data()));
+                        renderChat(messages);
+                    });
+            }
+            
+            function renderChat(messages) {
+                const container = document.getElementById('chatMessages');
+                if (!container) return;
+                container.innerHTML = messages.map(m => `
+                    <div class="chat-message">
+                        <span class="chat-name">${escapeHtml(m.name)}</span>
+                        <span class="chat-time">${new Date(m.timestamp).toLocaleTimeString()}</span><br>
+                        ${escapeHtml(m.text)}
+                    </div>
+                `).join('');
+                container.scrollTop = container.scrollHeight;
+            }
+            
+            async function sendChatMessage() {
+                let name = document.getElementById('chatInput').value.trim();
+                const text = document.getElementById('messageInput').value.trim();
+                if (!name && currentUser && !isAdmin) name = currentUser;
+                if (!name && isAdmin) name = 'ADMIN';
+                if (!name) name = 'Гость';
+                if (!text) return;
+                await db.collection('globalChat').add({ name, text, timestamp: Date.now() });
+                document.getElementById('messageInput').value = '';
+            }
+            
+            // ========== РЕАЛЬНОЕ ВРЕМЯ ДЛЯ ФОРУМА ==========
+            function subscribeToTickets() {
+                if (unsubscribeTickets) unsubscribeTickets();
+                unsubscribeTickets = db.collection('tickets')
+                    .orderBy('date', 'desc')
+                    .onSnapshot((snapshot) => {
+                        const tickets = [];
+                        snapshot.forEach(doc => tickets.push({ id: doc.id, ...doc.data() }));
+                        renderTickets(tickets);
+                    });
+            }
+            
+            function renderTickets(tickets) {
+                const container = document.getElementById('ticketsList');
+                if (!container) return;
+                if (isAdmin) {
+                    container.innerHTML = tickets.map(t => `
+                        <div class="ticket" id="ticket-${t.id}">
+                            <div class="ticket-header"><span>👤 ${t.username}</span><span>📅 ${new Date(t.date).toLocaleString()}</span></div>
+                            <div><strong>${t.title}</strong></div>
+                            <div>${t.text}</div>
+                            ${(t.replies || []).map(r => `<div class="ticket-reply"><strong>${r.admin ? '⭐ Админ' : r.username}:</strong> ${r.text}</div>`).join('')}
+                            <div class="reply-form"><input type="text" id="reply-${t.id}" class="reply-input" placeholder="Ответ..."><button class="bank-btn" onclick="replyToTicket('${t.id}')" style="padding: 8px 16px;">Ответить</button></div>
+                        </div>
+                    `).join('');
+                } else if (currentUser) {
+                    const userTickets = tickets.filter(t => t.username === currentUser);
+                    container.innerHTML = userTickets.map(t => `
+                        <div class="ticket">
+                            <div class="ticket-header"><span>📌 ${t.title}</span><span>📅 ${new Date(t.date).toLocaleString()}</span></div>
+                            <div>${t.text}</div>
+                            ${(t.replies || []).map(r => `<div class="ticket-reply"><strong>${r.admin ? '⭐ Админ' : r.username}:</strong> ${r.text}</div>`).join('')}
+                        </div>
+                    `).join('');
+                }
+            }
+            
+            async function createTicket() {
+                if (!currentUser || isAdmin) return;
+                const title = document.getElementById('ticketTitle').value;
+                const text = document.getElementById('ticketText').value;
+                if (!title || !text) return;
+                await db.collection('tickets').add({ username: currentUser, title, text, date: new Date().toISOString(), replies: [] });
+                document.getElementById('ticketTitle').value = '';
+                document.getElementById('ticketText').value = '';
+            }
+            
+            async function replyToTicket(ticketId) {
+                if (!isAdmin) return;
+                const reply = document.getElementById(`reply-${ticketId}`).value;
+                if (!reply) return;
+                const ticketRef = db.collection('tickets').doc(ticketId);
+                const ticket = (await ticketRef.get()).data();
+                const replies = ticket.replies || [];
+                replies.push({ username: 'ADMIN', text: reply, admin: true });
+                await ticketRef.update({ replies });
+                document.getElementById(`reply-${ticketId}`).value = '';
+            }
+            
+            function escapeHtml(str) {
+                if (!str) return '';
+                return str.replace(/[&<>]/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m]));
             }
             
             async function giveMoney() {
@@ -884,107 +1002,6 @@
                 `).join('');
             }
             
-            let tickets = [];
-            async function loadTickets() {
-                const snapshot = await db.collection('tickets').orderBy('date', 'desc').get();
-                tickets = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                renderTickets();
-            }
-            
-            async function createTicket() {
-                if (!currentUser || isAdmin) return;
-                const title = document.getElementById('ticketTitle').value;
-                const text = document.getElementById('ticketText').value;
-                if (!title || !text) return;
-                await db.collection('tickets').add({ username: currentUser, title, text, date: new Date().toISOString(), replies: [] });
-                document.getElementById('ticketTitle').value = '';
-                document.getElementById('ticketText').value = '';
-                loadTickets();
-            }
-            
-            async function replyToTicket(ticketId, replyText) {
-                const ticketRef = db.collection('tickets').doc(ticketId);
-                const ticket = (await ticketRef.get()).data();
-                const replies = ticket.replies || [];
-                replies.push({ username: 'ADMIN', text: replyText, admin: true });
-                await ticketRef.update({ replies });
-                loadTickets();
-            }
-            
-            function renderTickets() {
-                const container = document.getElementById('ticketsList');
-                if (!container) return;
-                if (isAdmin) {
-                    container.innerHTML = tickets.map(t => `
-                        <div class="ticket" id="ticket-${t.id}">
-                            <div class="ticket-header"><span>👤 ${t.username}</span><span>📅 ${new Date(t.date).toLocaleString()}</span></div>
-                            <div><strong>${t.title}</strong></div>
-                            <div>${t.text}</div>
-                            ${(t.replies || []).map(r => `<div class="ticket-reply"><strong>${r.admin ? '⭐ Админ' : r.username}:</strong> ${r.text}</div>`).join('')}
-                            <div class="reply-form"><input type="text" id="reply-${t.id}" class="reply-input" placeholder="Ответ..."><button onclick="replyToTicketUI('${t.id}')" class="bank-btn" style="padding: 8px 16px;">Ответить</button></div>
-                        </div>
-                    `).join('');
-                } else if (currentUser) {
-                    const userTickets = tickets.filter(t => t.username === currentUser);
-                    container.innerHTML = userTickets.map(t => `
-                        <div class="ticket">
-                            <div class="ticket-header"><span>📌 ${t.title}</span><span>📅 ${new Date(t.date).toLocaleString()}</span></div>
-                            <div>${t.text}</div>
-                            ${(t.replies || []).map(r => `<div class="ticket-reply"><strong>${r.admin ? '⭐ Админ' : r.username}:</strong> ${r.text}</div>`).join('')}
-                        </div>
-                    `).join('');
-                }
-            }
-            
-            window.replyToTicketUI = async function(ticketId) {
-                if (!isAdmin) return;
-                const reply = document.getElementById(`reply-${ticketId}`).value;
-                if (!reply) return;
-                await replyToTicket(ticketId, reply);
-                document.getElementById(`reply-${ticketId}`).value = '';
-            };
-            
-            document.getElementById('createTicketBtn').onclick = createTicket;
-            
-            let chatMessages = [];
-            async function loadChat() {
-                const snapshot = await db.collection('globalChat').orderBy('timestamp', 'asc').limit(100).get();
-                chatMessages = snapshot.docs.map(doc => doc.data());
-                renderChat();
-            }
-            
-            function renderChat() {
-                const container = document.getElementById('chatMessages');
-                if (!container) return;
-                container.innerHTML = chatMessages.map(m => `
-                    <div class="chat-message">
-                        <span class="chat-name">${escapeHtml(m.name)}</span>
-                        <span class="chat-time">${new Date(m.timestamp).toLocaleTimeString()}</span><br>
-                        ${escapeHtml(m.text)}
-                    </div>
-                `).join('');
-                container.scrollTop = container.scrollHeight;
-            }
-            
-            async function sendChatMessage() {
-                let name = document.getElementById('chatInput').value.trim();
-                const text = document.getElementById('messageInput').value.trim();
-                if (!name && currentUser && !isAdmin) name = currentUser;
-                if (!name && isAdmin) name = 'ADMIN';
-                if (!name) name = 'Гость';
-                if (!text) return;
-                await db.collection('globalChat').add({ name, text, timestamp: Date.now() });
-                document.getElementById('messageInput').value = '';
-                loadChat();
-            }
-            
-            function escapeHtml(str) {
-                if (!str) return '';
-                return str.replace(/[&<>]/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m]));
-            }
-            
-            document.getElementById('sendChatBtn').onclick = sendChatMessage;
-            
             function updateUI() {
                 const area = document.getElementById('userInfoArea');
                 if (currentUser || isAdmin) {
@@ -1009,8 +1026,7 @@
                 if (section === 'shop') renderShop();
                 if (section === 'tests') renderTests();
                 if (section === 'achievements') renderAchievements();
-                if (section === 'forum') loadTickets();
-                if (section === 'chat') loadChat();
+                // Чат и форум обновляются автоматически через подписки
             }
             
             function showAuthModal() { document.getElementById('authModal').style.display = 'flex'; }
@@ -1018,7 +1034,6 @@
             function showTransferModal() { document.getElementById('transferModal').style.display = 'flex'; }
             function closeTransferModal() { document.getElementById('transferModal').style.display = 'none'; }
             
-            // ОБРАБОТЧИКИ - чёткое разделение
             document.getElementById('authSubmitBtn').onclick = async () => {
                 const u = document.getElementById('authUsername').value;
                 const p = document.getElementById('authPassword').value;
@@ -1062,12 +1077,15 @@
             document.getElementById('giveMoneyBtn').onclick = giveMoney;
             document.getElementById('banUserBtn').onclick = banUser;
             document.getElementById('unbanUserBtn').onclick = unbanUser;
+            document.getElementById('sendChatBtn').onclick = sendChatMessage;
+            document.getElementById('createTicketBtn').onclick = createTicket;
             
             window.showSection = showSection;
             window.ifLoggedIn = (cb) => { if (currentUser || isAdmin) cb(); else showAuthModal(); };
             window.logout = logout;
             window.showAuthModal = showAuthModal;
             window.closeTransferModal = closeTransferModal;
+            window.replyToTicket = replyToTicket;
             
             restoreSession();
         }
