@@ -100,39 +100,124 @@
         .policy-btn { background: #ff3c00; padding: 12px 30px; font-size: 16px; color: white; }
         .logout-btn { background: #ff3c00; border: none; padding: 4px 12px; border-radius: 20px; color: white; cursor: pointer; font-size: 11px; }
         
-        /* Документы */
+        /* НАСТОЯЩИЕ ДОКУМЕНТЫ */
         .documents-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 30px;
             margin: 30px 0;
         }
         .doc-card {
-            background: linear-gradient(135deg, #1a1a2e, #16213e);
-            border-radius: 20px;
-            padding: 20px;
-            border: 1px solid #ffaa00;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            border-radius: 16px;
+            padding: 25px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+            transition: transform 0.2s;
         }
+        .doc-card:hover {
+            transform: translateY(-5px);
+        }
+        /* Паспорт РФ */
+        .passport-card {
+            background: linear-gradient(145deg, #e8f0fe 0%, #d0e0f5 100%);
+            border: 1px solid #8db5d6;
+            color: #1a2a3a;
+        }
+        .passport-card::before {
+            content: "РФ";
+            position: absolute;
+            bottom: 10px;
+            right: 20px;
+            font-size: 80px;
+            font-weight: bold;
+            opacity: 0.08;
+            font-family: monospace;
+            pointer-events: none;
+        }
+        /* Медкнижка */
+        .med-card {
+            background: linear-gradient(145deg, #fde8f0 0%, #f5d0e0 100%);
+            border: 1px solid #d68db5;
+            color: #3a1a2a;
+        }
+        .med-card::before {
+            content: "⚕️";
+            position: absolute;
+            bottom: 10px;
+            right: 20px;
+            font-size: 70px;
+            opacity: 0.15;
+            pointer-events: none;
+        }
+        /* Права */
+        .license-card {
+            background: linear-gradient(145deg, #fde8f0 0%, #f5d0e0 100%);
+            border: 1px solid #d68db5;
+            color: #3a1a2a;
+        }
+        .license-card::before {
+            content: "🚗";
+            position: absolute;
+            bottom: 10px;
+            right: 20px;
+            font-size: 70px;
+            opacity: 0.12;
+            pointer-events: none;
+        }
+        
         .doc-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             padding-bottom: 10px;
-            border-bottom: 2px solid #ffaa00;
+            border-bottom: 2px solid rgba(0,0,0,0.15);
         }
-        .doc-header i { font-size: 32px; color: #ffaa00; }
-        .doc-title { font-size: 18px; font-weight: bold; color: #ffaa00; }
-        .doc-field { margin: 10px 0; font-size: 13px; }
-        .doc-label { color: #888; display: inline-block; width: 100px; }
-        .doc-value { color: #fff; font-weight: 500; }
+        .doc-header i { font-size: 32px; }
+        .doc-title { font-size: 18px; font-weight: 800; letter-spacing: 1px; }
+        
+        .doc-field {
+            margin: 12px 0;
+            font-size: 13px;
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .doc-label {
+            width: 120px;
+            font-weight: 600;
+            color: rgba(0,0,0,0.6);
+        }
+        .doc-value {
+            flex: 1;
+            font-weight: 500;
+            color: #000;
+            border-bottom: 1px dashed rgba(0,0,0,0.2);
+        }
         .doc-stamp {
             margin-top: 15px;
             text-align: right;
             font-family: monospace;
-            color: #ffaa00;
             font-size: 11px;
+            color: rgba(0,0,0,0.5);
+            border-top: 1px solid rgba(0,0,0,0.1);
+            padding-top: 10px;
+        }
+        .doc-sign {
+            margin-top: 10px;
+            font-family: 'Brush Script MT', cursive;
+            font-size: 18px;
+            color: #2a4a6a;
+            text-align: right;
+        }
+        .category-badge {
+            display: inline-block;
+            background: #2a6e3a;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            margin-right: 5px;
         }
         
         .card-container { perspective: 1000px; margin: 30px auto; max-width: 400px; }
@@ -234,7 +319,6 @@
         }
         .policy-box p { margin: 12px 0; font-size: 13px; color: #bbb; }
         
-        /* Модалка ПДД */
         .pdd-modal .modal-content {
             max-width: 600px;
             max-height: 80vh;
@@ -245,11 +329,14 @@
             .navbar { flex-direction: column; text-align: center; }
             .nav-links { justify-content: center; }
             .section-title { font-size: 24px; }
+            .documents-grid { grid-template-columns: 1fr; }
         }
         @media (max-width: 480px) {
-            .showcase-grid, .tests-grid, .vehicles-grid, .achievements-grid, .businesses-grid, .documents-grid { grid-template-columns: 1fr; }
+            .showcase-grid, .tests-grid, .vehicles-grid, .achievements-grid, .businesses-grid { grid-template-columns: 1fr; }
             .bank-actions { flex-direction: column; align-items: center; }
             .job-buttons { gap: 8px; }
+            .doc-field { flex-direction: column; }
+            .doc-label { width: 100%; margin-bottom: 5px; }
         }
     </style>
 </head>
@@ -640,6 +727,165 @@
                 return Math.floor(Math.random() * 9000000000 + 1000000000).toString();
             }
             
+            // Функция для рендера документов в новом стиле
+            function renderDocuments() {
+                const container = document.getElementById('documentsGrid');
+                if (!container) return;
+                
+                let html = '';
+                
+                // Паспорт РФ (бирюзовый фон)
+                if (userData.passport) {
+                    const passportId = userData.passport.id;
+                    const series = passportId.substring(0, 4);
+                    const number = passportId.substring(4);
+                    html += `
+                        <div class="doc-card passport-card">
+                            <div class="doc-header">
+                                <i class="fas fa-passport"></i>
+                                <span class="doc-title">ПАСПОРТ РФ</span>
+                            </div>
+                            <div class="doc-field">
+                                <span class="doc-label">Фамилия Имя Отчество:</span>
+                                <span class="doc-value">${userData.passport.fullName}</span>
+                            </div>
+                            <div class="doc-field">
+                                <span class="doc-label">Год рождения:</span>
+                                <span class="doc-value">${userData.passport.birthYear}</span>
+                            </div>
+                            <div class="doc-field">
+                                <span class="doc-label">Место жительства:</span>
+                                <span class="doc-value">${userData.passport.address}</span>
+                            </div>
+                            <div class="doc-field">
+                                <span class="doc-label">Серия и номер:</span>
+                                <span class="doc-value">${series} ${number}</span>
+                            </div>
+                            <div class="doc-field">
+                                <span class="doc-label">Код подразделения:</span>
+                                <span class="doc-value">${Math.floor(Math.random() * 1000)}-${Math.floor(Math.random() * 1000)}</span>
+                            </div>
+                            <div class="doc-field">
+                                <span class="doc-label">Дата выдачи:</span>
+                                <span class="doc-value">${userData.passport.issuedDate}</span>
+                            </div>
+                            <div class="doc-sign">Подпись: ___________________</div>
+                            <div class="doc-stamp">✓ Действителен</div>
+                        </div>
+                    `;
+                } else {
+                    html += `
+                        <div class="doc-card passport-card" style="opacity:0.7;">
+                            <div class="doc-header">
+                                <i class="fas fa-passport"></i>
+                                <span class="doc-title">ПАСПОРТ РФ</span>
+                            </div>
+                            <div class="doc-field">❌ Паспорт не оформлен</div>
+                            <div class="doc-field">Нажмите кнопку ниже</div>
+                        </div>
+                    `;
+                }
+                
+                // Медицинская книжка (розовый фон)
+                if (userData.passport) {
+                    const medId = generateRandomId();
+                    html += `
+                        <div class="doc-card med-card">
+                            <div class="doc-header">
+                                <i class="fas fa-notes-medical"></i>
+                                <span class="doc-title">МЕДИЦИНСКАЯ КНИЖКА</span>
+                            </div>
+                            <div class="doc-field">
+                                <span class="doc-label">Номер:</span>
+                                <span class="doc-value">${medId}</span>
+                            </div>
+                            <div class="doc-field">
+                                <span class="doc-label">Привязана к паспорту:</span>
+                                <span class="doc-value">${userData.passport.id}</span>
+                            </div>
+                            <div class="doc-field">
+                                <span class="doc-label">Годен до:</span>
+                                <span class="doc-value">${new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toLocaleDateString()}</span>
+                            </div>
+                            <div class="doc-field">
+                                <span class="doc-label">Штрих-код:</span>
+                                <span class="doc-value">▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮</span>
+                            </div>
+                            <div class="doc-stamp">✓ Действительна</div>
+                        </div>
+                    `;
+                } else {
+                    html += `
+                        <div class="doc-card med-card" style="opacity:0.7;">
+                            <div class="doc-header">
+                                <i class="fas fa-notes-medical"></i>
+                                <span class="doc-title">МЕДИЦИНСКАЯ КНИЖКА</span>
+                            </div>
+                            <div class="doc-field">❌ Требуется паспорт</div>
+                        </div>
+                    `;
+                }
+                
+                // Водительские права (розовый фон)
+                if (userData.license) {
+                    html += `
+                        <div class="doc-card license-card">
+                            <div class="doc-header">
+                                <i class="fas fa-id-card"></i>
+                                <span class="doc-title">ВОДИТЕЛЬСКОЕ УДОСТОВЕРЕНИЕ</span>
+                            </div>
+                            <div class="doc-field">
+                                <span class="doc-label">Номер ВУ:</span>
+                                <span class="doc-value">${userData.license.id}</span>
+                            </div>
+                            <div class="doc-field">
+                                <span class="doc-label">Категории:</span>
+                                <span class="doc-value">
+                                    <span class="category-badge">A</span>
+                                    <span class="category-badge">B</span>
+                                    <span class="category-badge">C</span>
+                                    <span class="category-badge">M</span>
+                                </span>
+                            </div>
+                            <div class="doc-field">
+                                <span class="doc-label">Дата выдачи:</span>
+                                <span class="doc-value">${userData.license.issueDate}</span>
+                            </div>
+                            <div class="doc-field">
+                                <span class="doc-label">Годен до:</span>
+                                <span class="doc-value">${new Date(new Date().setFullYear(new Date().getFullYear() + 10)).toLocaleDateString()}</span>
+                            </div>
+                            <div class="doc-stamp">Голограмма ████████</div>
+                            <div class="doc-stamp">✓ Действительно</div>
+                        </div>
+                    `;
+                } else if (userData.licenseCooldown && Date.now() < userData.licenseCooldown) {
+                    const remaining = Math.ceil((userData.licenseCooldown - Date.now()) / 60000);
+                    html += `
+                        <div class="doc-card license-card" style="opacity:0.8;">
+                            <div class="doc-header">
+                                <i class="fas fa-id-card"></i>
+                                <span class="doc-title">ВОДИТЕЛЬСКОЕ УДОСТОВЕРЕНИЕ</span>
+                            </div>
+                            <div class="doc-field">⏳ Пересдача через ${remaining} минут</div>
+                        </div>
+                    `;
+                } else {
+                    html += `
+                        <div class="doc-card license-card" style="opacity:0.7;">
+                            <div class="doc-header">
+                                <i class="fas fa-id-card"></i>
+                                <span class="doc-title">ВОДИТЕЛЬСКОЕ УДОСТОВЕРЕНИЕ</span>
+                            </div>
+                            <div class="doc-field">❌ Не получено</div>
+                            <div class="doc-field">Требуется сдать экзамен ПДД</div>
+                        </div>
+                    `;
+                }
+                
+                container.innerHTML = html;
+            }
+            
             async function savePassport() {
                 if (!userData) return;
                 const fullName = document.getElementById('passportFullName').value.trim();
@@ -676,14 +922,12 @@
                     return;
                 }
                 
-                // Проверка на пересдачу
                 if (userData.licenseCooldown && Date.now() < userData.licenseCooldown) {
                     const remaining = Math.ceil((userData.licenseCooldown - Date.now()) / 60000);
                     alert(`⏳ Пересдача через ${remaining} минут!`);
                     return;
                 }
                 
-                // Открываем модалку с тестом
                 showPddModal();
             }
             
@@ -708,7 +952,6 @@
                 }
                 const wrongCount = pddQuestions.length - correct;
                 if (wrongCount <= 5) {
-                    // Сдал!
                     userData.license = {
                         id: generateRandomId(),
                         passportId: userData.passport.id,
@@ -722,115 +965,11 @@
                     document.getElementById('pddModal').style.display = 'none';
                     alert(`✅ Поздравляем! Вы сдали экзамен ПДД (${correct}/${pddQuestions.length} правильных). Права выданы!`);
                 } else {
-                    // Не сдал
                     userData.licenseCooldown = Date.now() + 5 * 60 * 1000;
                     await saveUserData();
                     document.getElementById('pddModal').style.display = 'none';
                     alert(`❌ Экзамен не сдан! (${correct}/${pddQuestions.length} правильных). Пересдача через 5 минут.`);
                 }
-            }
-            
-            function renderDocuments() {
-                const container = document.getElementById('documentsGrid');
-                if (!container) return;
-                
-                let html = '';
-                
-                // Паспорт
-                if (userData.passport) {
-                    html += `
-                        <div class="doc-card">
-                            <div class="doc-header">
-                                <i class="fas fa-passport"></i>
-                                <span class="doc-title">ПАСПОРТ РФ</span>
-                            </div>
-                            <div class="doc-field"><span class="doc-label">ФИО:</span> <span class="doc-value">${userData.passport.fullName}</span></div>
-                            <div class="doc-field"><span class="doc-label">Год рождения:</span> <span class="doc-value">${userData.passport.birthYear}</span></div>
-                            <div class="doc-field"><span class="doc-label">Место жительства:</span> <span class="doc-value">${userData.passport.address}</span></div>
-                            <div class="doc-field"><span class="doc-label">Серия/номер:</span> <span class="doc-value">${userData.passport.id}</span></div>
-                            <div class="doc-field"><span class="doc-label">Дата выдачи:</span> <span class="doc-value">${userData.passport.issuedDate}</span></div>
-                            <div class="doc-stamp">✓ Действителен</div>
-                        </div>
-                    `;
-                } else {
-                    html += `
-                        <div class="doc-card" style="border-color: #555;">
-                            <div class="doc-header">
-                                <i class="fas fa-passport"></i>
-                                <span class="doc-title">ПАСПОРТ РФ</span>
-                            </div>
-                            <div class="doc-field">❌ Паспорт не оформлен</div>
-                            <div class="doc-field">Нажмите кнопку ниже</div>
-                        </div>
-                    `;
-                }
-                
-                // Медицинская книжка (связана с паспортом)
-                if (userData.passport) {
-                    const medId = generateRandomId();
-                    html += `
-                        <div class="doc-card">
-                            <div class="doc-header">
-                                <i class="fas fa-notes-medical"></i>
-                                <span class="doc-title">МЕДИЦИНСКАЯ КНИЖКА</span>
-                            </div>
-                            <div class="doc-field"><span class="doc-label">Номер:</span> <span class="doc-value">${medId}</span></div>
-                            <div class="doc-field"><span class="doc-label">Привязана к паспорту:</span> <span class="doc-value">${userData.passport.id}</span></div>
-                            <div class="doc-field"><span class="doc-label">Годен до:</span> <span class="doc-value">${new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toLocaleDateString()}</span></div>
-                            <div class="doc-stamp">✓ Действительна</div>
-                        </div>
-                    `;
-                } else {
-                    html += `
-                        <div class="doc-card" style="border-color: #555;">
-                            <div class="doc-header">
-                                <i class="fas fa-notes-medical"></i>
-                                <span class="doc-title">МЕДИЦИНСКАЯ КНИЖКА</span>
-                            </div>
-                            <div class="doc-field">❌ Требуется паспорт</div>
-                        </div>
-                    `;
-                }
-                
-                // Водительские права
-                if (userData.license) {
-                    html += `
-                        <div class="doc-card">
-                            <div class="doc-header">
-                                <i class="fas fa-id-card"></i>
-                                <span class="doc-title">ВОДИТЕЛЬСКОЕ УДОСТОВЕРЕНИЕ</span>
-                            </div>
-                            <div class="doc-field"><span class="doc-label">Номер ВУ:</span> <span class="doc-value">${userData.license.id}</span></div>
-                            <div class="doc-field"><span class="doc-label">Категории:</span> <span class="doc-value">${userData.license.categories}</span></div>
-                            <div class="doc-field"><span class="doc-label">Дата выдачи:</span> <span class="doc-value">${userData.license.issueDate}</span></div>
-                            <div class="doc-stamp">✓ Действительно</div>
-                        </div>
-                    `;
-                } else if (userData.licenseCooldown && Date.now() < userData.licenseCooldown) {
-                    const remaining = Math.ceil((userData.licenseCooldown - Date.now()) / 60000);
-                    html += `
-                        <div class="doc-card" style="border-color: #ffaa66;">
-                            <div class="doc-header">
-                                <i class="fas fa-id-card"></i>
-                                <span class="doc-title">ВОДИТЕЛЬСКОЕ УДОСТОВЕРЕНИЕ</span>
-                            </div>
-                            <div class="doc-field">⏳ Пересдача через ${remaining} минут</div>
-                        </div>
-                    `;
-                } else {
-                    html += `
-                        <div class="doc-card" style="border-color: #555;">
-                            <div class="doc-header">
-                                <i class="fas fa-id-card"></i>
-                                <span class="doc-title">ВОДИТЕЛЬСКОЕ УДОСТОВЕРЕНИЕ</span>
-                            </div>
-                            <div class="doc-field">❌ Не получено</div>
-                            <div class="doc-field">Требуется сдать экзамен ПДД</div>
-                        </div>
-                    `;
-                }
-                
-                container.innerHTML = html;
             }
             
             function showPassportModal() {
