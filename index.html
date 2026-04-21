@@ -101,6 +101,121 @@
         .policy-btn { background: #ff3c00; padding: 12px 30px; font-size: 16px; color: white; }
         .logout-btn { background: #ff3c00; border: none; padding: 4px 12px; border-radius: 20px; color: white; cursor: pointer; font-size: 11px; }
         
+        /* Реалистичные документы */
+        .documents-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 30px;
+            margin: 30px 0;
+        }
+        .doc-card {
+            border-radius: 16px;
+            padding: 25px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+            transition: transform 0.2s;
+        }
+        .doc-card:hover { transform: translateY(-5px); }
+        .passport-card {
+            background: linear-gradient(145deg, #e8f0fe 0%, #d0e0f5 100%);
+            border: 1px solid #8db5d6;
+            color: #1a2a3a;
+        }
+        .passport-card::before {
+            content: "РФ";
+            position: absolute;
+            bottom: 10px;
+            right: 20px;
+            font-size: 80px;
+            font-weight: bold;
+            opacity: 0.08;
+            font-family: monospace;
+            pointer-events: none;
+        }
+        .med-card {
+            background: linear-gradient(145deg, #fde8f0 0%, #f5d0e0 100%);
+            border: 1px solid #d68db5;
+            color: #3a1a2a;
+        }
+        .med-card::before {
+            content: "⚕️";
+            position: absolute;
+            bottom: 10px;
+            right: 20px;
+            font-size: 70px;
+            opacity: 0.15;
+            pointer-events: none;
+        }
+        .license-card {
+            background: linear-gradient(145deg, #fde8f0 0%, #f5d0e0 100%);
+            border: 1px solid #d68db5;
+            color: #3a1a2a;
+        }
+        .license-card::before {
+            content: "🚗";
+            position: absolute;
+            bottom: 10px;
+            right: 20px;
+            font-size: 70px;
+            opacity: 0.12;
+            pointer-events: none;
+        }
+        
+        .doc-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(0,0,0,0.15);
+        }
+        .doc-header i { font-size: 32px; }
+        .doc-title { font-size: 18px; font-weight: 800; letter-spacing: 1px; }
+        
+        .doc-field {
+            margin: 12px 0;
+            font-size: 13px;
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .doc-label {
+            width: 120px;
+            font-weight: 600;
+            color: rgba(0,0,0,0.6);
+        }
+        .doc-value {
+            flex: 1;
+            font-weight: 500;
+            color: #000;
+            border-bottom: 1px dashed rgba(0,0,0,0.2);
+        }
+        .doc-stamp {
+            margin-top: 15px;
+            text-align: right;
+            font-family: monospace;
+            font-size: 11px;
+            color: rgba(0,0,0,0.5);
+            border-top: 1px solid rgba(0,0,0,0.1);
+            padding-top: 10px;
+        }
+        .doc-sign {
+            margin-top: 10px;
+            font-family: 'Brush Script MT', cursive;
+            font-size: 18px;
+            color: #2a4a6a;
+            text-align: right;
+        }
+        .category-badge {
+            display: inline-block;
+            background: #2a6e3a;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            margin-right: 5px;
+        }
+        
         .players-table {
             width: 100%;
             border-collapse: collapse;
@@ -249,6 +364,7 @@
             .navbar { flex-direction: column; text-align: center; }
             .nav-links { justify-content: center; }
             .section-title { font-size: 24px; }
+            .documents-grid { grid-template-columns: 1fr; }
         }
         @media (max-width: 480px) {
             .showcase-grid, .tests-grid, .vehicles-grid, .achievements-grid, .businesses-grid { grid-template-columns: 1fr; }
@@ -490,6 +606,7 @@
                             <option value="admin">Администратор</option>
                         </select>
                         <button id="assignRoleBtnPanel" class="admin-btn">Назначить роль</button>
+                        <button id="removeRoleBtnPanel" class="admin-btn" style="background:#8b0000;">Снять роль</button>
                     </div>
                     <div id="roleResult"></div>
                 </div>
@@ -691,8 +808,9 @@
                             ` : ''}
                             ${currentUserRole === 'creator' && user.username !== 'Yura' ? `
                                 <button class="admin-btn" onclick="openRoleModal('${user.username}')">Назначить роль</button>
+                                <button class="admin-btn" onclick="removeRole('${user.username}')">Снять роль</button>
                             ` : ''}
-                        </td>
+                         </td>
                     </tr>
                 `).join('');
             }
@@ -749,11 +867,10 @@
             };
             
             window.openRoleModal = function(username) {
-                document.getElementById('roleTargetUser').value = username;
-                document.getElementById('roleModal').style.display = 'flex';
+                document.getElementById('roleUser').value = username;
+                document.getElementById('rolesTab').style.display = 'block';
+                document.querySelector('.admin-tab[data-tab="roles"]').click();
             };
-            
-            function closeRoleModal() { document.getElementById('roleModal').style.display = 'none'; }
             
             async function assignRole(username, role) {
                 if (currentUserRole !== 'creator') {
@@ -770,7 +887,26 @@
                     await db.collection('users').doc(username).set(user);
                     await loadAllUsers();
                     alert(`✅ Игроку ${username} назначена роль: ${role}`);
-                    closeRoleModal();
+                } else {
+                    alert("Игрок не найден!");
+                }
+            }
+            
+            async function removeRole(username) {
+                if (currentUserRole !== 'creator') {
+                    alert("Только создатель может снимать роли!");
+                    return;
+                }
+                if (username === 'Yura') {
+                    alert("Нельзя снять роль создателя!");
+                    return;
+                }
+                const user = allUsers.find(u => u.username === username);
+                if (user) {
+                    user.role = 'player';
+                    await db.collection('users').doc(username).set(user);
+                    await loadAllUsers();
+                    alert(`✅ У игрока ${username} снята роль (теперь игрок)`);
                 } else {
                     alert("Игрок не найден!");
                 }
@@ -833,80 +969,7 @@
                 return Math.floor(Math.random() * 9000000000 + 1000000000).toString();
             }
             
-            // Чат с закреплением
-            let pinnedMessages = [];
-            async function loadPinnedMessages() {
-                const snapshot = await db.collection('pinnedMessages').orderBy('timestamp', 'asc').get();
-                pinnedMessages = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                renderPinnedMessages();
-            }
-            
-            function renderPinnedMessages() {
-                const container = document.getElementById('pinnedMessages');
-                if (!container) return;
-                if (pinnedMessages.length === 0) {
-                    container.innerHTML = '<div style="color:#ffaa00;">📌 Закреплённых сообщений нет</div>';
-                    return;
-                }
-                container.innerHTML = '<div style="color:#ffaa00; margin-bottom:5px;">📌 ЗАКРЕПЛЁННЫЕ СООБЩЕНИЯ:</div>' + 
-                    pinnedMessages.map(m => `<div><strong>${m.name}</strong>: ${m.text}</div>`).join('');
-            }
-            
-            async function pinMessage(messageId, name, text) {
-                if (currentUserRole !== 'admin' && currentUserRole !== 'creator') return;
-                await db.collection('pinnedMessages').add({
-                    name: name,
-                    text: text,
-                    timestamp: Date.now()
-                });
-                loadPinnedMessages();
-            }
-            
-            async function loadChat() {
-                const snapshot = await db.collection('globalChat').orderBy('timestamp', 'asc').limit(100).get();
-                const messages = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                renderChat(messages);
-            }
-            
-            function getRoleTag(username) {
-                if (username === 'Yura') return roleTags.creator;
-                const user = allUsers.find(u => u.username === username);
-                if (user && user.role === 'admin') return roleTags.admin;
-                if (user && user.role === 'moderator') return roleTags.moderator;
-                return roleTags.player;
-            }
-            
-            function renderChat(messages) {
-                const container = document.getElementById('chatMessages');
-                if (!container) return;
-                container.innerHTML = messages.map(m => `
-                    <div class="chat-message" id="msg-${m.id}">
-                        <div>
-                            <span class="chat-name" style="color: ${m.name === 'Yura' ? '#ffaa00' : '#ff9a6e'}">${getRoleTag(m.name)} ${m.name}</span>
-                            <span class="chat-time">${new Date(m.timestamp).toLocaleTimeString()}</span>
-                            ${(currentUserRole === 'admin' || currentUserRole === 'creator') ? `<button class="admin-btn" style="float:right; padding:2px 8px;" onclick="pinMessage('${m.id}', '${m.name}', '${escapeHtml(m.text).replace(/'/g, "\\'")}')">📌 Закрепить</button>` : ''}
-                        </div>
-                        <div>${escapeHtml(m.text)}</div>
-                    </div>
-                `).join('');
-                container.scrollTop = container.scrollHeight;
-            }
-            
-            async function sendChatMessage() {
-                const text = document.getElementById('messageInput').value.trim();
-                if (!text) return;
-                await db.collection('globalChat').add({ 
-                    name: currentUser, 
-                    text: text, 
-                    timestamp: Date.now(),
-                    role: currentUserRole
-                });
-                document.getElementById('messageInput').value = '';
-            }
-            
-            window.pinMessage = pinMessage;
-            
-            // Документы
+            // Реалистичные документы
             function renderDocuments() {
                 const container = document.getElementById('documentsGrid');
                 if (!container) return;
@@ -920,7 +983,9 @@
                         <div class="doc-field"><span class="doc-label">Год рождения:</span><span class="doc-value">${userData.passport.birthYear}</span></div>
                         <div class="doc-field"><span class="doc-label">Место жительства:</span><span class="doc-value">${userData.passport.address}</span></div>
                         <div class="doc-field"><span class="doc-label">Серия и номер:</span><span class="doc-value">${series} ${number}</span></div>
+                        <div class="doc-field"><span class="doc-label">Код подразделения:</span><span class="doc-value">${Math.floor(Math.random() * 1000)}-${Math.floor(Math.random() * 1000)}</span></div>
                         <div class="doc-field"><span class="doc-label">Дата выдачи:</span><span class="doc-value">${userData.passport.issuedDate}</span></div>
+                        <div class="doc-sign">Подпись: ___________________</div>
                         <div class="doc-stamp">✓ Действителен</div></div>`;
                 } else {
                     html += `<div class="doc-card passport-card" style="opacity:0.7;"><div class="doc-header"><i class="fas fa-passport"></i><span class="doc-title">ПАСПОРТ РФ</span></div><div class="doc-field">❌ Паспорт не оформлен</div></div>`;
@@ -929,7 +994,9 @@
                     const medId = generateRandomId();
                     html += `<div class="doc-card med-card"><div class="doc-header"><i class="fas fa-notes-medical"></i><span class="doc-title">МЕДИЦИНСКАЯ КНИЖКА</span></div>
                         <div class="doc-field"><span class="doc-label">Номер:</span><span class="doc-value">${medId}</span></div>
+                        <div class="doc-field"><span class="doc-label">Привязана к паспорту:</span><span class="doc-value">${userData.passport.id}</span></div>
                         <div class="doc-field"><span class="doc-label">Годен до:</span><span class="doc-value">${new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toLocaleDateString()}</span></div>
+                        <div class="doc-field"><span class="doc-label">Штрих-код:</span><span class="doc-value">▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮</span></div>
                         <div class="doc-stamp">✓ Действительна</div></div>`;
                 } else {
                     html += `<div class="doc-card med-card" style="opacity:0.7;"><div class="doc-header"><i class="fas fa-notes-medical"></i><span class="doc-title">МЕДИЦИНСКАЯ КНИЖКА</span></div><div class="doc-field">❌ Требуется паспорт</div></div>`;
@@ -939,6 +1006,8 @@
                         <div class="doc-field"><span class="doc-label">Номер ВУ:</span><span class="doc-value">${userData.license.id}</span></div>
                         <div class="doc-field"><span class="doc-label">Категории:</span><span class="doc-value"><span class="category-badge">A</span><span class="category-badge">B</span><span class="category-badge">C</span><span class="category-badge">M</span></span></div>
                         <div class="doc-field"><span class="doc-label">Дата выдачи:</span><span class="doc-value">${userData.license.issueDate}</span></div>
+                        <div class="doc-field"><span class="doc-label">Годен до:</span><span class="doc-value">${new Date(new Date().setFullYear(new Date().getFullYear() + 10)).toLocaleDateString()}</span></div>
+                        <div class="doc-stamp">Голограмма ████████</div>
                         <div class="doc-stamp">✓ Действительно</div></div>`;
                 } else if (userData.licenseCooldown && Date.now() < userData.licenseCooldown) {
                     const remaining = Math.ceil((userData.licenseCooldown - Date.now()) / 60000);
@@ -1209,6 +1278,79 @@
                     alert("Игрок не найден!");
                 }
             }
+            
+            // Чат с закреплением
+            let pinnedMessages = [];
+            async function loadPinnedMessages() {
+                const snapshot = await db.collection('pinnedMessages').orderBy('timestamp', 'asc').get();
+                pinnedMessages = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderPinnedMessages();
+            }
+            
+            function renderPinnedMessages() {
+                const container = document.getElementById('pinnedMessages');
+                if (!container) return;
+                if (pinnedMessages.length === 0) {
+                    container.innerHTML = '<div style="color:#ffaa00;">📌 Закреплённых сообщений нет</div>';
+                    return;
+                }
+                container.innerHTML = '<div style="color:#ffaa00; margin-bottom:5px;">📌 ЗАКРЕПЛЁННЫЕ СООБЩЕНИЯ:</div>' + 
+                    pinnedMessages.map(m => `<div><strong>${m.name}</strong>: ${m.text}</div>`).join('');
+            }
+            
+            async function pinMessage(messageId, name, text) {
+                if (currentUserRole !== 'admin' && currentUserRole !== 'creator') return;
+                await db.collection('pinnedMessages').add({
+                    name: name,
+                    text: text,
+                    timestamp: Date.now()
+                });
+                loadPinnedMessages();
+            }
+            
+            async function loadChat() {
+                const snapshot = await db.collection('globalChat').orderBy('timestamp', 'asc').limit(100).get();
+                const messages = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderChat(messages);
+            }
+            
+            function getRoleTag(username) {
+                if (username === 'Yura') return roleTags.creator;
+                const user = allUsers.find(u => u.username === username);
+                if (user && user.role === 'admin') return roleTags.admin;
+                if (user && user.role === 'moderator') return roleTags.moderator;
+                return roleTags.player;
+            }
+            
+            function renderChat(messages) {
+                const container = document.getElementById('chatMessages');
+                if (!container) return;
+                container.innerHTML = messages.map(m => `
+                    <div class="chat-message" id="msg-${m.id}">
+                        <div>
+                            <span class="chat-name" style="color: ${m.name === 'Yura' ? '#ffaa00' : '#ff9a6e'}">${getRoleTag(m.name)} ${m.name}</span>
+                            <span class="chat-time">${new Date(m.timestamp).toLocaleTimeString()}</span>
+                            ${(currentUserRole === 'admin' || currentUserRole === 'creator') ? `<button class="admin-btn" style="float:right; padding:2px 8px;" onclick="pinMessage('${m.id}', '${m.name}', '${escapeHtml(m.text).replace(/'/g, "\\'")}')">📌 Закрепить</button>` : ''}
+                        </div>
+                        <div>${escapeHtml(m.text)}</div>
+                    </div>
+                `).join('');
+                container.scrollTop = container.scrollHeight;
+            }
+            
+            async function sendChatMessage() {
+                const text = document.getElementById('messageInput').value.trim();
+                if (!text) return;
+                await db.collection('globalChat').add({ 
+                    name: currentUser, 
+                    text: text, 
+                    timestamp: Date.now(),
+                    role: currentUserRole
+                });
+                document.getElementById('messageInput').value = '';
+            }
+            
+            window.pinMessage = pinMessage;
             
             function renderBuildings() {
                 const container = document.getElementById('buildingsGrid');
@@ -1538,18 +1680,23 @@
                 const role = document.getElementById('roleType').value;
                 await assignRole(username, role);
             };
+            document.getElementById('removeRoleBtnPanel').onclick = async () => {
+                const username = document.getElementById('roleUser').value;
+                await removeRole(username);
+            };
             document.getElementById('giveMoneyBtnPanel').onclick = () => giveMoney(document.getElementById('targetUser').value, parseInt(document.getElementById('moneyAmount').value));
             document.getElementById('takeMoneyBtnPanel').onclick = () => takeMoney(document.getElementById('targetUser').value, parseInt(document.getElementById('moneyAmount').value));
             document.getElementById('givePropertyBtn').onclick = () => giveProperty(document.getElementById('targetUser').value, document.getElementById('propertyType').value, document.getElementById('propertyName').value);
             document.getElementById('takePropertyBtn').onclick = () => takeProperty(document.getElementById('targetUser').value, document.getElementById('propertyType').value, document.getElementById('propertyName').value);
             
-            window.closeRoleModal = closeRoleModal;
+            window.closeRoleModal = () => {};
             window.replyToTicket = replyToTicket;
             window.showSection = showSection;
             window.ifLoggedIn = (cb) => { if (currentUser) cb(); else showAuthModal(); };
             window.logout = logout;
             window.showAuthModal = showAuthModal;
             window.closeTransferModal = closeTransferModal;
+            window.removeRole = removeRole;
             
             restoreSession();
         }
