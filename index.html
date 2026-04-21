@@ -535,6 +535,7 @@
             </div>
         </div>
 
+        <!-- Бизнес (добавлен новый бизнес "Свой") -->
         <div id="businessesSection" style="display: none;">
             <div class="section-title">🏢 Купить <span>бизнес</span></div>
             <div class="businesses-grid" id="businessesGrid"></div>
@@ -698,12 +699,14 @@
             { text: "Что нужно сделать при ДТП?", options: ["Уехать с места аварии", "Остановиться, включить аварийку, вызвать ГИБДД", "Позвонить друзьям", "Продолжить движение"], correct: 1 }
         ];
         
+        // НОВЫЙ БИЗНЕС "СВОЙ"
         const businessesList = [
             { id: "auto", name: "Автосалон", icon: "fa-car", price: 500000, income: 25000, level: 1 },
             { id: "restaurant", name: "Ресторан", icon: "fa-utensils", price: 300000, income: 15000, level: 1 },
             { id: "hotel", name: "Отель", icon: "fa-hotel", price: 800000, income: 40000, level: 1 },
             { id: "club", name: "Ночной клуб", icon: "fa-music", price: 600000, income: 30000, level: 1 },
-            { id: "gas", name: "АЗС", icon: "fa-gas-pump", price: 400000, income: 20000, level: 1 }
+            { id: "gas", name: "АЗС", icon: "fa-gas-pump", price: 400000, income: 20000, level: 1 },
+            { id: "svoy", name: "⭐ Свой бизнес", icon: "fa-star", price: 2000000, income: 100000, level: 1 }
         ];
         
         const buildings = [
@@ -811,7 +814,7 @@
                                 <button class="admin-btn" onclick="removeRole('${user.username}')">Снять роль</button>
                             ` : ''}
                          </td>
-                    </tr>
+                     </tr>
                 `).join('');
             }
             
@@ -912,6 +915,17 @@
                 }
             }
             
+            // Функция для получения подписи из ФИО
+            function getSignature(fullName) {
+                const parts = fullName.trim().split(/\s+/);
+                if (parts.length >= 2) {
+                    const lastName = parts[0];
+                    const firstName = parts[1];
+                    return (lastName[0] + firstName[0]).toUpperCase();
+                }
+                return "XX";
+            }
+            
             async function loadUserData(username) {
                 const doc = await db.collection('users').doc(username).get();
                 if (doc.exists) {
@@ -969,7 +983,7 @@
                 return Math.floor(Math.random() * 9000000000 + 1000000000).toString();
             }
             
-            // Реалистичные документы
+            // Реалистичные документы с подписью из букв
             function renderDocuments() {
                 const container = document.getElementById('documentsGrid');
                 if (!container) return;
@@ -978,6 +992,7 @@
                     const passportId = userData.passport.id;
                     const series = passportId.substring(0, 4);
                     const number = passportId.substring(4);
+                    const signature = getSignature(userData.passport.fullName);
                     html += `<div class="doc-card passport-card"><div class="doc-header"><i class="fas fa-passport"></i><span class="doc-title">ПАСПОРТ РФ</span></div>
                         <div class="doc-field"><span class="doc-label">ФИО:</span><span class="doc-value">${userData.passport.fullName}</span></div>
                         <div class="doc-field"><span class="doc-label">Год рождения:</span><span class="doc-value">${userData.passport.birthYear}</span></div>
@@ -985,7 +1000,7 @@
                         <div class="doc-field"><span class="doc-label">Серия и номер:</span><span class="doc-value">${series} ${number}</span></div>
                         <div class="doc-field"><span class="doc-label">Код подразделения:</span><span class="doc-value">${Math.floor(Math.random() * 1000)}-${Math.floor(Math.random() * 1000)}</span></div>
                         <div class="doc-field"><span class="doc-label">Дата выдачи:</span><span class="doc-value">${userData.passport.issuedDate}</span></div>
-                        <div class="doc-sign">Подпись: ___________________</div>
+                        <div class="doc-sign">Подпись: ${signature}</div>
                         <div class="doc-stamp">✓ Действителен</div></div>`;
                 } else {
                     html += `<div class="doc-card passport-card" style="opacity:0.7;"><div class="doc-header"><i class="fas fa-passport"></i><span class="doc-title">ПАСПОРТ РФ</span></div><div class="doc-field">❌ Паспорт не оформлен</div></div>`;
