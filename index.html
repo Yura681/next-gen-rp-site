@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>NEXT GEN RP | Бизнес и Профессии | Полная версия со сроками документов</title>
+    <title>NEXT GEN RP | Бизнес и Профессии | Полная версия</title>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        /* ========== ПОЛНЫЙ CSS КОД (900+ строк) ========== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #0a0c12 0%, #0f1420 100%); color: #eee; line-height: 1.5; min-height: 100vh; }
         .bg-particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; overflow: hidden; }
@@ -191,7 +192,7 @@
     <div id="renewLicenseModal" class="modal"><div class="modal-content"><h2>🚗 Переоформление прав</h2><p>⚠️ Для переоформления прав нужно сдать экзамен ПДД заново!</p><p>Стоимость пересдачи: 3 000 ₽</p><button id="confirmRenewLicenseBtn" class="auth-btn">Пересдать экзамен</button><div class="switch-auth" onclick="closeRenewLicenseModal()">Отмена</div></div></div>
     <div class="container" id="mainContent" style="display: none;">
         <div class="navbar"><div class="logo"><i class="fas fa-car-crash"></i> NEXT<span style="color:#ff5e2c;">GEN</span> RP</div><div class="nav-links" id="navLinks"><a onclick="ifLoggedIn(() => showSection('main'))">Главная</a><a onclick="ifLoggedIn(() => showSection('documents'))">Документы</a><a onclick="ifLoggedIn(() => showSection('businesses'))">Бизнес</a><a onclick="ifLoggedIn(() => showSection('buildings'))">Постройки</a><a onclick="ifLoggedIn(() => showSection('shop'))">Магазин</a><a onclick="ifLoggedIn(() => showSection('tests'))">Тесты</a><a onclick="ifLoggedIn(() => showSection('achievements'))">Достижения</a><a onclick="ifLoggedIn(() => showSection('forum'))">Форум</a><a onclick="ifLoggedIn(() => showSection('chat'))">Чат</a><a href="https://discord.gg/S6Az9wR7P4" target="_blank">Discord</a><div id="userInfoArea"></div></div></div>
-        <div id="mainSection"><div style="text-align: center; padding: 30px 0 20px;"><h1 style="font-size: 42px;">NEXT <span style="color:#ff5e2c;">GEN</span> RP</h1><p>Облачный сервер | Данные с любых устройств</p></div><div class="card-container" id="bankCardContainer"><div class="bank-card"><div class="card-chip"><i class="fas fa-microchip chip-icon"></i><span class="card-network">VISTA</span></div><div class="card-number" id="cardNumberDisplay">**** **** **** ****</div><div class="card-details"><div><div class="card-label">ДЕРЖАТЕЛЬ</div><div class="card-value" id="cardHolder">НЕ АВТОРИЗОВАН</div></div><div><div class="card-label">ДЕЙСТВУЕТ ДО</div><div class="card-value" id="cardExpiry">**/**</div></div></div><div class="card-brand">KISA</div></div></div><div class="balance-amount" id="balanceDisplay">0 ₽</div><div class="bank-actions" style="display: flex; gap: 10px; justify-content: center; margin: 20px 0;"><button class="bank-btn" id="showTransferBtn"><i class="fas fa-exchange-alt"></i> Перевести</button><button class="bank-btn" id="refreshBalanceBtn"><i class="fas fa-sync-alt"></i> Обновить</button></div><div class="download-section"><i class="fas fa-download" style="font-size: 40px; color: #ff5e2c;"></i><h2>Скачай лаунчер</h2><a href="#" class="download-btn" target="_blank">📦 СКАЧАТЬ ЛАУНЧЕР (EXE)</a></div><div class="job-section" id="jobSection"><h3>Выбери профессию</h3><div class="job-buttons"><button class="job-btn" data-job="taxi">🚖 Таксист (+30 000₽/час)</button><button class="job-btn" data-job="police">👮 Полиция (+35 000₽/час)</button><button class="job-btn" data-job="mechanic">🔧 Механик (+25 000₽/час)</button><button class="job-btn" data-job="loader">📦 Грузчик (+20 000₽/час)</button><button class="job-btn" data-job="cashier">💰 Инкассатор (+45 000₽/час)</button><button class="job-btn" data-job="mayor">🏛️ Мэр (+80 000₽/час)</button><button class="job-btn" data-job="svoya">⭐ Своя (+43 000₽/час)</button></div><div class="salary-info" id="salaryInfo"><p id="jobStatus">Профессия не выбрана</p><p id="nextSalary">—</p></div></div><div style="background: #1a1e2a; border-radius: 30px; padding: 15px; text-align: center; margin: 20px 0;">📦 <strong>Наши моды:</strong> <a href="#" target="_blank">BrickMountains</a> | <a href="#" target="_blank">EternityRP</a> | <a href="#" target="_blank">RandomClothes</a></div></div>
+        <div id="mainSection"><div style="text-align: center; padding: 30px 0 20px;"><h1 style="font-size: 42px;">NEXT <span style="color:#ff5e2c;">GEN</span> RP</h1><p>Облачный сервер | Данные с любых устройств</p></div><div class="card-container" id="bankCardContainer"><div class="bank-card"><div class="card-chip"><i class="fas fa-microchip chip-icon"></i><span class="card-network">VISTA</span></div><div class="card-number" id="cardNumberDisplay">**** **** **** ****</div><div class="card-details"><div><div class="card-label">ДЕРЖАТЕЛЬ</div><div class="card-value" id="cardHolder">НЕ АВТОРИЗОВАН</div></div><div><div class="card-label">ДЕЙСТВУЕТ ДО</div><div class="card-value" id="cardExpiry">**/**</div></div></div><div class="card-brand">KISA</div></div></div><div class="balance-amount" id="balanceDisplay">0 ₽</div><div class="bank-actions" style="display: flex; gap: 10px; justify-content: center; margin: 20px 0;"><button class="bank-btn" id="showTransferBtn"><i class="fas fa-exchange-alt"></i> Перевести</button><button class="bank-btn" id="refreshBalanceBtn"><i class="fas fa-sync-alt"></i> Обновить</button></div><div class="download-section"><i class="fas fa-download" style="font-size: 40px; color: #ff5e2c;"></i><h2>Скачай лаунчер</h2><a href="https://drive.google.com/file/d/133lQwtyCNkqBmtg8fglZzhhH30d2kfnt/view?usp=drive_link" class="download-btn" target="_blank">📦 СКАЧАТЬ ЛАУНЧЕР (EXE)</a></div><div class="job-section" id="jobSection"><h3>Выбери профессию</h3><div class="job-buttons"><button class="job-btn" data-job="taxi">🚖 Таксист (+30 000₽/час)</button><button class="job-btn" data-job="police">👮 Полиция (+35 000₽/час)</button><button class="job-btn" data-job="mechanic">🔧 Механик (+25 000₽/час)</button><button class="job-btn" data-job="loader">📦 Грузчик (+20 000₽/час)</button><button class="job-btn" data-job="cashier">💰 Инкассатор (+45 000₽/час)</button><button class="job-btn" data-job="mayor">🏛️ Мэр (+80 000₽/час)</button><button class="job-btn" data-job="svoya">⭐ Своя (+43 000₽/час)</button></div><div class="salary-info" id="salaryInfo"><p id="jobStatus">Профессия не выбрана</p><p id="nextSalary">—</p></div></div><div style="background: #1a1e2a; border-radius: 30px; padding: 15px; text-align: center; margin: 20px 0;">📦 <strong>Наши моды:</strong> <a href="#" target="_blank">BrickMountains</a> | <a href="#" target="_blank">EternityRP</a> | <a href="#" target="_blank">RandomClothes</a></div></div>
         <div id="documentsSection" style="display: none;"><div class="section-title">📋 Мои <span>документы</span></div><div id="documentsGrid" class="documents-grid"></div><div style="text-align: center; margin-top: 20px;"><button id="applyPassportBtn" class="doc-btn">📘 Оформить паспорт</button><button id="applyLicenseBtn" class="doc-btn" style="margin-left: 10px;">🚗 Сдать на права</button></div></div>
         <div id="businessesSection" style="display: none;"><div class="section-title">🏢 Купить <span>бизнес</span></div><div class="businesses-grid" id="businessesGrid"></div><div style="margin-top: 20px; padding: 18px; background: #0f131c; border-radius: 20px;"><h3>📊 Мои бизнесы</h3><div id="myBusinessesList"></div></div></div>
         <div id="buildingsSection" style="display: none;"><div class="section-title">🏗️ Популярные <span>постройки</span></div><div class="showcase-grid" id="buildingsGrid"></div></div>
@@ -205,6 +206,9 @@
     </div>
 
     <script>
+        // ========== ПОЛНЫЙ JAVASCRIPT КОД (1400+ строк) ==========
+        
+        // Хеширование паролей
         async function hashPassword(password) {
             const encoder = new TextEncoder();
             const data = encoder.encode(password);
@@ -212,6 +216,7 @@
             return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
         }
         
+        // Уведомления
         function showNotification(message, type = 'success') {
             const notification = document.createElement('div');
             notification.className = `notification ${type}`;
@@ -220,12 +225,14 @@
             setTimeout(() => notification.remove(), 3000);
         }
         
+        // Экранирование HTML
         function escapeHtml(text) {
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
         }
         
+        // Логгирование действий администрации
         async function logAdminAction(action, target, details) {
             if (!currentUser) return;
             await db.collection('adminLogs').add({ admin: currentUser, action: action, target: target, details: details, timestamp: Date.now(), date: new Date().toLocaleString() });
@@ -241,8 +248,10 @@
             container.innerHTML = logs.map(log => `<div class="work-log-entry"><span class="date">📅 ${log.date}</span><br><span>👤 ${escapeHtml(log.admin)}</span><br><span>⚡ ${escapeHtml(log.action)}</span><br><span>🎯 ${escapeHtml(log.target)}</span><br><span>📝 ${escapeHtml(log.details)}</span><hr style="margin-top:5px; border-color:#333;"></div>`).join('');
         }
         
+        // Частицы фона
         for(let i = 0; i < 80; i++) { let p = document.createElement('span'); p.style.left = Math.random() * 100 + '%'; p.style.animationDelay = Math.random() * 20 + 's'; p.style.animationDuration = 8 + Math.random() * 15 + 's'; p.style.width = p.style.height = (2 + Math.random() * 5) + 'px'; document.getElementById('particles').appendChild(p); }
         
+        // Политика конфиденциальности
         if (localStorage.getItem('policyAccepted') === 'true') { document.getElementById('policyOverlay').style.display = 'none'; document.getElementById('authModal').style.display = 'flex'; }
         
         document.addEventListener('DOMContentLoaded', function() { const acceptBtn = document.getElementById('acceptPolicy'); if (acceptBtn) { acceptBtn.onclick = function() { localStorage.setItem('policyAccepted', 'true'); document.getElementById('policyOverlay').style.display = 'none'; document.getElementById('authModal').style.display = 'flex'; }; } });
@@ -492,7 +501,19 @@
                 const tbody = document.getElementById('playersList');
                 if (!tbody) return;
                 const jobNames = { taxi:'Таксист', police:'Полиция', mechanic:'Механик', loader:'Грузчик', cashier:'Инкассатор', mayor:'Мэр', svoya:'Своя' };
-                tbody.innerHTML = allUsers.map(user => `<tr><td>${user.username}${user.username === 'Yura' ? ' 👑' : ''}</td><td>${user.role || 'player'}</td><td>${(user.balance || 0).toLocaleString()} ₽</td><td>${(user.garage || []).length}</td><td>${(user.businesses || []).length}</td><td>${user.job ? jobNames[user.job] || user.job : '❌ Нет'}</td><td>${(currentUser === 'Yura' || currentUserRole === 'admin' || currentUserRole === 'moderator' || currentUser?.job === 'police') ? `<button class="admin-btn" onclick="viewPlayerDocs('${user.username}')" style="background:#ffaa00; color:#000;">📋 Документы</button>` : ''}${(currentUser === 'Yura' || currentUserRole === 'admin') && user.username !== 'Yura' ? `<button class="admin-btn" onclick="adminGiveMoney('${user.username}')">💰 Выдать</button><button class="admin-btn" onclick="adminTakeMoney('${user.username}')">💰 Забрать</button><button class="admin-btn" onclick="adminGiveCar('${user.username}')">🚗 Дать машину</button>${!user.isBanned ? `<button class="admin-btn" onclick="banUser('${user.username}')">⛔ Забанить</button>` : `<button class="admin-btn" onclick="unbanUser('${user.username}')">✅ Разбанить</button>`}` : ''}${currentUser === 'Yura' && user.username !== 'Yura' ? `<button class="admin-btn" onclick="openRoleModal('${user.username}')">👑 Назначить роль</button><button class="admin-btn" onclick="removeRole('${user.username}')">📋 Снять роль</button>` : ''}</td></tr>`).join('');
+                tbody.innerHTML = allUsers.map(user => `<tr>
+                    <td>${user.username}${user.username === 'Yura' ? ' 👑' : ''}</td>
+                    <td>${user.role || 'player'}</td>
+                    <td>${(user.balance || 0).toLocaleString()} ₽</td>
+                    <td>${(user.garage || []).length}</td>
+                    <td>${(user.businesses || []).length}</td>
+                    <td>${user.job ? jobNames[user.job] || user.job : '❌ Нет'}</td>
+                    <td>
+                        ${(currentUser === 'Yura' || currentUserRole === 'admin' || currentUserRole === 'moderator' || currentUser?.job === 'police') ? `<button class="admin-btn" onclick="viewPlayerDocs('${user.username}')" style="background:#ffaa00; color:#000;">📋 Документы</button>` : ''}
+                        ${(currentUser === 'Yura' || currentUserRole === 'admin') && user.username !== 'Yura' ? `<button class="admin-btn" onclick="adminGiveMoney('${user.username}')">💰 Выдать</button><button class="admin-btn" onclick="adminTakeMoney('${user.username}')">💰 Забрать</button><button class="admin-btn" onclick="adminGiveCar('${user.username}')">🚗 Дать машину</button>${!user.isBanned ? `<button class="admin-btn" onclick="banUser('${user.username}')">⛔ Забанить</button>` : `<button class="admin-btn" onclick="unbanUser('${user.username}')">✅ Разбанить</button>`}` : ''}
+                        ${currentUser === 'Yura' && user.username !== 'Yura' ? `<button class="admin-btn" onclick="openRoleModal('${user.username}')">👑 Назначить роль</button><button class="admin-btn" onclick="removeRole('${user.username}')">📋 Снять роль</button>` : ''}
+                    </td>
+                </tr>`).join('');
             }
             
             window.viewPlayerDocs = async function(username) {
