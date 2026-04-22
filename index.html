@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>NEXT GEN RP | Бизнес и Профессии | Полная версия</title>
+    <title>NEXT GEN RP | Бизнес и Профессии | Полная версия со сроками документов</title>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
@@ -48,7 +48,6 @@
         .chat-send { background: #ff3c00; padding: 12px 24px; font-size: 14px; color: white; }
         .download-btn { background: #2a6e3a; padding: 14px 32px; font-size: 18px; display: inline-block; text-decoration: none; color: white; }
         .policy-btn { background: #ff3c00; padding: 12px 30px; font-size: 16px; color: white; }
-        .logout-btn { background: #ff3c00; border: none; padding: 4px 12px; border-radius: 20px; color: white; cursor: pointer; font-size: 11px; }
         .documents-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 30px; margin: 30px 0; }
         .doc-card { border-radius: 16px; padding: 25px; position: relative; overflow: hidden; box-shadow: 0 15px 30px rgba(0,0,0,0.3); transition: transform 0.2s; }
         .doc-card:hover { transform: translateY(-5px); }
@@ -173,7 +172,7 @@
         .player-docs-container { display: flex; flex-direction: column; gap: 20px; }
         .player-doc-card { border-radius: 16px; padding: 20px; background: #0a0c12; border-left: 4px solid #ff3c00; }
         .player-doc-card h4 { color: #ffaa00; margin-bottom: 15px; }
-        .renew-btn { background: #ffaa00; color: #000; padding: 5px 12px; border-radius: 20px; font-size: 11px; margin-top: 10px; cursor: pointer; border: none; font-weight: bold; }
+        .renew-btn { background: #ffaa00; color: #000; padding: 5px 12px; border-radius: 20px; font-size: 11px; margin-top: 10px; cursor: pointer; border: none; font-weight: bold; display: inline-block; }
         .renew-btn:hover { background: #ffcc33; transform: scale(1.02); }
         @media (max-width: 768px) { .navbar { flex-direction: column; text-align: center; } .nav-links { justify-content: center; } .section-title { font-size: 24px; } .documents-grid { grid-template-columns: 1fr; } .pinned-message-item { flex-direction: column; align-items: flex-start; } .unpin-btn { margin-left: 0; margin-top: 5px; } }
         @media (max-width: 480px) { .showcase-grid, .tests-grid, .vehicles-grid, .achievements-grid, .businesses-grid { grid-template-columns: 1fr; } .bank-actions { flex-direction: column; align-items: center; } .job-buttons { gap: 8px; } .players-table { font-size: 12px; } }
@@ -206,7 +205,6 @@
     </div>
 
     <script>
-        // Хеширование паролей
         async function hashPassword(password) {
             const encoder = new TextEncoder();
             const data = encoder.encode(password);
@@ -214,7 +212,6 @@
             return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
         }
         
-        // Уведомления
         function showNotification(message, type = 'success') {
             const notification = document.createElement('div');
             notification.className = `notification ${type}`;
@@ -223,14 +220,12 @@
             setTimeout(() => notification.remove(), 3000);
         }
         
-        // Экранирование HTML
         function escapeHtml(text) {
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
         }
         
-        // Логгирование действий администрации
         async function logAdminAction(action, target, details) {
             if (!currentUser) return;
             await db.collection('adminLogs').add({ admin: currentUser, action: action, target: target, details: details, timestamp: Date.now(), date: new Date().toLocaleString() });
@@ -246,10 +241,8 @@
             container.innerHTML = logs.map(log => `<div class="work-log-entry"><span class="date">📅 ${log.date}</span><br><span>👤 ${escapeHtml(log.admin)}</span><br><span>⚡ ${escapeHtml(log.action)}</span><br><span>🎯 ${escapeHtml(log.target)}</span><br><span>📝 ${escapeHtml(log.details)}</span><hr style="margin-top:5px; border-color:#333;"></div>`).join('');
         }
         
-        // Частицы фона
         for(let i = 0; i < 80; i++) { let p = document.createElement('span'); p.style.left = Math.random() * 100 + '%'; p.style.animationDelay = Math.random() * 20 + 's'; p.style.animationDuration = 8 + Math.random() * 15 + 's'; p.style.width = p.style.height = (2 + Math.random() * 5) + 'px'; document.getElementById('particles').appendChild(p); }
         
-        // Политика конфиденциальности
         if (localStorage.getItem('policyAccepted') === 'true') { document.getElementById('policyOverlay').style.display = 'none'; document.getElementById('authModal').style.display = 'flex'; }
         
         document.addEventListener('DOMContentLoaded', function() { const acceptBtn = document.getElementById('acceptPolicy'); if (acceptBtn) { acceptBtn.onclick = function() { localStorage.setItem('policyAccepted', 'true'); document.getElementById('policyOverlay').style.display = 'none'; document.getElementById('authModal').style.display = 'flex'; }; } });
@@ -285,8 +278,6 @@
         async function checkDocumentExpiry() {
             if (!userData) return;
             let needsRenewal = false;
-            
-            // Проверка медицинской книжки (срок 1 год)
             if (userData.medicalCard && userData.medicalCard.expiryDate) {
                 if (isDocumentExpired(userData.medicalCard.expiryDate)) {
                     userData.medicalCard = null;
@@ -297,8 +288,6 @@
                     showNotification(`⚠️ Медицинская книжка истекает через ${daysLeft} дня(ей)! Переоформите её.`, 'warning');
                 }
             }
-            
-            // Проверка водительских прав (срок 10 лет)
             if (userData.license && userData.license.expiryDate) {
                 if (isDocumentExpired(userData.license.expiryDate)) {
                     userData.license = null;
@@ -310,85 +299,49 @@
                     showNotification(`⚠️ Водительские права истекают через ${daysLeft} дня(ей)! Переоформите их.`, 'warning');
                 }
             }
-            
-            if (needsRenewal) {
-                await saveUserData();
-                renderDocuments();
-                renderAchievements();
-            }
+            if (needsRenewal) { await saveUserData(); renderDocuments(); renderAchievements(); }
         }
         
         async function renewMedicalCard() {
             if (!userData) return;
-            if (!userData.passport) {
-                showNotification('❌ Сначала оформите паспорт!', 'error');
-                return;
-            }
-            
+            if (!userData.passport) { showNotification('❌ Сначала оформите паспорт!', 'error'); return; }
             const price = 5000;
-            if (userData.balance < price) {
-                showNotification(`❌ Не хватает ${price.toLocaleString()} ₽ для переоформления!`, 'error');
-                return;
-            }
-            
+            if (userData.balance < price) { showNotification(`❌ Не хватает ${price.toLocaleString()} ₽ для переоформления!`, 'error'); return; }
             userData.balance -= price;
-            const expiryDate = new Date();
-            expiryDate.setFullYear(expiryDate.getFullYear() + 1);
-            
-            userData.medicalCard = {
-                id: generateRandomId(),
-                passportId: userData.passport.id,
-                issueDate: new Date().toLocaleDateString(),
-                expiryDate: expiryDate.toLocaleDateString()
-            };
-            
-            await saveUserData();
-            renderDocuments();
-            updateCardUI();
-            showNotification(`✅ Медицинская книжка переоформлена! Действительна до ${expiryDate.toLocaleDateString()}`, 'success');
+            const expiryDate = new Date(); expiryDate.setFullYear(expiryDate.getFullYear() + 1);
+            userData.medicalCard = { id: generateRandomId(), passportId: userData.passport.id, issueDate: new Date().toLocaleDateString(), expiryDate: expiryDate.toLocaleDateString() };
+            await saveUserData(); renderDocuments(); updateCardUI(); showNotification(`✅ Медицинская книжка переоформлена! Действительна до ${expiryDate.toLocaleDateString()}`, 'success');
             closeRenewMedicalModal();
         }
         
         async function renewLicense() {
             if (!userData) return;
-            if (!userData.passport) {
-                showNotification('❌ Сначала оформите паспорт!', 'error');
-                return;
-            }
-            
+            if (!userData.passport) { showNotification('❌ Сначала оформите паспорт!', 'error'); return; }
             const price = 3000;
-            if (userData.balance < price) {
-                showNotification(`❌ Не хватает ${price.toLocaleString()} ₽ для пересдачи!`, 'error');
-                return;
-            }
-            
+            if (userData.balance < price) { showNotification(`❌ Не хватает ${price.toLocaleString()} ₽ для пересдачи!`, 'error'); return; }
             userData.balance -= price;
             closeRenewLicenseModal();
-            showPddModal(true);
+            isRenewMode = true;
+            showPddModal();
         }
-              function showPlayerDocsModal(username, playerData) {
+        
+        function showPlayerDocsModal(username, playerData) {
             document.getElementById('docsModalTitle').innerHTML = `📋 Документы игрока: ${escapeHtml(username)}`;
             let html = '';
             if (playerData.passport) {
                 html += `<div class="player-doc-card" style="background: linear-gradient(145deg, #e8f0fe 0%, #d0e0f5 100%);"><h4>📘 ПАСПОРТ РФ</h4><div class="doc-field"><span class="doc-label">ФИО:</span><span class="doc-value">${escapeHtml(playerData.passport.fullName || '—')}</span></div><div class="doc-field"><span class="doc-label">Год рождения:</span><span class="doc-value">${playerData.passport.birthYear || '—'}</span></div><div class="doc-field"><span class="doc-label">Место жительства:</span><span class="doc-value">${escapeHtml(playerData.passport.address || '—')}</span></div><div class="doc-field"><span class="doc-label">Номер паспорта:</span><span class="doc-value">${playerData.passport.id || '—'}</span></div><div class="doc-field"><span class="doc-label">Дата выдачи:</span><span class="doc-value">${playerData.passport.issuedDate || '—'}</span></div><div class="doc-stamp">✓ Действителен (бессрочно)</div></div>`;
-            } else {
-                html += `<div class="player-doc-card" style="opacity:0.7;"><h4>📘 ПАСПОРТ РФ</h4><div class="doc-field">❌ Паспорт не оформлен</div></div>`;
-            }
+            } else { html += `<div class="player-doc-card" style="opacity:0.7;"><h4>📘 ПАСПОРТ РФ</h4><div class="doc-field">❌ Паспорт не оформлен</div></div>`; }
             if (playerData.passport) {
                 const medId = playerData.medicalCard?.id || generateRandomId();
                 const expiryDate = playerData.medicalCard?.expiryDate || new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toLocaleDateString();
                 const isExpired = isDocumentExpired(expiryDate);
                 html += `<div class="player-doc-card" style="background: linear-gradient(145deg, #fde8f0 0%, #f5d0e0 100%);"><h4>⚕️ МЕДИЦИНСКАЯ КНИЖКА</h4><div class="doc-field"><span class="doc-label">Номер:</span><span class="doc-value">${medId}</span></div><div class="doc-field"><span class="doc-label">Привязана к паспорту:</span><span class="doc-value">${playerData.passport.id}</span></div><div class="doc-field"><span class="doc-label">Годен до:</span><span class="doc-value" style="color: ${isExpired ? 'red' : 'green'}">${expiryDate} ${isExpired ? '❌ ИСТЕКЛО' : '✓'}</span></div><div class="doc-stamp">${isExpired ? '❌ Требуется переоформление' : '✓ Действительна'}</div></div>`;
-            } else {
-                html += `<div class="player-doc-card" style="opacity:0.7;"><h4>⚕️ МЕДИЦИНСКАЯ КНИЖКА</h4><div class="doc-field">❌ Требуется паспорт</div></div>`;
-            }
+            } else { html += `<div class="player-doc-card" style="opacity:0.7;"><h4>⚕️ МЕДИЦИНСКАЯ КНИЖКА</h4><div class="doc-field">❌ Требуется паспорт</div></div>`; }
             if (playerData.license) {
                 const expiryDate = playerData.license.expiryDate || new Date(new Date().setFullYear(new Date().getFullYear() + 10)).toLocaleDateString();
                 const isExpired = isDocumentExpired(expiryDate);
                 html += `<div class="player-doc-card" style="background: linear-gradient(145deg, #fde8f0 0%, #f5d0e0 100%);"><h4>🚗 ВОДИТЕЛЬСКОЕ УДОСТОВЕРЕНИЕ</h4><div class="doc-field"><span class="doc-label">Номер ВУ:</span><span class="doc-value">${playerData.license.id || '—'}</span></div><div class="doc-field"><span class="doc-label">Категории:</span><span class="doc-value"><span class="category-badge">A</span><span class="category-badge">B</span><span class="category-badge">C</span><span class="category-badge">M</span></span></div><div class="doc-field"><span class="doc-label">Дата выдачи:</span><span class="doc-value">${playerData.license.issueDate || '—'}</span></div><div class="doc-field"><span class="doc-label">Годен до:</span><span class="doc-value" style="color: ${isExpired ? 'red' : 'green'}">${expiryDate} ${isExpired ? '❌ ИСТЕКЛО' : '✓'}</span></div><div class="doc-stamp">${isExpired ? '❌ Требуется пересдача экзамена' : '✓ Действительно'}</div></div>`;
-            } else {
-                html += `<div class="player-doc-card" style="opacity:0.7;"><h4>🚗 ВОДИТЕЛЬСКОЕ УДОСТОВЕРЕНИЕ</h4><div class="doc-field">❌ Не получено</div></div>`;
-            }
+            } else { html += `<div class="player-doc-card" style="opacity:0.7;"><h4>🚗 ВОДИТЕЛЬСКОЕ УДОСТОВЕРЕНИЕ</h4><div class="doc-field">❌ Не получено</div></div>`; }
             html += `<div class="player-doc-card" style="background: #0a0c12;"><h4>📝 КВАЛИФИКАЦИОННЫЕ ТЕСТЫ</h4><div class="doc-field"><span class="doc-label">Тест полицейского:</span><span class="doc-value">${playerData.policeTest === 'passed' ? '✅ Сдан' : '❌ Не сдан'}</span></div><div class="doc-field"><span class="doc-label">Тест инкассатора:</span><span class="doc-value">${playerData.cashierTest === 'passed' ? '✅ Сдан' : '❌ Не сдан'}</span></div><div class="doc-field"><span class="doc-label">Тест мэра:</span><span class="doc-value">${playerData.mayorTest === 'passed' ? '✅ Сдан' : '❌ Не сдан'}</span></div></div>`;
             document.getElementById('playerDocsContent').innerHTML = html;
             document.getElementById('playerDocsModal').style.display = 'flex';
@@ -401,26 +354,14 @@
         function closeRenewLicenseModal() { document.getElementById('renewLicenseModal').style.display = 'none'; }
         
         window.unpinMessage = async function(messageId, messageName, messageText) {
-            if (currentUser !== 'Yura' && currentUserRole !== 'admin') {
-                showNotification('Нет прав для открепления сообщений!', 'error');
-                return;
-            }
-            try {
-                await db.collection('pinnedMessages').doc(messageId).delete();
-                await logAdminAction(`📌 Открепление сообщения`, `Чат`, `Сообщение от ${messageName}: ${messageText.substring(0, 50)}...`);
-                showNotification('✅ Сообщение откреплено!', 'success');
-                loadPinnedMessages();
-            } catch (error) {
-                showNotification('Ошибка при откреплении: ' + error.message, 'error');
-            }
+            if (currentUser !== 'Yura' && currentUserRole !== 'admin') { showNotification('Нет прав для открепления сообщений!', 'error'); return; }
+            try { await db.collection('pinnedMessages').doc(messageId).delete(); await logAdminAction(`📌 Открепление сообщения`, `Чат`, `Сообщение от ${messageName}: ${messageText.substring(0, 50)}...`); showNotification('✅ Сообщение откреплено!', 'success'); loadPinnedMessages(); } catch (error) { showNotification('Ошибка при откреплении: ' + error.message, 'error'); }
         };
         
         const firebaseConfig = { apiKey: "AIzaSyAJeBC0bgStvXZlNGpF0M1J9MwUoM57yNw", authDomain: "brickrp-site.firebaseapp.com", projectId: "brickrp-site", storageBucket: "brickrp-site.firebasestorage.app", messagingSenderId: "735858740541", appId: "1:735858740541:web:54fcf2ef0c2cb60d9d4954" };
         
         let db, currentUser = null, currentUserRole = "player", userData = null, allUsers = [];
-        
         const roleTags = { "creator": "👑 [создатель]", "admin": "🛡️ [админ]", "moderator": "📋 [модератор]", "player": "🎮 [игрок]" };
-        
         function generateRandomId() { return Math.floor(Math.random() * 9000000000 + 1000000000).toString(); }
         
         async function fixCreatorAccount() {
@@ -431,30 +372,14 @@
                 if (!userData_check.medicalCard || !userData_check.license || !userData_check.license.expiryDate) {
                     const futureDate10 = new Date(); futureDate10.setFullYear(futureDate10.getFullYear() + 10);
                     const futureDate1 = new Date(); futureDate1.setFullYear(futureDate1.getFullYear() + 1);
-                    await db.collection('users').doc(creatorUsername).update({
-                        medicalCard: { id: "MED987654321", expiryDate: futureDate1.toLocaleDateString() },
-                        license: { id: "098765432109", issueDate: new Date().toLocaleDateString(), expiryDate: futureDate10.toLocaleDateString() }
-                    });
+                    await db.collection('users').doc(creatorUsername).update({ medicalCard: { id: "MED987654321", expiryDate: futureDate1.toLocaleDateString() }, license: { id: "098765432109", issueDate: new Date().toLocaleDateString(), expiryDate: futureDate10.toLocaleDateString() } });
                 }
                 return; 
             }
             const hashedPassword = await hashPassword(creatorPassword);
             const futureDate10 = new Date(); futureDate10.setFullYear(futureDate10.getFullYear() + 10);
             const futureDate1 = new Date(); futureDate1.setFullYear(futureDate1.getFullYear() + 1);
-            const creatorData = { 
-                username: creatorUsername, password: hashedPassword, balance: 999999999, 
-                garage: ["🚗 Bugatti Chiron", "🚁 Private Jet", "🏍️ Ducati V4", "🚤 Yacht"], 
-                businesses: ["auto", "restaurant", "hotel", "club", "gas", "svoy"], 
-                businessLevels: { auto: 5, restaurant: 5, hotel: 5, club: 5, gas: 5, svoy: 5 }, 
-                job: "mayor", lastPayTime: Date.now(), lastBusinessTime: Date.now(), 
-                policeTest: 'passed', cashierTest: 'passed', mayorTest: 'passed', 
-                achievements: ["first_car", "first_business", "first_passport", "first_license", "million", "test_master", "job_master", "collector", "rich", "business_magnate"], 
-                isBanned: false, 
-                passport: { fullName: "Юра Создатель", birthYear: 1990, address: "Москва, Кремль", id: "123456789012", issuedDate: new Date().toLocaleDateString() }, 
-                license: { id: "098765432109", issueDate: new Date().toLocaleDateString(), expiryDate: futureDate10.toLocaleDateString() }, 
-                medicalCard: { id: "MED987654321", expiryDate: futureDate1.toLocaleDateString() }, 
-                licenseCooldown: null, role: 'creator' 
-            };
+            const creatorData = { username: creatorUsername, password: hashedPassword, balance: 999999999, garage: ["🚗 Bugatti Chiron", "🚁 Private Jet", "🏍️ Ducati V4", "🚤 Yacht"], businesses: ["auto", "restaurant", "hotel", "club", "gas", "svoy"], businessLevels: { auto: 5, restaurant: 5, hotel: 5, club: 5, gas: 5, svoy: 5 }, job: "mayor", lastPayTime: Date.now(), lastBusinessTime: Date.now(), policeTest: 'passed', cashierTest: 'passed', mayorTest: 'passed', achievements: ["first_car", "first_business", "first_passport", "first_license", "million", "test_master", "job_master", "collector", "rich", "business_magnate"], isBanned: false, passport: { fullName: "Юра Создатель", birthYear: 1990, address: "Москва, Кремль", id: "123456789012", issuedDate: new Date().toLocaleDateString() }, license: { id: "098765432109", issueDate: new Date().toLocaleDateString(), expiryDate: futureDate10.toLocaleDateString() }, medicalCard: { id: "MED987654321", expiryDate: futureDate1.toLocaleDateString() }, licenseCooldown: null, role: 'creator' };
             await db.collection('users').doc(creatorUsername).set(creatorData);
             console.log("✅ Аккаунт создателя Yura создан");
         }
@@ -653,7 +578,7 @@
                 if (!userData.role) userData.role = 'player';
                 updateCardUI(); updateUI(); renderShop(); renderTests(); renderAchievements(); renderJobStatus(); renderBusinesses(); renderMyBusinesses(); renderDocuments(); await loadAllUsers(); await loadWorkLog();
                 checkDocumentExpiry();
-                setInterval(checkDocumentExpiry, 3600000);
+                setInterval(checkDocumentExpiry, 1800000);
             }
             
             async function saveUserData() { if (!userData) return; await db.collection('users').doc(userData.username).set(userData); }
@@ -668,29 +593,21 @@
                     const number = passportId.substring(4);
                     const signature = getSignature(userData.passport.fullName);
                     html += `<div class="doc-card passport-card"><div class="doc-header"><i class="fas fa-passport"></i><span class="doc-title">ПАСПОРТ РФ</span></div><div class="doc-field"><span class="doc-label">ФИО:</span><span class="doc-value">${escapeHtml(userData.passport.fullName)}</span></div><div class="doc-field"><span class="doc-label">Год рождения:</span><span class="doc-value">${userData.passport.birthYear}</span></div><div class="doc-field"><span class="doc-label">Место жительства:</span><span class="doc-value">${escapeHtml(userData.passport.address)}</span></div><div class="doc-field"><span class="doc-label">Серия и номер:</span><span class="doc-value">${series} ${number}</span></div><div class="doc-field"><span class="doc-label">Дата выдачи:</span><span class="doc-value">${userData.passport.issuedDate}</span></div><div class="doc-sign">Подпись: ${signature}</div><div class="doc-stamp">✓ Действителен (бессрочно)</div></div>`;
-                } else {
-                    html += `<div class="doc-card passport-card" style="opacity:0.7;"><div class="doc-header"><i class="fas fa-passport"></i><span class="doc-title">ПАСПОРТ РФ</span></div><div class="doc-field">❌ Паспорт не оформлен</div></div>`;
-                }
+                } else { html += `<div class="doc-card passport-card" style="opacity:0.7;"><div class="doc-header"><i class="fas fa-passport"></i><span class="doc-title">ПАСПОРТ РФ</span></div><div class="doc-field">❌ Паспорт не оформлен</div></div>`; }
                 if (userData.passport) {
                     const medId = userData.medicalCard?.id || generateRandomId();
                     const expiryDate = userData.medicalCard?.expiryDate || new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toLocaleDateString();
                     const isExpired = isDocumentExpired(expiryDate);
                     const daysLeft = getDaysUntilExpiry(expiryDate);
                     html += `<div class="doc-card med-card"><div class="doc-header"><i class="fas fa-notes-medical"></i><span class="doc-title">МЕДИЦИНСКАЯ КНИЖКА</span></div><div class="doc-field"><span class="doc-label">Номер:</span><span class="doc-value">${medId}</span></div><div class="doc-field"><span class="doc-label">Привязана к паспорту:</span><span class="doc-value">${userData.passport.id}</span></div><div class="doc-field"><span class="doc-label">Годен до:</span><span class="doc-value" style="color: ${isExpired ? 'red' : (daysLeft <= 7 ? '#ffaa00' : 'green')}">${expiryDate} ${isExpired ? '❌ ИСТЕКЛО' : (daysLeft <= 7 ? '⚠️ Истекает скоро' : '✓')}</span></div><div class="doc-stamp">${isExpired ? '❌ Требуется переоформление' : '✓ Действительна'}</div>${!isExpired && daysLeft <= 30 ? `<button class="renew-btn" onclick="showRenewMedicalModal()">🔄 Переоформить заранее</button>` : ''}${isExpired ? `<button class="renew-btn" onclick="showRenewMedicalModal()">🔄 Переоформить</button>` : ''}</div>`;
-                } else {
-                    html += `<div class="doc-card med-card" style="opacity:0.7;"><div class="doc-header"><i class="fas fa-notes-medical"></i><span class="doc-title">МЕДИЦИНСКАЯ КНИЖКА</span></div><div class="doc-field">❌ Требуется паспорт</div></div>`;
-                }
+                } else { html += `<div class="doc-card med-card" style="opacity:0.7;"><div class="doc-header"><i class="fas fa-notes-medical"></i><span class="doc-title">МЕДИЦИНСКАЯ КНИЖКА</span></div><div class="doc-field">❌ Требуется паспорт</div></div>`; }
                 if (userData.license) {
                     const expiryDate = userData.license.expiryDate || new Date(new Date().setFullYear(new Date().getFullYear() + 10)).toLocaleDateString();
                     const isExpired = isDocumentExpired(expiryDate);
                     const daysLeft = getDaysUntilExpiry(expiryDate);
                     html += `<div class="doc-card license-card"><div class="doc-header"><i class="fas fa-id-card"></i><span class="doc-title">ВОДИТЕЛЬСКОЕ УДОСТОВЕРЕНИЕ</span></div><div class="doc-field"><span class="doc-label">Номер ВУ:</span><span class="doc-value">${userData.license.id}</span></div><div class="doc-field"><span class="doc-label">Категории:</span><span class="doc-value"><span class="category-badge">A</span><span class="category-badge">B</span><span class="category-badge">C</span><span class="category-badge">M</span></span></div><div class="doc-field"><span class="doc-label">Дата выдачи:</span><span class="doc-value">${userData.license.issueDate}</span></div><div class="doc-field"><span class="doc-label">Годен до:</span><span class="doc-value" style="color: ${isExpired ? 'red' : (daysLeft <= 30 ? '#ffaa00' : 'green')}">${expiryDate} ${isExpired ? '❌ ИСТЕКЛО' : (daysLeft <= 30 ? '⚠️ Истекает скоро' : '✓')}</span></div><div class="doc-stamp">${isExpired ? '❌ Требуется пересдача экзамена' : '✓ Действительно'}</div>${!isExpired && daysLeft <= 60 ? `<button class="renew-btn" onclick="showRenewLicenseModal()">🔄 Пересдать заранее</button>` : ''}${isExpired ? `<button class="renew-btn" onclick="showRenewLicenseModal()">🔄 Пересдать экзамен</button>` : ''}</div>`;
-                } else if (userData.licenseCooldown && Date.now() < userData.licenseCooldown) {
-                    const remaining = Math.ceil((userData.licenseCooldown - Date.now()) / 60000);
-                    html += `<div class="doc-card license-card" style="opacity:0.8;"><div class="doc-header"><i class="fas fa-id-card"></i><span class="doc-title">ВОДИТЕЛЬСКОЕ УДОСТОВЕРЕНИЕ</span></div><div class="doc-field">⏳ Пересдача через ${remaining} минут</div></div>`;
-                } else {
-                    html += `<div class="doc-card license-card" style="opacity:0.7;"><div class="doc-header"><i class="fas fa-id-card"></i><span class="doc-title">ВОДИТЕЛЬСКОЕ УДОСТОВЕРЕНИЕ</span></div><div class="doc-field">❌ Не получено</div></div>`;
-                }
+                } else if (userData.licenseCooldown && Date.now() < userData.licenseCooldown) { const remaining = Math.ceil((userData.licenseCooldown - Date.now()) / 60000); html += `<div class="doc-card license-card" style="opacity:0.8;"><div class="doc-header"><i class="fas fa-id-card"></i><span class="doc-title">ВОДИТЕЛЬСКОЕ УДОСТОВЕРЕНИЕ</span></div><div class="doc-field">⏳ Пересдача через ${remaining} минут</div></div>`; }
+                else { html += `<div class="doc-card license-card" style="opacity:0.7;"><div class="doc-header"><i class="fas fa-id-card"></i><span class="doc-title">ВОДИТЕЛЬСКОЕ УДОСТОВЕРЕНИЕ</span></div><div class="doc-field">❌ Не получено</div></div>`; }
                 container.innerHTML = html;
             }
             
@@ -712,11 +629,10 @@
                 if (!userData.passport) { showNotification('❌ Сначала оформите паспорт!', 'error'); return; }
                 if (userData.licenseCooldown && Date.now() < userData.licenseCooldown) { const remaining = Math.ceil((userData.licenseCooldown - Date.now()) / 60000); showNotification(`⏳ Пересдача через ${remaining} минут!`, 'warning'); return; }
                 isRenewMode = false;
-                showPddModal(false);
+                showPddModal();
             }
             
-            function showPddModal(isRenew = false) {
-                isRenewMode = isRenew;
+            function showPddModal() {
                 const container = document.getElementById('pddQuestions');
                 container.innerHTML = pddQuestions.map((q, idx) => `<div class="question"><p>${idx+1}. ${q.text}</p>${q.options.map((opt, oi) => `<label><input type="radio" name="pdd_${idx}" value="${oi}"> ${opt}</label><br>`).join('')}</div>`).join('');
                 document.getElementById('pddModal').style.display = 'flex';
@@ -730,33 +646,24 @@
                     if (isRenewMode) {
                         userData.license = { id: generateRandomId(), passportId: userData.passport.id, issueDate: new Date().toLocaleDateString(), expiryDate: futureDate10.toLocaleDateString(), categories: "A, B, C, M" };
                         userData.licenseCooldown = null;
-                        await saveUserData();
-                        await updateAchievements();
-                        renderDocuments();
-                        document.getElementById('pddModal').style.display = 'none';
+                        await saveUserData(); await updateAchievements(); renderDocuments(); document.getElementById('pddModal').style.display = 'none';
                         showNotification(`✅ Поздравляем! Вы пересдали экзамен ПДД (${correct}/${pddQuestions.length} правильных). Права переоформлены на 10 лет!`, 'success');
                     } else {
                         userData.license = { id: generateRandomId(), passportId: userData.passport.id, issueDate: new Date().toLocaleDateString(), expiryDate: futureDate10.toLocaleDateString(), categories: "A, B, C, M" };
                         userData.licenseCooldown = null;
-                        await saveUserData();
-                        await updateAchievements();
-                        renderDocuments();
-                        document.getElementById('pddModal').style.display = 'none';
+                        await saveUserData(); await updateAchievements(); renderDocuments(); document.getElementById('pddModal').style.display = 'none';
                         showNotification(`✅ Поздравляем! Вы сдали экзамен ПДД (${correct}/${pddQuestions.length} правильных). Права выданы на 10 лет!`, 'success');
                     }
                 } else {
-                    if (!isRenewMode) {
-                        userData.licenseCooldown = Date.now() + 5 * 60 * 1000;
-                        await saveUserData();
-                    }
+                    if (!isRenewMode) { userData.licenseCooldown = Date.now() + 5 * 60 * 1000; await saveUserData(); }
                     document.getElementById('pddModal').style.display = 'none';
                     showNotification(`❌ Экзамен не сдан! (${correct}/${pddQuestions.length} правильных). Пересдача через 5 минут.`, 'error');
                 }
                 isRenewMode = false;
             }
-                      function showPassportModal() { if (userData.passport) { showNotification('Паспорт уже оформлен!', 'warning'); return; } document.getElementById('passportModal').style.display = 'flex'; }
-            function closePassportModal() { document.getElementById('passportModal').style.display = 'none'; document.getElementById('passportFullName').value = ''; document.getElementById('passportBirthYear').value = ''; document.getElementById('passportAddress').value = ''; }
             
+            function showPassportModal() { if (userData.passport) { showNotification('Паспорт уже оформлен!', 'warning'); return; } document.getElementById('passportModal').style.display = 'flex'; }
+            function closePassportModal() { document.getElementById('passportModal').style.display = 'none'; document.getElementById('passportFullName').value = ''; document.getElementById('passportBirthYear').value = ''; document.getElementById('passportAddress').value = ''; }
             function updateCardUI() { if (!userData) return; document.getElementById('balanceDisplay').innerHTML = userData.balance.toLocaleString() + ' ₽'; document.getElementById('cardHolder').innerHTML = userData.username.toUpperCase(); document.getElementById('cardNumberDisplay').innerHTML = '**** **** **** ' + Math.floor(Math.random() * 9000 + 1000); let d = new Date(); document.getElementById('cardExpiry').innerHTML = `${(d.getMonth()+1).toString().padStart(2,'0')}/${(d.getFullYear()+3).toString().slice(-2)}`; }
             
             async function transferMoney(toUsername, amount) {
@@ -888,61 +795,35 @@
             }
             
             async function loadChat() { const snapshot = await db.collection('globalChat').orderBy('timestamp', 'asc').limit(100).get(); renderChat(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))); }
-            
             function getRoleTag(username) { if (username === 'Yura') return roleTags.creator; const user = allUsers.find(u => u.username === username); if (user && user.role === 'admin') return roleTags.admin; if (user && user.role === 'moderator') return roleTags.moderator; return roleTags.player; }
-            
             function renderChat(messages) { const container = document.getElementById('chatMessages'); if (!container) return; container.innerHTML = messages.map(m => `<div class="chat-message" id="msg-${m.id}"><div><span class="chat-name" style="color: ${m.name === 'Yura' ? '#ffaa00' : '#ff9a6e'}">${getRoleTag(m.name)} ${escapeHtml(m.name)}</span><span class="chat-time">${new Date(m.timestamp).toLocaleTimeString()}</span>${(currentUser === 'Yura' || currentUserRole === 'admin') ? `<button class="admin-btn" style="float:right; padding:2px 8px;" onclick="pinMessage('${m.id}', '${escapeHtml(m.name)}', '${escapeHtml(m.text).replace(/'/g, "\\'")}')">📌 Закрепить</button>` : ''}</div><div>${escapeHtml(m.text)}</div></div>`).join(''); container.scrollTop = container.scrollHeight; }
-            
             async function sendChatMessage() { if (!currentUser) return; const text = document.getElementById('messageInput').value.trim(); if (!text) return; if (text.length > 200) { showNotification('Сообщение слишком длинное! Максимум 200 символов', 'error'); return; } await db.collection('globalChat').add({ name: currentUser, text: text, timestamp: Date.now(), role: currentUserRole }); document.getElementById('messageInput').value = ''; }
-            
             window.pinMessage = pinMessage;
-            
             function renderBuildings() { const container = document.getElementById('buildingsGrid'); if (container) container.innerHTML = buildings.map(b => `<div class="showcase-card"><div class="showcase-img" style="background-image: url('${b.image}'); background-size: cover;"></div><div class="showcase-info"><h4>${b.name}</h4><p>${b.desc}</p></div></div>`).join(''); }
-            
             function renderBusinesses() { const container = document.getElementById('businessesGrid'); if (!container) return; container.innerHTML = businessesList.map(b => { const owned = userData?.businesses?.includes(b.id); return `<div class="business-card"><div class="business-icon"><i class="fas ${b.icon}"></i></div><div class="business-info"><h4>${b.name}</h4><div class="business-income">💰 Доход: ${(b.income * (userData?.businessLevels?.[b.id] || 1)).toLocaleString()} ₽/час</div><div class="business-level">📈 Уровень: ${userData?.businessLevels?.[b.id] || 1}</div><div>💵 Цена: ${b.price.toLocaleString()} ₽</div>${owned ? '<button class="business-btn" disabled>✅ Принадлежит</button>' : `<button class="business-btn" onclick="buyBusiness('${b.id}')">Купить бизнес</button>`}${owned && (userData?.businessLevels?.[b.id] || 1) < 5 ? `<button class="business-btn" onclick="upgradeBusiness('${b.id}')" style="margin-top:5px; background:#ffaa00; color:#000;">📈 Улучшить (${(b.price * 0.5).toLocaleString()}₽)</button>` : ''}</div></div>`; }).join(''); }
-            
             window.buyBusiness = async function(businessId) { if (!userData) return; const business = businessesList.find(b => b.id === businessId); if (userData.businesses?.includes(businessId)) return; if (userData.balance >= business.price) { userData.balance -= business.price; if (!userData.businesses) userData.businesses = []; userData.businesses.push(businessId); if (!userData.businessLevels) userData.businessLevels = {}; userData.businessLevels[businessId] = 1; await saveUserData(); updateCardUI(); renderBusinesses(); renderMyBusinesses(); await updateAchievements(); renderAchievements(); showNotification(`✅ Вы купили ${business.name}!`, 'success'); } else { showNotification(`❌ Не хватает ${business.price.toLocaleString()}₽`, 'error'); } };
-            
             window.upgradeBusiness = async function(businessId) { if (!userData) return; const business = businessesList.find(b => b.id === businessId); const currentLevel = userData.businessLevels?.[businessId] || 1; if (currentLevel >= 5) return; const upgradeCost = business.price * 0.5; if (userData.balance >= upgradeCost) { userData.balance -= upgradeCost; userData.businessLevels[businessId] = currentLevel + 1; await saveUserData(); updateCardUI(); renderBusinesses(); renderMyBusinesses(); showNotification(`✅ ${business.name} улучшен до ${currentLevel + 1} уровня!`, 'success'); } else { showNotification(`❌ Не хватает ${upgradeCost.toLocaleString()}₽ для улучшения`, 'error'); } };
-            
             function renderMyBusinesses() { const container = document.getElementById('myBusinessesList'); if (!container) return; if (!userData?.businesses || userData.businesses.length === 0) { container.innerHTML = '<p>У вас пока нет бизнесов. Купите первый!</p>'; return; } let totalIncome = 0; const businessesHtml = userData.businesses.map(bid => { const biz = businessesList.find(b => b.id === bid); const level = userData.businessLevels?.[bid] || 1; const income = biz.income * level; totalIncome += income; return `<p>🏢 ${biz.name} | Уровень ${level} | Доход: ${income.toLocaleString()} ₽/час</p>`; }).join(''); container.innerHTML = businessesHtml + `<p style="margin-top:10px; color:#ffaa00;"><strong>💰 Общий доход с бизнесов: ${totalIncome.toLocaleString()} ₽/час</strong></p>`; }
-            
             async function checkBusinessIncome() { if (!userData || !userData.businesses || userData.businesses.length === 0) return; const now = Date.now(); if (now - (userData.lastBusinessTime || 0) >= 3600000) { let totalIncome = 0; for (const bid of userData.businesses) { const biz = businessesList.find(b => b.id === bid); const level = userData.businessLevels?.[bid] || 1; totalIncome += biz.income * level; } userData.balance += totalIncome; userData.lastBusinessTime = now; await saveUserData(); updateCardUI(); renderMyBusinesses(); await updateAchievements(); renderAchievements(); showNotification(`💰 Получен доход с бизнесов: ${totalIncome.toLocaleString()} ₽`, 'success'); } }
             setInterval(checkBusinessIncome, 60000);
-            
             function renderShop() { if (!userData) return; const container = document.getElementById('vehicleList'); if (!container) return; container.innerHTML = vehicles.map((v, i) => `<div class="vehicle-item"><div class="vehicle-img"><i class="${v.icon}"></i></div><div class="vehicle-info"><h4>${v.name}</h4><div class="price">💰 ${v.price.toLocaleString()} ₽</div><button class="buy-btn" onclick="buyVehicle(${i})" ${userData.garage?.includes(v.name) ? 'disabled' : ''}>${userData.garage?.includes(v.name) ? '✅ В гараже' : 'Купить'}</button></div></div>`).join(''); const garageDiv = document.getElementById('garageContent'); const garage = userData.garage || []; garageDiv.innerHTML = garage.length ? garage.map(n => `<p>🚘 ${escapeHtml(n)}</p>`).join('') : '<p>У вас пока нет машин</p>'; }
-            
             window.buyVehicle = async function(i) { if (!userData) return; const v = vehicles[i]; if (userData.garage?.includes(v.name)) return; if (userData.balance >= v.price) { userData.balance -= v.price; if (!userData.garage) userData.garage = []; userData.garage.push(v.name); await saveUserData(); updateCardUI(); renderShop(); await updateAchievements(); renderAchievements(); showNotification(`✅ Куплено: ${v.name}`, 'success'); } else { showNotification(`❌ Не хватает ${v.price.toLocaleString()}₽`, 'error'); } };
-            
             function renderTests() { if (!userData) return; const container = document.getElementById('testsContainer'); if (!container) return; container.innerHTML = ''; for (const [id, test] of Object.entries(testsData)) { const status = userData[id]; let statusHtml = '', locked = false; if (status === 'passed') statusHtml = '<div class="test-status passed">✅ Тест сдан!</div>'; else if (status?.startsWith('cooldown_')) { const end = parseInt(status.split('_')[1]); const rem = Math.max(0, end - Date.now()); if (rem > 0) { statusHtml = `<div class="test-status locked">⏳ Пересдача через ${Math.floor(rem/60000)} мин</div>`; locked = true; } else { userData[id] = null; saveUserData(); statusHtml = '<div class="test-status failed">❌ Тест не сдан</div>'; } } else { statusHtml = '<div class="test-status failed">❌ Тест не сдан</div>'; } container.innerHTML += `<div class="test-card"><h3>${test.name}</h3>${statusHtml}<button class="test-btn open-test-btn" onclick="toggleQuestions('${id}')" ${locked ? 'disabled' : ''}>📋 Пройти тест</button><div class="test-questions" id="questions-${id}">${test.questions.map((q, idx) => `<div class="question"><p>${idx+1}. ${q.text}</p>${q.options.map((o, oi) => `<label><input type="radio" name="q${id}_${idx}" value="${oi}"> ${o}</label><br>`).join('')}</div>`).join('')}<button class="test-btn" onclick="submitTest('${id}')">✅ Отправить</button></div></div>`; } }
-            
             window.toggleQuestions = function(id) { const div = document.getElementById(`questions-${id}`); if (div) div.style.display = div.style.display === 'none' ? 'block' : 'none'; };
             window.submitTest = async function(id) { if (!userData) return; const test = testsData[id]; let correct = 0; for (let i = 0; i < test.questions.length; i++) { const selected = document.querySelector(`input[name="q${id}_${i}"]:checked`); if (selected && parseInt(selected.value) === test.questions[i].correct) correct++; } if (correct >= 3) { userData[id] = 'passed'; await saveUserData(); await updateAchievements(); renderAchievements(); showNotification(`✅ Тест сдан! (${correct}/5)`, 'success'); renderTests(); } else { userData[id] = `cooldown_${Date.now() + 30*60000}`; await saveUserData(); showNotification(`❌ Тест не сдан (${correct}/5). Пересдача через 30 мин.`, 'error'); renderTests(); } };
-            
             function renderJobStatus() { if (!userData) return; const salariesMap = { taxi:30000, police:35000, mechanic:25000, loader:20000, cashier:45000, mayor:80000, svoya:43000 }; if (userData.job) { let jobName = { taxi:'Таксист', police:'Полиция', mechanic:'Механик', loader:'Грузчик', cashier:'Инкассатор', mayor:'Мэр', svoya:'Своя' }[userData.job]; document.getElementById('jobStatus').innerHTML = `✅ Работает: ${jobName} (+${salariesMap[userData.job].toLocaleString()}₽/час)`; } else { document.getElementById('jobStatus').innerHTML = `❌ Профессия не выбрана`; } }
-            
             const salariesMap = { taxi:30000, police:35000, mechanic:25000, loader:20000, cashier:45000, mayor:80000, svoya:43000 };
-            
             async function checkSalary() { if (!userData || !userData.job) return; const now = Date.now(); if (now - (userData.lastPayTime || 0) >= 3600000) { userData.balance += salariesMap[userData.job]; userData.lastPayTime = now; await saveUserData(); updateCardUI(); renderAchievements(); renderJobStatus(); showNotification(`💵 Получена зарплата: ${salariesMap[userData.job].toLocaleString()} ₽`, 'success'); } if (userData.job) { const next = (userData.lastPayTime || 0) + 3600000; const rem = Math.max(0, next - now); document.getElementById('nextSalary').innerHTML = `⏱️ Следующая выплата через ${Math.floor(rem/60000)} мин`; } }
             setInterval(checkSalary, 1000);
-            
             document.querySelectorAll('.job-btn').forEach(btn => { btn.onclick = async () => { if (!userData) return; const job = btn.dataset.job; let need = null; if (job === 'police') need = 'policeTest'; if (job === 'cashier') need = 'cashierTest'; if (job === 'mayor') need = 'mayorTest'; if (need && userData[need] !== 'passed') { showNotification(`⚠️ Сначала сдайте тест!`, 'warning'); showSection('tests'); return; } userData.job = job; userData.lastPayTime = Date.now(); await saveUserData(); await updateAchievements(); renderAchievements(); renderJobStatus(); showNotification(`✅ Вы выбрали профессию: ${btn.textContent.split(' ')[0]}`, 'success'); }; });
-            
             function renderAchievements() { if (!userData) return; const container = document.getElementById('achievementsGrid'); if (!container) return; const unlocked = userData.achievements || []; container.innerHTML = achievementsList.map(ach => `<div class="achievement-card ${unlocked.includes(ach.id) ? 'unlocked' : ''}"><div class="achievement-icon"><i class="fas ${ach.icon}"></i></div><div class="achievement-title">${ach.title}</div><div class="achievement-desc">${ach.desc}</div>${unlocked.includes(ach.id) ? '<span style="color:#ffaa00;">✓ Получено</span>' : '<span style="color:#666;">🔒 Не выполнено</span>'}</div>`).join(''); }
-            
             let unsubscribeTickets = null;
             function loadTickets() { if (unsubscribeTickets) unsubscribeTickets(); unsubscribeTickets = db.collection('tickets').orderBy('date', 'desc').onSnapshot((snapshot) => { const tickets = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })); renderTickets(tickets); }); }
-            
             async function createTicket() { if (!currentUser) return; const title = document.getElementById('ticketTitle').value.trim(); const text = document.getElementById('ticketText').value.trim(); if (!title || !text) { showNotification('Заполните тему и текст обращения!', 'error'); return; } await db.collection('tickets').add({ username: currentUser, title, text, date: new Date().toISOString(), replies: [] }); document.getElementById('ticketTitle').value = ''; document.getElementById('ticketText').value = ''; showNotification('✅ Обращение создано!', 'success'); }
-            
             async function replyToTicket(ticketId) { if (currentUser !== 'Yura' && currentUserRole !== 'admin' && currentUserRole !== 'moderator') { showNotification('Нет прав для ответа!', 'error'); return; } const reply = document.getElementById(`reply-${ticketId}`).value.trim(); if (!reply) return; const ticketRef = db.collection('tickets').doc(ticketId); const ticket = (await ticketRef.get()).data(); const replies = ticket.replies || []; replies.push({ username: currentUser, text: reply, admin: (currentUser === 'Yura' || currentUserRole === 'admin') }); await ticketRef.update({ replies }); await logAdminAction(`💬 Ответ в тикете`, `Тикет #${ticketId}`, `Ответ: ${reply.substring(0, 50)}...`); document.getElementById(`reply-${ticketId}`).value = ''; showNotification('✅ Ответ отправлен!', 'success'); }
-            
             function renderTickets(tickets) { const container = document.getElementById('ticketsList'); if (!container) return; if (currentUser === 'Yura' || currentUserRole === 'admin' || currentUserRole === 'moderator') { container.innerHTML = tickets.map(t => `<div class="ticket" id="ticket-${t.id}"><div class="ticket-header"><span>👤 ${escapeHtml(t.username)}</span><span>📅 ${new Date(t.date).toLocaleString()}</span></div><div><strong>${escapeHtml(t.title)}</strong></div><div>${escapeHtml(t.text)}</div>${(t.replies || []).map(r => `<div class="ticket-reply"><strong>${r.admin ? '⭐ Админ' : escapeHtml(r.username)}:</strong> ${escapeHtml(r.text)}</div>`).join('')}<div class="reply-form"><input type="text" id="reply-${t.id}" class="reply-input" placeholder="Ответ..."><button class="bank-btn" onclick="replyToTicket('${t.id}')" style="padding: 8px 16px;">Ответить</button></div></div>`).join(''); } else if (currentUser) { const userTickets = tickets.filter(t => t.username === currentUser); container.innerHTML = userTickets.map(t => `<div class="ticket"><div class="ticket-header"><span>📌 ${escapeHtml(t.title)}</span><span>📅 ${new Date(t.date).toLocaleString()}</span></div><div>${escapeHtml(t.text)}</div>${(t.replies || []).map(r => `<div class="ticket-reply"><strong>${r.admin ? '⭐ Админ' : escapeHtml(r.username)}:</strong> ${escapeHtml(r.text)}</div>`).join('')}</div>`).join(''); } }
-            
             function updateUI() { const area = document.getElementById('userInfoArea'); if (currentUser) { const roleTag = currentUser === 'Yura' ? roleTags.creator : (currentUserRole === 'admin' ? roleTags.admin : (currentUserRole === 'moderator' ? roleTags.moderator : roleTags.player)); area.innerHTML = `<div class="user-info">${roleTag} ${escapeHtml(currentUser)} <button class="logout-btn" onclick="logout()">Выйти</button></div>`; } else { area.innerHTML = `<a onclick="showAuthModal()">Войти</a>`; } }
-            
             function showSection(section) { document.getElementById('mainSection').style.display = section === 'main' ? 'block' : 'none'; document.getElementById('documentsSection').style.display = section === 'documents' ? 'block' : 'none'; document.getElementById('businessesSection').style.display = section === 'businesses' ? 'block' : 'none'; document.getElementById('buildingsSection').style.display = section === 'buildings' ? 'block' : 'none'; document.getElementById('shopSection').style.display = section === 'shop' ? 'block' : 'none'; document.getElementById('testsSection').style.display = section === 'tests' ? 'block' : 'none'; document.getElementById('achievementsSection').style.display = section === 'achievements' ? 'block' : 'none'; document.getElementById('forumSection').style.display = section === 'forum' ? 'block' : 'none'; document.getElementById('chatSection').style.display = section === 'chat' ? 'block' : 'none'; if (section === 'buildings') renderBuildings(); if (section === 'businesses') { renderBusinesses(); renderMyBusinesses(); } if (section === 'shop') renderShop(); if (section === 'tests') renderTests(); if (section === 'achievements') renderAchievements(); if (section === 'documents') renderDocuments(); }
-            
             function showAuthModal() { document.getElementById('authModal').style.display = 'flex'; }
             function showTransferModal() { document.getElementById('transferModal').style.display = 'flex'; }
             function closeTransferModal() { document.getElementById('transferModal').style.display = 'none'; }
@@ -962,7 +843,6 @@
             document.getElementById('confirmRenewLicenseBtn').onclick = renewLicense;
             
             document.querySelectorAll('.admin-tab').forEach(tab => { tab.onclick = () => { document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active')); tab.classList.add('active'); const tabName = tab.dataset.tab; document.getElementById('playersTab').style.display = tabName === 'players' ? 'block' : 'none'; document.getElementById('rolesTab').style.display = tabName === 'roles' ? 'block' : 'none'; document.getElementById('moneyTab').style.display = tabName === 'money' ? 'block' : 'none'; document.getElementById('worklogTab').style.display = tabName === 'worklog' ? 'block' : 'none'; if (tabName === 'players') renderPlayersTable(); if (tabName === 'worklog') loadWorkLog(); }; });
-            
             document.getElementById('assignRoleBtnPanel').onclick = async () => { const username = document.getElementById('roleUser').value.trim(); const role = document.getElementById('roleType').value; await assignRole(username, role); };
             document.getElementById('removeRoleBtnPanel').onclick = async () => { const username = document.getElementById('roleUser').value.trim(); await removeRole(username); };
             document.getElementById('giveMoneyBtnPanel').onclick = () => { const user = document.getElementById('targetUser').value.trim(); const amount = parseInt(document.getElementById('moneyAmount').value); if (user && amount > 0) giveMoney(user, amount); else showNotification('Введите ник и сумму!', 'error'); };
