@@ -1,1 +1,2053 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>NEXT GEN RP | Бизнес и Профессии</title>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #0a0c12 0%, #0f1420 100%); color: #eee; line-height: 1.5; min-height: 100vh; }
+        
+        .bg-particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; overflow: hidden; }
+        .bg-particles span { position: absolute; width: 3px; height: 3px; background: rgba(255, 60, 0, 0.3); border-radius: 50%; animation: float 15s infinite linear; }
+        @keyframes float { 0% { transform: translateY(100vh) scale(0); opacity: 0; } 50% { opacity: 0.5; } 100% { transform: translateY(-100vh) scale(1); opacity: 0; } }
+        
+        .container { max-width: 1400px; margin: 0 auto; padding: 0 20px; position: relative; z-index: 1; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #1a1e2a; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #ff3c00; border-radius: 10px; }
+        
+        .navbar {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 16px 0; flex-wrap: wrap; gap: 15px;
+            border-bottom: 1px solid rgba(255, 60, 0, 0.3);
+            backdrop-filter: blur(10px);
+            background: rgba(10, 12, 18, 0.8);
+            position: sticky; top: 0; z-index: 100;
+            border-radius: 0 0 20px 20px;
+        }
+        .logo { font-size: 24px; font-weight: 800; background: linear-gradient(135deg, #ff7b2c, #ff3c00); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .logo i { color: #ff3c00; margin-right: 8px; }
+        .nav-links { display: flex; gap: 20px; flex-wrap: wrap; align-items: center; }
+        .nav-links a { color: #ccc; text-decoration: none; font-weight: 500; transition: 0.3s; cursor: pointer; font-size: 14px; }
+        .nav-links a:hover { color: #ff5e2c; }
+        .user-info { background: #1a1e2a; padding: 6px 14px; border-radius: 40px; font-size: 13px; display: flex; align-items: center; gap: 8px; }
+        .logout-btn { background: #ff3c00; border: none; padding: 4px 10px; border-radius: 20px; color: white; cursor: pointer; font-size: 11px; }
+        
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); justify-content: center; align-items: center; z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            background: #1a1e2a; padding: 25px; border-radius: 24px; width: 90%; max-width: 500px;
+            border: 1px solid #ff5e2c;
+        }
+        .modal-content input { width: 100%; padding: 12px; margin: 10px 0; background: #0a0c12; border: 1px solid #333; border-radius: 12px; color: white; font-size: 14px; }
+        .modal-content button { width: 100%; padding: 12px; background: #ff3c00; border: none; border-radius: 30px; color: white; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .switch-auth { text-align: center; margin-top: 15px; color: #ff9a6e; cursor: pointer; font-size: 13px; }
+        .checkbox-row { display: flex; align-items: center; gap: 8px; margin: 10px 0; }
+        
+        .auth-btn {
+            background: #ff3c00;
+            border: none;
+            padding: 12px;
+            border-radius: 30px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        .auth-btn:hover { background: #ff5e2c; }
+        
+        .bank-btn, .buy-btn, .job-btn, .test-btn, .chat-send, .download-btn, .policy-btn, .business-btn, .doc-btn, .admin-btn {
+            transition: all 0.2s ease;
+            cursor: pointer;
+            font-weight: 600;
+            border: none;
+            border-radius: 30px;
+        }
+        .bank-btn:hover, .buy-btn:hover, .job-btn:hover, .test-btn:hover, .chat-send:hover, .download-btn:hover, .policy-btn:hover, .business-btn:hover, .doc-btn:hover, .admin-btn:hover {
+            transform: scale(1.02);
+            filter: brightness(1.1);
+        }
+        
+        .bank-btn {
+            background: linear-gradient(135deg, #1a1e2a, #0f131c);
+            border: 1px solid #ff3c00;
+            padding: 12px 24px;
+            color: white;
+            font-size: 14px;
+        }
+        .bank-btn:hover { background: #ff3c00; }
+        
+        .buy-btn, .business-btn, .doc-btn, .admin-btn { background: #2a6e3a; padding: 10px 16px; font-size: 13px; color: white; }
+        .buy-btn:hover, .business-btn:hover, .doc-btn:hover, .admin-btn:hover { background: #3a8e4a; }
+        .buy-btn:disabled, .business-btn:disabled, .doc-btn:disabled, .admin-btn:disabled { background: #555; cursor: not-allowed; transform: none; }
+        
+        .job-btn { background: #1a1e2a; border: 1px solid #ff5e2c; padding: 8px 18px; font-size: 12px; color: white; }
+        .job-btn:hover { background: #ff5e2c; }
+        .job-btn.active { background: #ff3c00; }
+        
+        .test-btn { background: #ff3c00; padding: 10px 20px; font-size: 14px; color: white; }
+        .chat-send { background: #ff3c00; padding: 12px 24px; font-size: 14px; color: white; }
+        .download-btn { background: #2a6e3a; padding: 14px 32px; font-size: 18px; display: inline-block; text-decoration: none; color: white; }
+        .policy-btn { background: #ff3c00; padding: 12px 30px; font-size: 16px; color: white; }
+        .logout-btn { background: #ff3c00; border: none; padding: 4px 12px; border-radius: 20px; color: white; cursor: pointer; font-size: 11px; }
+        
+        .documents-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 30px;
+            margin: 30px 0;
+        }
+        .doc-card {
+            border-radius: 16px;
+            padding: 25px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+            transition: transform 0.2s;
+        }
+        .doc-card:hover { transform: translateY(-5px); }
+        .passport-card {
+            background: linear-gradient(145deg, #e8f0fe 0%, #d0e0f5 100%);
+            border: 1px solid #8db5d6;
+            color: #1a2a3a;
+        }
+        .passport-card::before {
+            content: "РФ";
+            position: absolute;
+            bottom: 10px;
+            right: 20px;
+            font-size: 80px;
+            font-weight: bold;
+            opacity: 0.08;
+            font-family: monospace;
+            pointer-events: none;
+        }
+        .med-card {
+            background: linear-gradient(145deg, #fde8f0 0%, #f5d0e0 100%);
+            border: 1px solid #d68db5;
+            color: #3a1a2a;
+        }
+        .med-card::before {
+            content: "⚕️";
+            position: absolute;
+            bottom: 10px;
+            right: 20px;
+            font-size: 70px;
+            opacity: 0.15;
+            pointer-events: none;
+        }
+        .license-card {
+            background: linear-gradient(145deg, #fde8f0 0%, #f5d0e0 100%);
+            border: 1px solid #d68db5;
+            color: #3a1a2a;
+        }
+        .license-card::before {
+            content: "🚗";
+            position: absolute;
+            bottom: 10px;
+            right: 20px;
+            font-size: 70px;
+            opacity: 0.12;
+            pointer-events: none;
+        }
+        
+        .doc-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(0,0,0,0.15);
+        }
+        .doc-header i { font-size: 32px; }
+        .doc-title { font-size: 18px; font-weight: 800; letter-spacing: 1px; }
+        
+        .doc-field {
+            margin: 12px 0;
+            font-size: 13px;
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .doc-label {
+            width: 120px;
+            font-weight: 600;
+            color: rgba(0,0,0,0.6);
+        }
+        .doc-value {
+            flex: 1;
+            font-weight: 500;
+            color: #000;
+            border-bottom: 1px dashed rgba(0,0,0,0.2);
+        }
+        .doc-stamp {
+            margin-top: 15px;
+            text-align: right;
+            font-family: monospace;
+            font-size: 11px;
+            color: rgba(0,0,0,0.5);
+            border-top: 1px solid rgba(0,0,0,0.1);
+            padding-top: 10px;
+        }
+        .doc-sign {
+            margin-top: 10px;
+            font-family: 'Brush Script MT', cursive;
+            font-size: 18px;
+            color: #2a4a6a;
+            text-align: right;
+        }
+        .category-badge {
+            display: inline-block;
+            background: #2a6e3a;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            margin-right: 5px;
+        }
+        
+        .players-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        .players-table th, .players-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #333;
+        }
+        .players-table th {
+            background: #ff3c00;
+            color: white;
+        }
+        .players-table tr:hover {
+            background: #1a1e2a;
+        }
+        .admin-input-group {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+            flex-wrap: wrap;
+        }
+        .admin-input-group input, .admin-input-group select {
+            padding: 8px;
+            background: #0a0c12;
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: white;
+        }
+        
+        .card-container { perspective: 1000px; margin: 30px auto; max-width: 400px; cursor: pointer; }
+        .bank-card {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 24px; padding: 24px; box-shadow: 0 20px 35px -10px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,60,0,0.2);
+            transition: transform 0.3s ease; position: relative; overflow: hidden;
+        }
+        .bank-card:hover { transform: translateY(-5px); }
+        .bank-card::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(255,60,0,0.1) 0%, transparent 70%); pointer-events: none; }
+        .card-chip { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .chip-icon { font-size: 32px; color: #ffd700; }
+        .card-network { font-family: monospace; font-size: 14px; letter-spacing: 2px; color: #aaa; }
+        .card-number { font-family: monospace; font-size: 22px; letter-spacing: 3px; margin: 20px 0; }
+        .card-details { display: flex; justify-content: space-between; margin-bottom: 20px; }
+        .card-label { font-size: 10px; color: #888; text-transform: uppercase; }
+        .card-value { font-size: 14px; font-weight: 600; }
+        .card-brand { text-align: right; font-size: 24px; font-weight: 800; letter-spacing: 3px; color: rgba(255,255,255,0.3); }
+        .balance-amount { font-size: 32px; font-weight: 800; color: #ffaa00; text-shadow: 0 0 10px rgba(255,170,0,0.3); text-align: center; margin: 20px 0; }
+        
+        .section-title { font-size: 28px; font-weight: 700; margin: 40px 0 25px; text-align: center; }
+        .section-title span { color: #ff5e2c; }
+        
+        .showcase-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; margin-bottom: 50px; }
+        .showcase-card { background: #11151f; border-radius: 20px; overflow: hidden; border: 1px solid #252b39; transition: 0.3s; }
+        .showcase-card:hover { transform: translateY(-5px); border-color: #ff5e2c; }
+        .showcase-img { height: 180px; background-size: cover; background-position: center; background-color: #1e2432; }
+        .showcase-info { padding: 18px; }
+        
+        .vehicles-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 25px; margin-bottom: 50px; }
+        .vehicle-item { background: #0f131c; border-radius: 20px; overflow: hidden; border: 1px solid #252b39; }
+        .vehicle-img { background: #1e2432; height: 150px; display: flex; align-items: center; justify-content: center; font-size: 50px; color: #ff7940; }
+        .vehicle-info { padding: 16px; }
+        .price { color: #ffaa00; font-weight: bold; font-size: 16px; margin: 10px 0; }
+        
+        .businesses-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; margin-bottom: 50px; }
+        .business-card { background: #0f131c; border-radius: 20px; overflow: hidden; border: 1px solid #252b39; transition: 0.3s; }
+        .business-card:hover { transform: translateY(-5px); border-color: #ffaa00; }
+        .business-icon { background: #1e2432; height: 120px; display: flex; align-items: center; justify-content: center; font-size: 50px; }
+        .business-info { padding: 16px; }
+        .business-info h4 { font-size: 18px; margin-bottom: 8px; }
+        .business-income { color: #ffaa00; font-weight: bold; margin: 8px 0; }
+        .business-level { color: #88ccff; font-size: 12px; margin-bottom: 10px; }
+        
+        .job-section { background: #0f131c; border-radius: 20px; padding: 20px; margin: 30px 0; text-align: center; }
+        .job-buttons { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 20px 0; }
+        .salary-info { background: #0a0c12; padding: 15px; border-radius: 16px; margin-top: 15px; font-size: 14px; }
+        
+        .tests-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-bottom: 50px; }
+        .test-card { background: #11151f; border-radius: 20px; padding: 20px; border: 1px solid #252b39; }
+        .test-status { margin: 12px 0; padding: 8px; border-radius: 20px; font-weight: bold; text-align: center; font-size: 13px; }
+        .test-status.passed { background: #1a5a2a; color: #8aff8a; }
+        .test-status.failed { background: #5a2a2a; color: #ff8a8a; }
+        .test-status.locked { background: #3a3a4a; color: #ffaa66; }
+        .test-questions { margin-top: 15px; padding: 12px; background: #0a0c12; border-radius: 16px; display: none; }
+        .question { margin-bottom: 15px; padding: 12px; background: #1a1e2a; border-radius: 14px; }
+        .question p { font-weight: bold; margin-bottom: 10px; font-size: 14px; color: #ffaa66; }
+        .question label { display: block; margin: 6px 0; cursor: pointer; padding: 6px; border-radius: 10px; font-size: 13px; }
+        
+        .achievements-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin: 30px 0; }
+        .achievement-card { background: #11151f; border-radius: 20px; padding: 18px; text-align: center; border: 1px solid #252b39; }
+        .achievement-card.unlocked { border-color: #ffaa00; background: #1a1e2a; }
+        .achievement-icon { font-size: 40px; margin-bottom: 10px; color: #ffaa00; }
+        
+        .forum-section { background: #0f131c; border-radius: 20px; padding: 20px; margin: 30px 0; border: 1px solid #ff3c0044; }
+        .tickets-list { max-height: 400px; overflow-y: auto; margin-bottom: 20px; }
+        .ticket { background: #1a1e2a; border-radius: 16px; padding: 15px; margin-bottom: 15px; border-left: 3px solid #ff3c00; }
+        .ticket-header { display: flex; justify-content: space-between; margin-bottom: 10px; color: #ff9a6e; font-size: 12px; flex-wrap: wrap; }
+        .ticket-reply { margin-top: 12px; padding: 10px; background: #0a0c12; border-radius: 12px; font-size: 13px; }
+        .reply-form { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+        .reply-input { flex: 1; padding: 8px; background: #0a0c12; border: 1px solid #333; border-radius: 20px; color: white; font-size: 12px; }
+        .create-ticket { margin-bottom: 20px; }
+        .create-ticket textarea { width: 100%; padding: 10px; background: #1a1e2a; border: 1px solid #333; border-radius: 14px; color: white; margin-bottom: 10px; font-size: 13px; }
+        
+        .chat-section { background: #0f131c; border-radius: 20px; padding: 20px; margin: 30px 0; border: 1px solid #ff3c0044; }
+        .chat-messages { height: 300px; overflow-y: auto; background: #0a0c12; border-radius: 16px; padding: 15px; margin-bottom: 15px; }
+        .pinned-messages {
+            background: #2a2e3f;
+            border-radius: 12px;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-left: 3px solid #ffaa00;
+        }
+        .chat-message { margin-bottom: 12px; padding: 8px 12px; background: #1a1e2a; border-radius: 12px; word-break: break-word; }
+        .chat-name { font-weight: bold; margin-right: 10px; }
+        .chat-time { color: #666; font-size: 11px; }
+        .chat-input-area { display: flex; gap: 10px; flex-wrap: wrap; }
+        .chat-input { flex: 1; padding: 12px; background: #1a1e2a; border: 1px solid #333; border-radius: 30px; color: white; }
+        
+        .admin-panel { background: #1a1e2a; border-radius: 20px; padding: 20px; margin: 30px 0; border: 2px solid #ff3c00; }
+        .admin-tabs { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .admin-tab { background: #2a2e3f; padding: 8px 16px; border-radius: 20px; cursor: pointer; }
+        .admin-tab.active { background: #ff3c00; }
+        
+        .work-log {
+            background: #0a0c12;
+            border-radius: 12px;
+            padding: 10px;
+            margin-top: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .work-log-entry {
+            padding: 8px;
+            border-bottom: 1px solid #333;
+            font-size: 12px;
+        }
+        .work-log-entry .date { color: #ffaa00; }
+        
+        .download-section { text-align: center; margin: 30px 0; padding: 25px; background: linear-gradient(145deg, #0f131e, #090c14); border-radius: 30px; }
+        
+        footer { text-align: center; padding: 30px 0; border-top: 1px solid #1f2533; color: #6c758f; font-size: 12px; }
+        
+        .policy-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.98); z-index: 2000;
+            display: flex; justify-content: center; align-items: center;
+        }
+        .policy-box {
+            background: #1a1e2a; padding: 25px; border-radius: 28px; max-width: 500px;
+            border: 2px solid #ff3c00; text-align: center;
+        }
+        .policy-box p { margin: 12px 0; font-size: 13px; color: #bbb; }
+        
+        .pdd-modal .modal-content {
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .beatles-modal .modal-content {
+            text-align: center;
+        }
+        .beatles-img {
+            width: 100%;
+            border-radius: 16px;
+            margin: 15px 0;
+        }
+        .beatles-text {
+            background: #0a0c12;
+            padding: 15px;
+            border-radius: 12px;
+            margin: 15px 0;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .yellow-submarine {
+            font-size: 18px;
+            font-weight: bold;
+            color: #ffdd00;
+            margin: 15px 0;
+            text-align: center;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 12px;
+            color: white;
+            font-weight: bold;
+            z-index: 9999;
+            animation: slideIn 0.3s ease;
+        }
+        .notification.success { background: #2a6e3a; }
+        .notification.error { background: #8b0000; }
+        .notification.warning { background: #ffaa00; color: #000; }
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @media (max-width: 768px) {
+            .navbar { flex-direction: column; text-align: center; }
+            .nav-links { justify-content: center; }
+            .section-title { font-size: 24px; }
+            .documents-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 480px) {
+            .showcase-grid, .tests-grid, .vehicles-grid, .achievements-grid, .businesses-grid { grid-template-columns: 1fr; }
+            .bank-actions { flex-direction: column; align-items: center; }
+            .job-buttons { gap: 8px; }
+            .players-table { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-particles" id="particles"></div>
 
+    <div id="policyOverlay" class="policy-overlay">
+        <div class="policy-box">
+            <h2>📜 Политика конфиденциальности</h2>
+            <p>Открывая этот сайт, вы соглашаетесь с условиями:</p>
+            <p>✅ Автор не несёт ответственности за то, как лаунчер будет вести себя на вашем компьютере/ноутбуке.<br>
+            ✅ Эта игра — вымысел и не имеет отношения к реальным городам или странам.<br>
+            ✅ Сайт НЕ запрашивает пароли, логины или личные данные (кроме вводимых вами добровольно).</p>
+            <button id="acceptPolicy" class="policy-btn">Принимаю</button>
+        </div>
+    </div>
+
+    <div id="authModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h2>🔐 Вход в аккаунт</h2>
+            <input type="text" id="loginUsername" placeholder="Никнейм">
+            <input type="password" id="loginPassword" placeholder="Пароль">
+            <div class="checkbox-row">
+                <input type="checkbox" id="rememberMe">
+                <label for="rememberMe">Запомнить меня</label>
+            </div>
+            <button id="doLoginBtn" class="auth-btn">Войти</button>
+            
+            <hr style="margin: 15px 0; border-color: #333;">
+            
+            <h2>📝 Регистрация</h2>
+            <input type="text" id="registerUsername" placeholder="Никнейм">
+            <input type="password" id="registerPassword" placeholder="Пароль">
+            <button id="doRegisterBtn" class="auth-btn">Зарегистрироваться</button>
+        </div>
+    </div>
+
+    <div id="beatlesModal" class="modal beatles-modal">
+        <div class="modal-content">
+            <h2>🎸 THE BEATLES</h2>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/9/9f/The_Beatles_-_Yellow_Submarine.png" alt="Yellow Submarine" class="beatles-img" onerror="this.src='https://via.placeholder.com/400x200?text=Yellow+Submarine'">
+            <div class="beatles-text">
+                <strong>The Beatles</strong> — легендарная британская рок-группа, образованная в Ливерпуле в 1960 году. В состав входили: Джон Леннон, Пол Маккартни, Джордж Харрисон и Ринго Старр. Их музыка изменила мир, а альбом «Yellow Submarine» (1969) стал символом эпохи. Песня «Yellow Submarine» — одна из самых узнаваемых в истории музыки.
+            </div>
+            <div class="yellow-submarine">🐟 🎶 We all live in a yellow submarine! 🎶 🐟</div>
+            <button class="auth-btn" onclick="closeBeatlesModal()">Закрыть</button>
+        </div>
+    </div>
+
+    <div id="passportModal" class="modal">
+        <div class="modal-content">
+            <h2>📘 Оформление паспорта РФ</h2>
+            <input type="text" id="passportFullName" placeholder="ФИО полностью">
+            <input type="number" id="passportBirthYear" placeholder="Год рождения">
+            <input type="text" id="passportAddress" placeholder="Место жительства">
+            <button id="savePassportBtn" class="auth-btn">Сохранить паспорт</button>
+        </div>
+    </div>
+
+    <div id="pddModal" class="modal pdd-modal">
+        <div class="modal-content" id="pddContent">
+            <h2>🚦 Тест ПДД</h2>
+            <div id="pddQuestions"></div>
+            <button id="submitPddBtn" class="auth-btn">Сдать экзамен</button>
+        </div>
+    </div>
+
+    <div id="transferModal" class="modal">
+        <div class="modal-content">
+            <h2>💸 Перевод средств</h2>
+            <input type="text" id="transferTo" placeholder="Ник получателя">
+            <input type="number" id="transferAmount" placeholder="Сумма перевода">
+            <button id="confirmTransferBtn" class="bank-btn">Отправить перевод</button>
+            <div class="switch-auth" onclick="closeTransferModal()">Отмена</div>
+        </div>
+    </div>
+
+    <div class="container" id="mainContent" style="display: none;">
+        <div class="navbar">
+            <div class="logo"><i class="fas fa-car-crash"></i> NEXT<span style="color:#ff5e2c;">GEN</span> RP</div>
+            <div class="nav-links" id="navLinks">
+                <a onclick="ifLoggedIn(() => showSection('main'))">Главная</a>
+                <a onclick="ifLoggedIn(() => showSection('documents'))">Документы</a>
+                <a onclick="ifLoggedIn(() => showSection('businesses'))">Бизнес</a>
+                <a onclick="ifLoggedIn(() => showSection('buildings'))">Постройки</a>
+                <a onclick="ifLoggedIn(() => showSection('shop'))">Магазин</a>
+                <a onclick="ifLoggedIn(() => showSection('tests'))">Тесты</a>
+                <a onclick="ifLoggedIn(() => showSection('achievements'))">Достижения</a>
+                <a onclick="ifLoggedIn(() => showSection('forum'))">Форум</a>
+                <a onclick="ifLoggedIn(() => showSection('chat'))">Чат</a>
+                <a href="https://discord.gg/S6Az9wR7P4" target="_blank">Discord</a>
+                <div id="userInfoArea"></div>
+            </div>
+        </div>
+
+        <div id="mainSection">
+            <div style="text-align: center; padding: 30px 0 20px;">
+                <h1 style="font-size: 42px;">NEXT <span style="color:#ff5e2c;">GEN</span> RP</h1>
+                <p>Облачный сервер | Данные с любых устройств</p>
+            </div>
+            <div class="card-container" id="bankCardContainer">
+                <div class="bank-card">
+                    <div class="card-chip"><i class="fas fa-microchip chip-icon"></i><span class="card-network">VISTA</span></div>
+                    <div class="card-number" id="cardNumberDisplay">**** **** **** ****</div>
+                    <div class="card-details">
+                        <div><div class="card-label">ДЕРЖАТЕЛЬ</div><div class="card-value" id="cardHolder">НЕ АВТОРИЗОВАН</div></div>
+                        <div><div class="card-label">ДЕЙСТВУЕТ ДО</div><div class="card-value" id="cardExpiry">**/**</div></div>
+                    </div>
+                    <div class="card-brand">KISA</div>
+                </div>
+            </div>
+            <div class="balance-amount" id="balanceDisplay">0 ₽</div>
+            <div class="bank-actions" style="display: flex; gap: 10px; justify-content: center; margin: 20px 0;">
+                <button class="bank-btn" id="showTransferBtn"><i class="fas fa-exchange-alt"></i> Перевести</button>
+                <button class="bank-btn" id="refreshBalanceBtn"><i class="fas fa-sync-alt"></i> Обновить</button>
+            </div>
+            <div class="download-section">
+                <i class="fas fa-download" style="font-size: 40px; color: #ff5e2c;"></i>
+                <h2>Скачай лаунчер</h2>
+                <a href="https://drive.google.com/file/d/133lQwtyCNkqBmtg8fglZzhhH30d2kfnt/view?usp=drive_link" class="download-btn" target="_blank">📦 СКАЧАТЬ ЛАУНЧЕР (EXE)</a>
+            </div>
+            <div class="job-section" id="jobSection">
+                <h3>Выбери профессию</h3>
+                <div class="job-buttons">
+                    <button class="job-btn" data-job="taxi">🚖 Таксист (+30 000₽/час)</button>
+                    <button class="job-btn" data-job="police">👮 Полиция (+35 000₽/час)</button>
+                    <button class="job-btn" data-job="mechanic">🔧 Механик (+25 000₽/час)</button>
+                    <button class="job-btn" data-job="loader">📦 Грузчик (+20 000₽/час)</button>
+                    <button class="job-btn" data-job="cashier">💰 Инкассатор (+45 000₽/час)</button>
+                    <button class="job-btn" data-job="mayor">🏛️ Мэр (+80 000₽/час)</button>
+                    <button class="job-btn" data-job="svoya">⭐ Своя (+43 000₽/час)</button>
+                </div>
+                <div class="salary-info" id="salaryInfo">
+                    <p id="jobStatus">Профессия не выбрана</p>
+                    <p id="nextSalary">—</p>
+                </div>
+            </div>
+            <div style="background: #1a1e2a; border-radius: 30px; padding: 15px; text-align: center; margin: 20px 0;">
+                📦 <strong>Наши моды:</strong> 
+                <a href="#" target="_blank">BrickMountains</a> | 
+                <a href="#" target="_blank">EternityRP</a> | 
+                <a href="#" target="_blank">RandomClothes</a>
+            </div>
+        </div>
+
+        <div id="documentsSection" style="display: none;">
+            <div class="section-title">📋 Мои <span>документы</span></div>
+            <div id="documentsGrid" class="documents-grid"></div>
+            <div style="text-align: center; margin-top: 20px;">
+                <button id="applyPassportBtn" class="doc-btn">📘 Оформить паспорт</button>
+                <button id="applyLicenseBtn" class="doc-btn" style="margin-left: 10px;">🚗 Сдать на права</button>
+            </div>
+        </div>
+
+        <div id="businessesSection" style="display: none;">
+            <div class="section-title">🏢 Купить <span>бизнес</span></div>
+            <div class="businesses-grid" id="businessesGrid"></div>
+            <div style="margin-top: 20px; padding: 18px; background: #0f131c; border-radius: 20px;">
+                <h3>📊 Мои бизнесы</h3>
+                <div id="myBusinessesList"></div>
+            </div>
+        </div>
+
+        <div id="buildingsSection" style="display: none;"><div class="section-title">🏗️ Популярные <span>постройки</span></div><div class="showcase-grid" id="buildingsGrid"></div></div>
+        <div id="shopSection" style="display: none;"><div class="section-title">🏪 Магазин <span>транспорта</span></div><div class="vehicles-grid" id="vehicleList"></div><div style="margin-top:20px; padding:18px; background:#0f131c; border-radius:20px;"><h3>🚗 Мой гараж</h3><div id="garageContent"></div></div></div>
+        <div id="testsSection" style="display: none;"><div class="section-title">📝 Квалификационные <span>тесты</span></div><div class="tests-grid" id="testsContainer"></div></div>
+        <div id="achievementsSection" style="display: none;"><div class="section-title">🏆 Ваши <span>достижения</span></div><div class="achievements-grid" id="achievementsGrid"></div></div>
+        
+        <div id="forumSection" style="display: none;">
+            <div class="section-title">💬 Форум поддержки</div>
+            <div class="forum-section">
+                <div class="create-ticket">
+                    <h3>Создать обращение</h3>
+                    <textarea id="ticketTitle" placeholder="Тема" rows="2"></textarea>
+                    <textarea id="ticketText" placeholder="Опишите проблему..." rows="3"></textarea>
+                    <button id="createTicketBtn" class="bank-btn">Отправить</button>
+                </div>
+                <div id="ticketsList" class="tickets-list"></div>
+            </div>
+        </div>
+        
+        <div id="chatSection" style="display: none;">
+            <div class="section-title">💬 Общий <span>чат</span></div>
+            <div class="chat-section">
+                <div id="pinnedMessages" class="pinned-messages"></div>
+                <div class="chat-messages" id="chatMessages"></div>
+                <div class="chat-input-area">
+                    <input type="text" id="messageInput" class="chat-input" placeholder="Сообщение...">
+                    <button id="sendChatBtn" class="chat-send">Отправить</button>
+                </div>
+            </div>
+        </div>
+        
+        <div id="adminPanel" style="display: none;">
+            <div class="section-title">👑 Админ-панель</div>
+            <div class="admin-panel">
+                <div class="admin-tabs">
+                    <div class="admin-tab active" data-tab="players">Игроки</div>
+                    <div class="admin-tab" data-tab="roles">Роли</div>
+                    <div class="admin-tab" data-tab="money">Управление</div>
+                    <div class="admin-tab" data-tab="worklog">Лог работы</div>
+                </div>
+                <div id="playersTab">
+                    <h3>Список игроков</h3>
+                    <div style="overflow-x: auto;">
+                        <table class="players-table" id="playersTable">
+                            <thead>
+                                <tr><th>Ник</th><th>Роль</th><th>Баланс</th><th>Машины</th><th>Бизнесы</th><th>Профессия</th><th>Действия</th></tr>
+                            </thead>
+                            <tbody id="playersList"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div id="rolesTab" style="display: none;">
+                    <h3>Назначение ролей (только для создателя Yura)</h3>
+                    <div class="admin-input-group">
+                        <input type="text" id="roleUser" placeholder="Никнейм игрока">
+                        <select id="roleType">
+                            <option value="player">Игрок</option>
+                            <option value="moderator">Модератор</option>
+                            <option value="admin">Администратор</option>
+                        </select>
+                        <button id="assignRoleBtnPanel" class="admin-btn">Назначить роль</button>
+                        <button id="removeRoleBtnPanel" class="admin-btn" style="background:#8b0000;">Снять роль</button>
+                    </div>
+                    <div id="roleResult"></div>
+                </div>
+                <div id="moneyTab" style="display: none;">
+                    <h3>Управление деньгами и имуществом</h3>
+                    <div class="admin-input-group">
+                        <input type="text" id="targetUser" placeholder="Никнейм игрока">
+                        <input type="number" id="moneyAmount" placeholder="Сумма">
+                        <button id="giveMoneyBtnPanel" class="admin-btn">Выдать деньги</button>
+                        <button id="takeMoneyBtnPanel" class="admin-btn">Забрать деньги</button>
+                    </div>
+                    <div class="admin-input-group">
+                        <select id="propertyType">
+                            <option value="car">Машина</option>
+                            <option value="business">Бизнес</option>
+                        </select>
+                        <input type="text" id="propertyName" placeholder="Название машины/бизнеса">
+                        <button id="givePropertyBtn" class="admin-btn">Выдать имущество</button>
+                        <button id="takePropertyBtn" class="admin-btn">Забрать имущество</button>
+                    </div>
+                    <div id="moneyResult"></div>
+                </div>
+                <div id="worklogTab" style="display: none;">
+                    <h3>📋 Лог работы администрации</h3>
+                    <div class="work-log" id="workLogContainer"></div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>NEXT GEN RP Community — неофициальный проект. По вопросам: bossofgoose@gmail.com</p>
+            <p>Облачный сервер Firebase | Лаунчер версия 2.0 | © 2026</p>
+        </footer>
+    </div>
+
+    <script>
+        // Хеширование паролей
+        async function hashPassword(password) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(password);
+            const hash = await crypto.subtle.digest('SHA-256', data);
+            return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+        
+        // Уведомления
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 3000);
+        }
+        
+        // Экранирование HTML
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // Логгирование действий администрации
+        async function logAdminAction(action, target, details) {
+            if (!currentUser) return;
+            const logEntry = {
+                admin: currentUser,
+                action: action,
+                target: target,
+                details: details,
+                timestamp: Date.now(),
+                date: new Date().toLocaleString()
+            };
+            await db.collection('adminLogs').add(logEntry);
+            if (currentUser === 'Yura' || currentUserRole === 'admin') {
+                loadWorkLog();
+            }
+        }
+        
+        async function loadWorkLog() {
+            const snapshot = await db.collection('adminLogs').orderBy('timestamp', 'desc').limit(50).get();
+            const logs = snapshot.docs.map(doc => doc.data());
+            renderWorkLog(logs);
+        }
+        
+        function renderWorkLog(logs) {
+            const container = document.getElementById('workLogContainer');
+            if (!container) return;
+            if (logs.length === 0) {
+                container.innerHTML = '<div class="work-log-entry">📭 Лог действий пуст</div>';
+                return;
+            }
+            container.innerHTML = logs.map(log => `
+                <div class="work-log-entry">
+                    <span class="date">📅 ${log.date}</span><br>
+                    <span>👤 ${escapeHtml(log.admin)}</span><br>
+                    <span>⚡ ${escapeHtml(log.action)}</span><br>
+                    <span>🎯 ${escapeHtml(log.target)}</span><br>
+                    <span>📝 ${escapeHtml(log.details)}</span>
+                    <hr style="margin-top:5px; border-color:#333;">
+                </div>
+            `).join('');
+        }
+        
+        // Частицы фона
+        for(let i = 0; i < 80; i++) {
+            let p = document.createElement('span');
+            p.style.left = Math.random() * 100 + '%';
+            p.style.animationDelay = Math.random() * 20 + 's';
+            p.style.animationDuration = 8 + Math.random() * 15 + 's';
+            p.style.width = p.style.height = (2 + Math.random() * 5) + 'px';
+            document.getElementById('particles').appendChild(p);
+        }
+        
+        // Политика конфиденциальности
+        if (localStorage.getItem('policyAccepted') === 'true') {
+            document.getElementById('policyOverlay').style.display = 'none';
+            document.getElementById('authModal').style.display = 'flex';
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const acceptBtn = document.getElementById('acceptPolicy');
+            if (acceptBtn) {
+                acceptBtn.onclick = function() {
+                    localStorage.setItem('policyAccepted', 'true');
+                    document.getElementById('policyOverlay').style.display = 'none';
+                    document.getElementById('authModal').style.display = 'flex';
+                };
+            }
+        });
+        
+        function showBeatlesModal() { document.getElementById('beatlesModal').style.display = 'flex'; }
+        function closeBeatlesModal() { document.getElementById('beatlesModal').style.display = 'none'; }
+        
+        const firebaseConfig = {
+            apiKey: "AIzaSyAJeBC0bgStvXZlNGpF0M1J9MwUoM57yNw",
+            authDomain: "brickrp-site.firebaseapp.com",
+            projectId: "brickrp-site",
+            storageBucket: "brickrp-site.firebasestorage.app",
+            messagingSenderId: "735858740541",
+            appId: "1:735858740541:web:54fcf2ef0c2cb60d9d4954"
+        };
+        
+        let db;
+        let currentUser = null;
+        let currentUserRole = "player";
+        let userData = null;
+        let allUsers = [];
+        
+        const roleTags = {
+            "creator": "👑 СОЗДАТЕЛЬ",
+            "admin": "🛡️ АДМИН",
+            "moderator": "📋 МОДЕРАТОР",
+            "player": "🎮 ИГРОК"
+        };
+        
+        // Функция для удаления дубликатов и создания одного аккаунта создателя
+        async function fixCreatorAccount() {
+            const creatorUsername = "Yura";
+            const creatorPassword = "5638Yura";
+            
+            // Получаем все документы с именем Yura (включая возможные дубликаты с разным регистром)
+            const allDocs = await db.collection('users').get();
+            const yuraAccounts = [];
+            
+            allDocs.forEach(doc => {
+                if (doc.id.toLowerCase() === creatorUsername.toLowerCase() || doc.id === creatorUsername) {
+                    yuraAccounts.push({ id: doc.id, data: doc.data() });
+                }
+            });
+            
+            // Удаляем все найденные аккаунты Yura
+            for (const account of yuraAccounts) {
+                await db.collection('users').doc(account.id).delete();
+                console.log(`🗑️ Удалён дубликат аккаунта: ${account.id}`);
+            }
+            
+            // Создаём новый аккаунт создателя
+            const hashedPassword = await hashPassword(creatorPassword);
+            const creatorData = {
+                username: creatorUsername,
+                password: hashedPassword,
+                balance: 999999999,
+                garage: ["🚗 Bugatti Chiron", "🚁 Private Jet", "🏍️ Ducati V4", "🚤 Yacht"],
+                businesses: ["auto", "restaurant", "hotel", "club", "gas", "svoy"],
+                businessLevels: { auto: 5, restaurant: 5, hotel: 5, club: 5, gas: 5, svoy: 5 },
+                job: "mayor",
+                lastPayTime: Date.now(),
+                lastBusinessTime: Date.now(),
+                policeTest: 'passed',
+                cashierTest: 'passed',
+                mayorTest: 'passed',
+                achievements: ["first_car", "first_business", "first_passport", "first_license", "million", "test_master", "job_master", "collector", "rich", "business_magnate"],
+                isBanned: false,
+                passport: { fullName: "Юра Создатель", birthYear: 1990, address: "Москва, Кремль", id: "123456789012", issuedDate: new Date().toLocaleDateString() },
+                license: { id: "098765432109", issueDate: new Date().toLocaleDateString() },
+                licenseCooldown: null,
+                role: 'creator'
+            };
+            
+            await db.collection('users').doc(creatorUsername).set(creatorData);
+            console.log("✅ Аккаунт создателя Yura успешно создан!");
+            showNotification("✅ Аккаунт создателя Yura создан! Войдите с паролем 5638Yura", 'success');
+        }
+        
+        const pddQuestions = [
+            { text: "Что означает красный сигнал светофора?", options: ["Движение разрешено", "Движение запрещено", "Приготовиться к движению", "Уступить дорогу"], correct: 1 },
+            { text: "Что означает жёлтый сигнал светофора?", options: ["Движение запрещено", "Движение разрешено", "Предупреждение о смене сигнала", "Стоп-линия"], correct: 2 },
+            { text: "Разрешено ли обгонять на пешеходном переходе?", options: ["Да", "Нет", "Только если нет пешеходов", "Разрешено, если не создаёт помех"], correct: 1 },
+            { text: "Что такое «опасный груз»?", options: ["Крупногабаритный груз", "Взрывчатые, легковоспламеняющиеся вещества", "Тяжёлый груз", "Груз, мешающий обзору"], correct: 1 },
+            { text: "Кто должен уступить дорогу при одновременном перестроении?", options: ["Тот, кто слева", "Тот, кто справа", "Тот, кто быстрее", "Тот, кто первый начал манёвр"], correct: 1 },
+            { text: "Можно ли перевозить детей до 12 лет на переднем сиденье?", options: ["Да, всегда", "Нет, только на заднем", "Да, только в специальном кресле", "Нет, запрещено"], correct: 2 },
+            { text: "Что означает знак «Кирпич»?", options: ["Въезд запрещён", "Стоянка запрещена", "Одностороннее движение", "Тупик"], correct: 0 },
+            { text: "Какой документ даёт право управления транспортным средством?", options: ["Паспорт", "Водительское удостоверение", "Медицинская книжка", "Свидетельство о регистрации"], correct: 1 },
+            { text: "При каком уровне алкоголя в крови запрещено вождение?", options: ["Любое содержание алкоголя", "Более 0.1 промилле", "Более 0.5 промилле", "Более 1 промилле"], correct: 0 },
+            { text: "Что нужно сделать при ДТП?", options: ["Уехать с места аварии", "Остановиться, включить аварийку, вызвать ГИБДД", "Позвонить друзьям", "Продолжить движение"], correct: 1 }
+        ];
+        
+        const businessesList = [
+            { id: "auto", name: "Автосалон", icon: "fa-car", price: 500000, income: 25000, level: 1 },
+            { id: "restaurant", name: "Ресторан", icon: "fa-utensils", price: 300000, income: 15000, level: 1 },
+            { id: "hotel", name: "Отель", icon: "fa-hotel", price: 800000, income: 40000, level: 1 },
+            { id: "club", name: "Ночной клуб", icon: "fa-music", price: 600000, income: 30000, level: 1 },
+            { id: "gas", name: "АЗС", icon: "fa-gas-pump", price: 400000, income: 20000, level: 1 },
+            { id: "svoy", name: "⭐ Свой бизнес", icon: "fa-star", price: 2000000, income: 100000, level: 1 }
+        ];
+        
+        const buildings = [
+            { name: "Небоскрёб Downtown", image: "https://steamuserimages-a.akamaihd.net/ugc/1767174607894012903/", desc: "Центральный деловой район" },
+            { name: "АЗС Shell", image: "https://steamuserimages-a.akamaihd.net/ugc/1767174607894012345/", desc: "Заправка с автомойкой" },
+            { name: "Полицейский участок", image: "https://steamuserimages-a.akamaihd.net/ugc/1767174607894011789/", desc: "Отдел LSPD" },
+            { name: "Больница", image: "https://steamuserimages-a.akamaihd.net/ugc/1767174607894011234/", desc: "Скорая помощь" },
+            { name: "Автосалон", image: "https://steamuserimages-a.akamaihd.net/ugc/1767174607894010678/", desc: "Покупка машин" },
+            { name: "Ресторан KISA", image: "https://steamuserimages-a.akamaihd.net/ugc/1767174607894010123/", desc: "VIP-место встреч" }
+        ];
+        
+        const vehicles = [
+            { name: "ТАС-Дом на колёсах", price: 1200000, icon: "fas fa-home" },
+            { name: "RAH 270 Vapor VIP Helicopter", price: 5000000, icon: "fas fa-helicopter" },
+            { name: "2019 Lada Granta FL", price: 1000000, icon: "fas fa-car" },
+            { name: "Kawasaki Ninja red", price: 900000, icon: "fas fa-motorcycle" },
+            { name: "Mercedes-Benz C63 AMG", price: 2100000, icon: "fas fa-car-side" },
+            { name: "2020 BMW M8 Coupe", price: 2500000, icon: "fas fa-car" }
+        ];
+        
+        const testsData = {
+            policeTest: { name: "👮 Тест полицейского", jobName: "Полиция", questions: [
+                { text: "Что делать при ограблении банка?", options: ["Ждать подкрепления", "Врываться в одиночку", "Игнорировать", "Уйти в отпуск"], correct: 0 },
+                { text: "Можно ли стрелять в безоружного?", options: ["Да", "Нет, если нет угрозы", "Всегда", "Только в спину"], correct: 1 },
+                { text: "Что такое FearRP?", options: ["Страх за свою жизнь", "Название машины", "Команда", "Оружие"], correct: 0 },
+                { text: "Как обращаться к мэру?", options: ["На ты", "Господин мэр", "Просто по имени", "Молчать"], correct: 1 },
+                { text: "Что делать с уликами?", options: ["Уничтожить", "Продать", "Сохранить и передать", "Спрятать"], correct: 2 }
+            ]},
+            cashierTest: { name: "💰 Тест инкассатора", jobName: "Инкассатор", questions: [
+                { text: "Что самое важное при перевозке денег?", options: ["Скорость", "Безопасность", "Красивая машина", "Музыка"], correct: 1 },
+                { text: "Что делать при нападении?", options: ["Сдаться", "Убегать", "Оказать сопротивление и вызвать помощь", "Выбросить деньги"], correct: 2 },
+                { text: "Кто может остановить инкассатора?", options: ["Любой игрок", "Только полиция", "Друзья", "Бандиты"], correct: 1 },
+                { text: "Что такое броневик?", options: ["Обычная машина", "Машина с бронёй", "Мотоцикл", "Вертолёт"], correct: 1 },
+                { text: "Куда сдавать деньги?", options: ["Домой", "В банк", "В гараж", "Друзьям"], correct: 1 }
+            ]},
+            mayorTest: { name: "🏛️ Тест мэра", jobName: "Мэр", questions: [
+                { text: "Кто назначает мэра?", options: ["Игроки", "Администрация", "Президент", "Народ"], correct: 1 },
+                { text: "Что входит в обязанности мэра?", options: ["Водить такси", "Управлять городом", "Воевать", "Гонять"], correct: 1 },
+                { text: "Можно ли мэру нарушать закон?", options: ["Да, он главный", "Нет, он тоже подчиняется", "Только ночью", "С разрешения полиции"], correct: 1 },
+                { text: "Как повысить бюджет города?", options: ["Печатать деньги", "Налоги и штрафы", "Продать машины", "Никак"], correct: 1 },
+                { text: "Что делать с жалобами граждан?", options: ["Игнорировать", "Рассмотреть и решить", "Удалить", "Посмеяться"], correct: 1 }
+            ]}
+        };
+        
+        const achievementsList = [
+            { id: "first_car", title: "Первый автомобиль", desc: "Купить первую машину", icon: "fa-car", check: (d) => d.garage?.length > 0 },
+            { id: "first_business", title: "Первый бизнес", desc: "Купить первый бизнес", icon: "fa-store", check: (d) => d.businesses?.length > 0 },
+            { id: "first_passport", title: "Гражданин РФ", desc: "Получить паспорт", icon: "fa-passport", check: (d) => d.passport !== null },
+            { id: "first_license", title: "Водитель", desc: "Получить водительские права", icon: "fa-id-card", check: (d) => d.license !== null },
+            { id: "million", title: "Миллионер", desc: "Накопить 1 000 000 ₽", icon: "fa-coins", check: (d) => d.balance >= 1000000 },
+            { id: "test_master", title: "Мастер тестов", desc: "Сдать все три теста", icon: "fa-graduation-cap", check: (d) => d.policeTest === 'passed' && d.cashierTest === 'passed' && d.mayorTest === 'passed' },
+            { id: "job_master", title: "Трудоголик", desc: "Устроиться на работу", icon: "fa-briefcase", check: (d) => d.job !== null },
+            { id: "collector", title: "Коллекционер", desc: "Купить 3 машины", icon: "fa-car-side", check: (d) => d.garage?.length >= 3 },
+            { id: "rich", title: "Богач", desc: "Накопить 5 000 000 ₽", icon: "fa-gem", check: (d) => d.balance >= 5000000 },
+            { id: "business_magnate", title: "Магнат", desc: "Купить 3 бизнеса", icon: "fa-chart-line", check: (d) => d.businesses?.length >= 3 }
+        ];
+        
+        function initSite() {
+            if (!db) return;
+            
+            // Запускаем исправление аккаунта создателя
+            fixCreatorAccount();
+            
+            document.getElementById('bankCardContainer').addEventListener('click', showBeatlesModal);
+            
+            async function updateAchievements() {
+                if (!userData) return;
+                let changed = false;
+                for (const ach of achievementsList) {
+                    if (!userData.achievements?.includes(ach.id) && ach.check(userData)) {
+                        if (!userData.achievements) userData.achievements = [];
+                        userData.achievements.push(ach.id);
+                        changed = true;
+                        showNotification(`🏆 Получено достижение: ${ach.title}!`, 'success');
+                    }
+                }
+                if (changed) {
+                    await db.collection('users').doc(userData.username).update({ achievements: userData.achievements });
+                    renderAchievements();
+                }
+            }
+            
+            async function loadAllUsers() {
+                const snapshot = await db.collection('users').get();
+                allUsers = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                if (currentUser === 'Yura' || currentUserRole === 'admin') {
+                    renderPlayersTable();
+                }
+            }
+            
+            function renderPlayersTable() {
+                const tbody = document.getElementById('playersList');
+                if (!tbody) return;
+                const jobNames = { taxi:'Таксист', police:'Полиция', mechanic:'Механик', loader:'Грузчик', cashier:'Инкассатор', mayor:'Мэр', svoya:'Своя' };
+                tbody.innerHTML = allUsers.map(user => `
+                    <tr>
+                        <td>${user.username}${user.username === 'Yura' ? ' 👑' : ''}</td>
+                        <td>${user.role || 'player'}</td>
+                        <td>${(user.balance || 0).toLocaleString()} ₽</td>
+                        <td>${(user.garage || []).length}</td>
+                        <td>${(user.businesses || []).length}</td>
+                        <td>${user.job ? jobNames[user.job] || user.job : '❌ Нет'}</td>
+                        <td>
+                            ${(currentUser === 'Yura' || currentUserRole === 'admin') && user.username !== 'Yura' ? `
+                                <button class="admin-btn" onclick="adminGiveMoney('${user.username}')">💰 Выдать</button>
+                                <button class="admin-btn" onclick="adminTakeMoney('${user.username}')">💰 Забрать</button>
+                                <button class="admin-btn" onclick="adminGiveCar('${user.username}')">🚗 Дать машину</button>
+                                ${!user.isBanned ? `<button class="admin-btn" onclick="banUser('${user.username}')">⛔ Забанить</button>` : `<button class="admin-btn" onclick="unbanUser('${user.username}')">✅ Разбанить</button>`}
+                            ` : ''}
+                            ${currentUser === 'Yura' && user.username !== 'Yura' ? `
+                                <button class="admin-btn" onclick="openRoleModal('${user.username}')">👑 Назначить роль</button>
+                                <button class="admin-btn" onclick="removeRole('${user.username}')">📋 Снять роль</button>
+                            ` : ''}
+                         </td>
+                    </tr>
+                `).join('');
+            }
+            
+            window.adminGiveMoney = async function(username) {
+                if (currentUser !== 'Yura' && currentUserRole !== 'admin') {
+                    showNotification('Нет прав! Только Yura может выдавать деньги!', 'error');
+                    return;
+                }
+                const amount = parseInt(prompt("Сколько денег выдать?"));
+                if (isNaN(amount) || amount <= 0) return;
+                
+                const userRef = db.collection('users').doc(username);
+                try {
+                    await db.runTransaction(async (transaction) => {
+                        const doc = await transaction.get(userRef);
+                        if (!doc.exists) throw new Error('Игрок не найден');
+                        transaction.update(userRef, { balance: (doc.data().balance || 0) + amount });
+                    });
+                    await logAdminAction(`💰 Выдача денег`, username, `Сумма: ${amount.toLocaleString()} ₽`);
+                    showNotification(`✅ Выдано ${amount.toLocaleString()} ₽ игроку ${username}`, 'success');
+                    await loadAllUsers();
+                    if (userData && userData.username === username) {
+                        userData.balance += amount;
+                        updateCardUI();
+                    }
+                } catch (error) {
+                    showNotification(error.message, 'error');
+                }
+            };
+            
+            window.adminTakeMoney = async function(username) {
+                if (currentUser !== 'Yura' && currentUserRole !== 'admin') {
+                    showNotification('Нет прав! Только Yura может забирать деньги!', 'error');
+                    return;
+                }
+                const amount = parseInt(prompt("Сколько денег забрать?"));
+                if (isNaN(amount) || amount <= 0) return;
+                
+                const userRef = db.collection('users').doc(username);
+                try {
+                    await db.runTransaction(async (transaction) => {
+                        const doc = await transaction.get(userRef);
+                        if (!doc.exists) throw new Error('Игрок не найден');
+                        const newBalance = Math.max(0, (doc.data().balance || 0) - amount);
+                        transaction.update(userRef, { balance: newBalance });
+                    });
+                    await logAdminAction(`💰 Изъятие денег`, username, `Сумма: ${amount.toLocaleString()} ₽`);
+                    showNotification(`✅ Забрано ${amount.toLocaleString()} ₽ у ${username}`, 'success');
+                    await loadAllUsers();
+                    if (userData && userData.username === username) {
+                        userData.balance = Math.max(0, userData.balance - amount);
+                        updateCardUI();
+                    }
+                } catch (error) {
+                    showNotification(error.message, 'error');
+                }
+            };
+            
+            window.adminGiveCar = async function(username) {
+                if (currentUser !== 'Yura' && currentUserRole !== 'admin') {
+                    showNotification('Нет прав! Только Yura может выдавать машины!', 'error');
+                    return;
+                }
+                const carName = prompt("Введите название машины:");
+                if (!carName) return;
+                
+                const userRef = db.collection('users').doc(username);
+                try {
+                    await db.runTransaction(async (transaction) => {
+                        const doc = await transaction.get(userRef);
+                        if (!doc.exists) throw new Error('Игрок не найден');
+                        const garage = doc.data().garage || [];
+                        garage.push(carName);
+                        transaction.update(userRef, { garage: garage });
+                    });
+                    await logAdminAction(`🚗 Выдача машины`, username, `Машина: ${carName}`);
+                    showNotification(`✅ Выдана машина ${carName} игроку ${username}`, 'success');
+                    await loadAllUsers();
+                    if (userData && userData.username === username) {
+                        if (!userData.garage) userData.garage = [];
+                        userData.garage.push(carName);
+                    }
+                } catch (error) {
+                    showNotification(error.message, 'error');
+                }
+            };
+            
+            window.banUser = async function(username) {
+                if (currentUser !== 'Yura' && currentUserRole !== 'admin') {
+                    showNotification('Нет прав!', 'error');
+                    return;
+                }
+                if (username === 'Yura') { showNotification('Нельзя забанить создателя!', 'error'); return; }
+                const user = allUsers.find(u => u.username === username);
+                if (user) {
+                    user.isBanned = true;
+                    await db.collection('users').doc(username).set(user);
+                    await logAdminAction(`⛔ Бан игрока`, username, `Причина: нарушение правил`);
+                    await loadAllUsers();
+                    showNotification(`✅ ${username} забанен`, 'success');
+                }
+            };
+            
+            window.unbanUser = async function(username) {
+                if (currentUser !== 'Yura' && currentUserRole !== 'admin') {
+                    showNotification('Нет прав!', 'error');
+                    return;
+                }
+                const user = allUsers.find(u => u.username === username);
+                if (user) {
+                    user.isBanned = false;
+                    await db.collection('users').doc(username).set(user);
+                    await logAdminAction(`✅ Разбан игрока`, username, `Причина: апелляция принята`);
+                    await loadAllUsers();
+                    showNotification(`✅ ${username} разбанен`, 'success');
+                }
+            };
+            
+            window.openRoleModal = function(username) {
+                document.getElementById('roleUser').value = username;
+                document.getElementById('rolesTab').style.display = 'block';
+                document.querySelector('.admin-tab[data-tab="roles"]').click();
+            };
+            
+            async function assignRole(username, role) {
+                if (currentUser !== 'Yura') {
+                    showNotification('Только создатель Yura может назначать роли!', 'error');
+                    return;
+                }
+                if (username === 'Yura') {
+                    showNotification('Нельзя изменить роль создателя!', 'error');
+                    return;
+                }
+                const user = allUsers.find(u => u.username === username);
+                if (user) {
+                    user.role = role;
+                    await db.collection('users').doc(username).set(user);
+                    await logAdminAction(`👑 Назначение роли`, username, `Роль: ${role}`);
+                    await loadAllUsers();
+                    showNotification(`✅ Игроку ${username} назначена роль: ${role}`, 'success');
+                } else {
+                    showNotification('Игрок не найден!', 'error');
+                }
+            }
+            
+            async function removeRole(username) {
+                if (currentUser !== 'Yura') {
+                    showNotification('Только создатель Yura может снимать роли!', 'error');
+                    return;
+                }
+                if (username === 'Yura') {
+                    showNotification('Нельзя снять роль создателя!', 'error');
+                    return;
+                }
+                const user = allUsers.find(u => u.username === username);
+                if (user) {
+                    user.role = 'player';
+                    await db.collection('users').doc(username).set(user);
+                    await logAdminAction(`📋 Снятие роли`, username, `Новая роль: player`);
+                    await loadAllUsers();
+                    showNotification(`✅ У игрока ${username} снята роль (теперь игрок)`, 'success');
+                } else {
+                    showNotification('Игрок не найден!', 'error');
+                }
+            }
+            
+            function getSignature(fullName) {
+                const parts = fullName.trim().split(/\s+/);
+                if (parts.length >= 2) {
+                    const lastName = parts[0];
+                    const firstName = parts[1];
+                    return (lastName[0] + firstName[0]).toUpperCase();
+                }
+                return "XX";
+            }
+            
+            async function loadUserData(username) {
+                const doc = await db.collection('users').doc(username).get();
+                if (doc.exists) {
+                    userData = doc.data();
+                    currentUserRole = userData.role || 'player';
+                    if (username === 'Yura') currentUserRole = 'creator';
+                } else {
+                    userData = {
+                        username: username,
+                        balance: 50000,
+                        garage: [],
+                        businesses: [],
+                        businessLevels: {},
+                        job: null,
+                        lastPayTime: Date.now(),
+                        lastBusinessTime: Date.now(),
+                        policeTest: null,
+                        cashierTest: null,
+                        mayorTest: null,
+                        achievements: [],
+                        isBanned: false,
+                        passport: null,
+                        license: null,
+                        licenseCooldown: null,
+                        role: 'player'
+                    };
+                    currentUserRole = 'player';
+                    await db.collection('users').doc(username).set(userData);
+                }
+                if (userData.isBanned && username !== 'Yura') throw new Error("BANNED");
+                if (!userData.businesses) userData.businesses = [];
+                if (!userData.businessLevels) userData.businessLevels = {};
+                if (!userData.lastBusinessTime) userData.lastBusinessTime = Date.now();
+                if (!userData.passport) userData.passport = null;
+                if (!userData.license) userData.license = null;
+                if (!userData.role) userData.role = 'player';
+                updateCardUI();
+                updateUI();
+                renderShop();
+                renderTests();
+                renderAchievements();
+                renderJobStatus();
+                renderBusinesses();
+                renderMyBusinesses();
+                renderDocuments();
+                await loadAllUsers();
+                await loadWorkLog();
+            }
+            
+            async function saveUserData() {
+                if (!userData) return;
+                await db.collection('users').doc(userData.username).set(userData);
+            }
+            
+            function generateRandomId() {
+                return Math.floor(Math.random() * 9000000000 + 1000000000).toString();
+            }
+            
+            function renderDocuments() {
+                const container = document.getElementById('documentsGrid');
+                if (!container) return;
+                let html = '';
+                if (userData.passport) {
+                    const passportId = userData.passport.id;
+                    const series = passportId.substring(0, 4);
+                    const number = passportId.substring(4);
+                    const signature = getSignature(userData.passport.fullName);
+                    html += `<div class="doc-card passport-card"><div class="doc-header"><i class="fas fa-passport"></i><span class="doc-title">ПАСПОРТ РФ</span></div>
+                        <div class="doc-field"><span class="doc-label">ФИО:</span><span class="doc-value">${escapeHtml(userData.passport.fullName)}</span></div>
+                        <div class="doc-field"><span class="doc-label">Год рождения:</span><span class="doc-value">${userData.passport.birthYear}</span></div>
+                        <div class="doc-field"><span class="doc-label">Место жительства:</span><span class="doc-value">${escapeHtml(userData.passport.address)}</span></div>
+                        <div class="doc-field"><span class="doc-label">Серия и номер:</span><span class="doc-value">${series} ${number}</span></div>
+                        <div class="doc-field"><span class="doc-label">Код подразделения:</span><span class="doc-value">${Math.floor(Math.random() * 1000)}-${Math.floor(Math.random() * 1000)}</span></div>
+                        <div class="doc-field"><span class="doc-label">Дата выдачи:</span><span class="doc-value">${userData.passport.issuedDate}</span></div>
+                        <div class="doc-sign">Подпись: ${signature}</div>
+                        <div class="doc-stamp">✓ Действителен</div></div>`;
+                } else {
+                    html += `<div class="doc-card passport-card" style="opacity:0.7;"><div class="doc-header"><i class="fas fa-passport"></i><span class="doc-title">ПАСПОРТ РФ</span></div><div class="doc-field">❌ Паспорт не оформлен</div></div>`;
+                }
+                if (userData.passport) {
+                    const medId = generateRandomId();
+                    html += `<div class="doc-card med-card"><div class="doc-header"><i class="fas fa-notes-medical"></i><span class="doc-title">МЕДИЦИНСКАЯ КНИЖКА</span></div>
+                        <div class="doc-field"><span class="doc-label">Номер:</span><span class="doc-value">${medId}</span></div>
+                        <div class="doc-field"><span class="doc-label">Привязана к паспорту:</span><span class="doc-value">${userData.passport.id}</span></div>
+                        <div class="doc-field"><span class="doc-label">Годен до:</span><span class="doc-value">${new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toLocaleDateString()}</span></div>
+                        <div class="doc-field"><span class="doc-label">Штрих-код:</span><span class="doc-value">▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮</span></div>
+                        <div class="doc-stamp">✓ Действительна</div></div>`;
+                } else {
+                    html += `<div class="doc-card med-card" style="opacity:0.7;"><div class="doc-header"><i class="fas fa-notes-medical"></i><span class="doc-title">МЕДИЦИНСКАЯ КНИЖКА</span></div><div class="doc-field">❌ Требуется паспорт</div></div>`;
+                }
+                if (userData.license) {
+                    html += `<div class="doc-card license-card"><div class="doc-header"><i class="fas fa-id-card"></i><span class="doc-title">ВОДИТЕЛЬСКОЕ УДОСТОВЕРЕНИЕ</span></div>
+                        <div class="doc-field"><span class="doc-label">Номер ВУ:</span><span class="doc-value">${userData.license.id}</span></div>
+                        <div class="doc-field"><span class="doc-label">Категории:</span><span class="doc-value"><span class="category-badge">A</span><span class="category-badge">B</span><span class="category-badge">C</span><span class="category-badge">M</span></span></div>
+                        <div class="doc-field"><span class="doc-label">Дата выдачи:</span><span class="doc-value">${userData.license.issueDate}</span></div>
+                        <div class="doc-field"><span class="doc-label">Годен до:</span><span class="doc-value">${new Date(new Date().setFullYear(new Date().getFullYear() + 10)).toLocaleDateString()}</span></div>
+                        <div class="doc-stamp">Голограмма ████████</div>
+                        <div class="doc-stamp">✓ Действительно</div></div>`;
+                } else if (userData.licenseCooldown && Date.now() < userData.licenseCooldown) {
+                    const remaining = Math.ceil((userData.licenseCooldown - Date.now()) / 60000);
+                    html += `<div class="doc-card license-card" style="opacity:0.8;"><div class="doc-header"><i class="fas fa-id-card"></i><span class="doc-title">ВОДИТЕЛЬСКОЕ УДОСТОВЕРЕНИЕ</span></div><div class="doc-field">⏳ Пересдача через ${remaining} минут</div></div>`;
+                } else {
+                    html += `<div class="doc-card license-card" style="opacity:0.7;"><div class="doc-header"><i class="fas fa-id-card"></i><span class="doc-title">ВОДИТЕЛЬСКОЕ УДОСТОВЕРЕНИЕ</span></div><div class="doc-field">❌ Не получено</div></div>`;
+                }
+                container.innerHTML = html;
+            }
+            
+            async function savePassport() {
+                if (!userData) return;
+                const fullName = document.getElementById('passportFullName').value.trim();
+                const birthYear = parseInt(document.getElementById('passportBirthYear').value);
+                const address = document.getElementById('passportAddress').value.trim();
+                if (!fullName || !birthYear || !address) { showNotification('Заполните все поля!', 'error'); return; }
+                if (birthYear < 1920 || birthYear > 2010) { showNotification('Введите корректный год рождения (1920-2010)', 'error'); return; }
+                userData.passport = { fullName, birthYear, address, id: generateRandomId(), issuedDate: new Date().toLocaleDateString() };
+                await saveUserData();
+                await updateAchievements();
+                renderDocuments();
+                closePassportModal();
+                showNotification('✅ Паспорт успешно оформлен!', 'success');
+            }
+            
+            async function saveLicense() {
+                if (!userData) return;
+                if (!userData.passport) { showNotification('❌ Сначала оформите паспорт!', 'error'); return; }
+                if (userData.licenseCooldown && Date.now() < userData.licenseCooldown) {
+                    const remaining = Math.ceil((userData.licenseCooldown - Date.now()) / 60000);
+                    showNotification(`⏳ Пересдача через ${remaining} минут!`, 'warning'); return;
+                }
+                showPddModal();
+            }
+            
+            function showPddModal() {
+                const container = document.getElementById('pddQuestions');
+                container.innerHTML = pddQuestions.map((q, idx) => `<div class="question"><p>${idx+1}. ${q.text}</p>${q.options.map((opt, oi) => `<label><input type="radio" name="pdd_${idx}" value="${oi}"> ${opt}</label><br>`).join('')}</div>`).join('');
+                document.getElementById('pddModal').style.display = 'flex';
+            }
+            
+            async function submitPddTest() {
+                let correct = 0;
+                for (let i = 0; i < pddQuestions.length; i++) {
+                    const selected = document.querySelector(`input[name="pdd_${i}"]:checked`);
+                    if (selected && parseInt(selected.value) === pddQuestions[i].correct) correct++;
+                }
+                if (pddQuestions.length - correct <= 5) {
+                    userData.license = { id: generateRandomId(), passportId: userData.passport.id, issueDate: new Date().toLocaleDateString(), categories: "A, B, C, M" };
+                    userData.licenseCooldown = null;
+                    await saveUserData();
+                    await updateAchievements();
+                    renderDocuments();
+                    document.getElementById('pddModal').style.display = 'none';
+                    showNotification(`✅ Поздравляем! Вы сдали экзамен ПДД (${correct}/${pddQuestions.length} правильных). Права выданы!`, 'success');
+                } else {
+                    userData.licenseCooldown = Date.now() + 5 * 60 * 1000;
+                    await saveUserData();
+                    document.getElementById('pddModal').style.display = 'none';
+                    showNotification(`❌ Экзамен не сдан! (${correct}/${pddQuestions.length} правильных). Пересдача через 5 минут.`, 'error');
+                }
+            }
+            
+            function showPassportModal() {
+                if (userData.passport) { showNotification('Паспорт уже оформлен!', 'warning'); return; }
+                document.getElementById('passportModal').style.display = 'flex';
+            }
+            
+            function closePassportModal() {
+                document.getElementById('passportModal').style.display = 'none';
+                document.getElementById('passportFullName').value = '';
+                document.getElementById('passportBirthYear').value = '';
+                document.getElementById('passportAddress').value = '';
+            }
+            
+            function updateCardUI() {
+                if (!userData) return;
+                document.getElementById('balanceDisplay').innerHTML = userData.balance.toLocaleString() + ' ₽';
+                document.getElementById('cardHolder').innerHTML = userData.username.toUpperCase();
+                document.getElementById('cardNumberDisplay').innerHTML = '**** **** **** ' + Math.floor(Math.random() * 9000 + 1000);
+                let d = new Date();
+                document.getElementById('cardExpiry').innerHTML = `${(d.getMonth()+1).toString().padStart(2,'0')}/${(d.getFullYear()+3).toString().slice(-2)}`;
+            }
+            
+            async function transferMoney(toUsername, amount) {
+                if (!userData) return { success: false, message: 'Не авторизован' };
+                if (userData.username === toUsername) return { success: false, message: 'Нельзя перевести самому себе' };
+                if (amount <= 0) return { success: false, message: 'Сумма должна быть больше 0' };
+                if (userData.balance < amount) return { success: false, message: 'Недостаточно средств' };
+                
+                const userRef = db.collection('users').doc(userData.username);
+                const targetRef = db.collection('users').doc(toUsername);
+                
+                try {
+                    await db.runTransaction(async (transaction) => {
+                        const userDoc = await transaction.get(userRef);
+                        const targetDoc = await transaction.get(targetRef);
+                        
+                        if (!userDoc.exists) throw new Error('Отправитель не найден');
+                        if (!targetDoc.exists) throw new Error('Получатель не найден');
+                        
+                        const userBalance = userDoc.data().balance || 0;
+                        if (userBalance < amount) throw new Error('Недостаточно средств');
+                        
+                        transaction.update(userRef, { balance: userBalance - amount });
+                        transaction.update(targetRef, { balance: (targetDoc.data().balance || 0) + amount });
+                    });
+                    
+                    userData.balance -= amount;
+                    updateCardUI();
+                    return { success: true, message: `Переведено ${amount.toLocaleString()} ₽ игроку ${toUsername}` };
+                } catch (error) {
+                    return { success: false, message: error.message };
+                }
+            }
+            
+            async function doLogin() {
+                const username = document.getElementById('loginUsername').value.trim();
+                const password = document.getElementById('loginPassword').value;
+                const remember = document.getElementById('rememberMe').checked;
+                if (!username || !password) { showNotification('Введите никнейм и пароль!', 'error'); return; }
+                
+                const doc = await db.collection('users').doc(username).get();
+                if (!doc.exists) { showNotification('❌ Пользователь не найден!', 'error'); return; }
+                
+                const hashedPassword = await hashPassword(password);
+                if (doc.data().password !== hashedPassword) { showNotification('❌ Неверный пароль!', 'error'); return; }
+                if (doc.data().isBanned && username !== 'Yura') { showNotification('⛔ Аккаунт забанен!', 'error'); return; }
+                
+                currentUser = username;
+                document.getElementById('mainContent').style.display = 'block';
+                document.getElementById('authModal').style.display = 'none';
+                await loadUserData(username);
+                if (remember) localStorage.setItem('rememberedUser', username);
+                else localStorage.removeItem('rememberedUser');
+                renderJobStatus();
+                loadTickets();
+                loadChat();
+                loadPinnedMessages();
+                if (currentUser === 'Yura' || currentUserRole === 'admin') {
+                    document.getElementById('adminPanel').style.display = 'block';
+                    renderPlayersTable();
+                }
+            }
+            
+            async function doRegister() {
+                const username = document.getElementById('registerUsername').value.trim();
+                const password = document.getElementById('registerPassword').value;
+                if (!username || !password) { showNotification('Введите никнейм и пароль!', 'error'); return; }
+                if (username.length < 3) { showNotification('Никнейм должен быть минимум 3 символа!', 'error'); return; }
+                if (password.length < 4) { showNotification('Пароль должен быть минимум 4 символа!', 'error'); return; }
+                if (username.toLowerCase() === 'yura') { showNotification('Этот никнейм зарезервирован!', 'error'); return; }
+                
+                const doc = await db.collection('users').doc(username).get();
+                if (doc.exists) { showNotification('❌ Пользователь с таким ником уже существует!', 'error'); return; }
+                
+                const hashedPassword = await hashPassword(password);
+                const newUser = {
+                    username, password: hashedPassword, balance: 50000, garage: [], businesses: [], businessLevels: {},
+                    job: null, lastPayTime: Date.now(), lastBusinessTime: Date.now(),
+                    policeTest: null, cashierTest: null, mayorTest: null, achievements: [], isBanned: false,
+                    passport: null, license: null, licenseCooldown: null, role: 'player'
+                };
+                await db.collection('users').doc(username).set(newUser);
+                showNotification('✅ Регистрация успешна! Теперь войдите.', 'success');
+                document.getElementById('loginUsername').value = username;
+                document.getElementById('loginPassword').value = '';
+                document.getElementById('registerUsername').value = '';
+                document.getElementById('registerPassword').value = '';
+            }
+            
+            function logout() {
+                currentUser = null;
+                userData = null;
+                currentUserRole = 'player';
+                localStorage.removeItem('rememberedUser');
+                document.getElementById('mainContent').style.display = 'none';
+                document.getElementById('adminPanel').style.display = 'none';
+                document.getElementById('authModal').style.display = 'flex';
+                document.getElementById('loginUsername').value = '';
+                document.getElementById('loginPassword').value = '';
+                document.getElementById('registerUsername').value = '';
+                document.getElementById('registerPassword').value = '';
+                updateUI();
+            }
+            
+            async function restoreSession() {
+                const remembered = localStorage.getItem('rememberedUser');
+                if (remembered) {
+                    const doc = await db.collection('users').doc(remembered).get();
+                    if (doc.exists && !doc.data().isBanned) {
+                        currentUser = remembered;
+                        document.getElementById('mainContent').style.display = 'block';
+                        document.getElementById('authModal').style.display = 'none';
+                        await loadUserData(remembered);
+                        loadTickets();
+                        loadChat();
+                        loadPinnedMessages();
+                        if (currentUser === 'Yura' || currentUserRole === 'admin') {
+                            document.getElementById('adminPanel').style.display = 'block';
+                            renderPlayersTable();
+                        }
+                        return true;
+                    }
+                }
+                return false;
+            }
+            
+            async function giveMoney(target, amount) {
+                if (currentUser !== 'Yura' && currentUserRole !== 'admin') {
+                    showNotification('Нет прав!', 'error');
+                    return;
+                }
+                const doc = await db.collection('users').doc(target).get();
+                if (doc.exists) {
+                    const data = doc.data();
+                    data.balance = (data.balance || 0) + amount;
+                    await db.collection('users').doc(target).set(data);
+                    await logAdminAction(`💰 Выдача денег (панель)`, target, `Сумма: ${amount.toLocaleString()} ₽`);
+                    if (currentUser === target && userData) userData.balance = data.balance;
+                    document.getElementById('moneyResult').innerHTML = `<span style="color:#8aff8a;">✅ Выдано ${amount}₽</span>`;
+                    setTimeout(() => document.getElementById('moneyResult').innerHTML = '', 3000);
+                    await loadAllUsers();
+                } else {
+                    document.getElementById('moneyResult').innerHTML = `<span style="color:#ff8a8a;">❌ Игрок не найден</span>`;
+                }
+            }
+            
+            async function takeMoney(target, amount) {
+                if (currentUser !== 'Yura' && currentUserRole !== 'admin') {
+                    showNotification('Нет прав!', 'error');
+                    return;
+                }
+                const doc = await db.collection('users').doc(target).get();
+                if (doc.exists) {
+                    const data = doc.data();
+                    data.balance = Math.max(0, (data.balance || 0) - amount);
+                    await db.collection('users').doc(target).set(data);
+                    await logAdminAction(`💰 Изъятие денег (панель)`, target, `Сумма: ${amount.toLocaleString()} ₽`);
+                    if (currentUser === target && userData) userData.balance = data.balance;
+                    document.getElementById('moneyResult').innerHTML = `<span style="color:#ffaa00;">✅ Забрано ${amount}₽</span>`;
+                    setTimeout(() => document.getElementById('moneyResult').innerHTML = '', 3000);
+                    await loadAllUsers();
+                } else {
+                    document.getElementById('moneyResult').innerHTML = `<span style="color:#ff8a8a;">❌ Игрок не найден</span>`;
+                }
+            }
+            
+            async function giveProperty(target, type, name) {
+                if (currentUser !== 'Yura' && currentUserRole !== 'admin') {
+                    showNotification('Нет прав!', 'error');
+                    return;
+                }
+                const doc = await db.collection('users').doc(target).get();
+                if (doc.exists) {
+                    const data = doc.data();
+                    if (type === 'car') {
+                        if (!data.garage) data.garage = [];
+                        data.garage.push(name);
+                        await logAdminAction(`🚗 Выдача машины (панель)`, target, `Машина: ${name}`);
+                    } else if (type === 'business') {
+                        if (!data.businesses) data.businesses = [];
+                        data.businesses.push(name);
+                        await logAdminAction(`🏢 Выдача бизнеса (панель)`, target, `Бизнес: ${name}`);
+                    }
+                    await db.collection('users').doc(target).set(data);
+                    showNotification(`✅ Выдано ${type === 'car' ? 'авто' : 'бизнес'} ${name} игроку ${target}`, 'success');
+                    await loadAllUsers();
+                } else {
+                    showNotification('Игрок не найден!', 'error');
+                }
+            }
+            
+            async function takeProperty(target, type, name) {
+                if (currentUser !== 'Yura' && currentUserRole !== 'admin') {
+                    showNotification('Нет прав!', 'error');
+                    return;
+                }
+                const doc = await db.collection('users').doc(target).get();
+                if (doc.exists) {
+                    const data = doc.data();
+                    if (type === 'car' && data.garage) {
+                        data.garage = data.garage.filter(c => c !== name);
+                        await logAdminAction(`🚗 Изъятие машины (панель)`, target, `Машина: ${name}`);
+                    } else if (type === 'business' && data.businesses) {
+                        data.businesses = data.businesses.filter(b => b !== name);
+                        await logAdminAction(`🏢 Изъятие бизнеса (панель)`, target, `Бизнес: ${name}`);
+                    }
+                    await db.collection('users').doc(target).set(data);
+                    showNotification(`✅ Забрано ${type === 'car' ? 'авто' : 'бизнес'} ${name} у ${target}`, 'success');
+                    await loadAllUsers();
+                } else {
+                    showNotification('Игрок не найден!', 'error');
+                }
+            }
+            
+            let pinnedMessages = [];
+            async function loadPinnedMessages() {
+                const snapshot = await db.collection('pinnedMessages').orderBy('timestamp', 'asc').get();
+                pinnedMessages = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderPinnedMessages();
+            }
+            
+            function renderPinnedMessages() {
+                const container = document.getElementById('pinnedMessages');
+                if (!container) return;
+                if (pinnedMessages.length === 0) {
+                    container.innerHTML = '<div style="color:#ffaa00;">📌 Закреплённых сообщений нет</div>';
+                    return;
+                }
+                container.innerHTML = '<div style="color:#ffaa00; margin-bottom:5px;">📌 ЗАКРЕПЛЁННЫЕ СООБЩЕНИЯ:</div>' + 
+                    pinnedMessages.map(m => `<div><strong>${escapeHtml(m.name)}</strong>: ${escapeHtml(m.text)}</div>`).join('');
+            }
+            
+            async function pinMessage(messageId, name, text) {
+                if (currentUser !== 'Yura' && currentUserRole !== 'admin') {
+                    showNotification('Нет прав!', 'error');
+                    return;
+                }
+                await db.collection('pinnedMessages').add({
+                    name: name,
+                    text: text,
+                    timestamp: Date.now()
+                });
+                await logAdminAction(`📌 Закрепление сообщения`, `Чат`, `Сообщение: ${text.substring(0, 50)}...`);
+                loadPinnedMessages();
+                showNotification('📌 Сообщение закреплено!', 'success');
+            }
+            
+            async function loadChat() {
+                const snapshot = await db.collection('globalChat').orderBy('timestamp', 'asc').limit(100).get();
+                const messages = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderChat(messages);
+            }
+            
+            function getRoleTag(username) {
+                if (username === 'Yura') return roleTags.creator;
+                const user = allUsers.find(u => u.username === username);
+                if (user && user.role === 'admin') return roleTags.admin;
+                if (user && user.role === 'moderator') return roleTags.moderator;
+                return roleTags.player;
+            }
+            
+            function renderChat(messages) {
+                const container = document.getElementById('chatMessages');
+                if (!container) return;
+                container.innerHTML = messages.map(m => `
+                    <div class="chat-message" id="msg-${m.id}">
+                        <div>
+                            <span class="chat-name" style="color: ${m.name === 'Yura' ? '#ffaa00' : '#ff9a6e'}">${getRoleTag(m.name)} ${escapeHtml(m.name)}</span>
+                            <span class="chat-time">${new Date(m.timestamp).toLocaleTimeString()}</span>
+                            ${(currentUser === 'Yura' || currentUserRole === 'admin') ? `<button class="admin-btn" style="float:right; padding:2px 8px;" onclick="pinMessage('${m.id}', '${escapeHtml(m.name)}', '${escapeHtml(m.text).replace(/'/g, "\\'")}')">📌 Закрепить</button>` : ''}
+                        </div>
+                        <div>${escapeHtml(m.text)}</div>
+                    </div>
+                `).join('');
+                container.scrollTop = container.scrollHeight;
+            }
+            
+            async function sendChatMessage() {
+                if (!currentUser) return;
+                const text = document.getElementById('messageInput').value.trim();
+                if (!text) return;
+                if (text.length > 200) {
+                    showNotification('Сообщение слишком длинное! Максимум 200 символов', 'error');
+                    return;
+                }
+                await db.collection('globalChat').add({ 
+                    name: currentUser, 
+                    text: text, 
+                    timestamp: Date.now(),
+                    role: currentUserRole
+                });
+                document.getElementById('messageInput').value = '';
+            }
+            
+            window.pinMessage = pinMessage;
+            
+            function renderBuildings() {
+                const container = document.getElementById('buildingsGrid');
+                if (container) container.innerHTML = buildings.map(b => `<div class="showcase-card"><div class="showcase-img" style="background-image: url('${b.image}'); background-size: cover;"></div><div class="showcase-info"><h4>${b.name}</h4><p>${b.desc}</p></div></div>`).join('');
+            }
+            
+            function renderBusinesses() {
+                const container = document.getElementById('businessesGrid');
+                if (!container) return;
+                container.innerHTML = businessesList.map(b => {
+                    const owned = userData?.businesses?.includes(b.id);
+                    return `<div class="business-card"><div class="business-icon"><i class="fas ${b.icon}"></i></div><div class="business-info"><h4>${b.name}</h4><div class="business-income">💰 Доход: ${(b.income * (userData?.businessLevels?.[b.id] || 1)).toLocaleString()} ₽/час</div><div class="business-level">📈 Уровень: ${userData?.businessLevels?.[b.id] || 1}</div><div>💵 Цена: ${b.price.toLocaleString()} ₽</div>${owned ? '<button class="business-btn" disabled>✅ Принадлежит</button>' : `<button class="business-btn" onclick="buyBusiness('${b.id}')">Купить бизнес</button>`}${owned && (userData?.businessLevels?.[b.id] || 1) < 5 ? `<button class="business-btn" onclick="upgradeBusiness('${b.id}')" style="margin-top:5px; background:#ffaa00; color:#000;">📈 Улучшить (${(b.price * 0.5).toLocaleString()}₽)</button>` : ''}</div></div>`;
+                }).join('');
+            }
+            
+            window.buyBusiness = async function(businessId) {
+                if (!userData) return;
+                const business = businessesList.find(b => b.id === businessId);
+                if (userData.businesses?.includes(businessId)) return;
+                if (userData.balance >= business.price) {
+                    userData.balance -= business.price;
+                    if (!userData.businesses) userData.businesses = [];
+                    userData.businesses.push(businessId);
+                    if (!userData.businessLevels) userData.businessLevels = {};
+                    userData.businessLevels[businessId] = 1;
+                    await saveUserData();
+                    updateCardUI();
+                    renderBusinesses();
+                    renderMyBusinesses();
+                    await updateAchievements();
+                    renderAchievements();
+                    showNotification(`✅ Вы купили ${business.name}!`, 'success');
+                } else { 
+                    showNotification(`❌ Не хватает ${business.price.toLocaleString()}₽`, 'error');
+                }
+            };
+            
+            window.upgradeBusiness = async function(businessId) {
+                if (!userData) return;
+                const business = businessesList.find(b => b.id === businessId);
+                const currentLevel = userData.businessLevels?.[businessId] || 1;
+                if (currentLevel >= 5) return;
+                const upgradeCost = business.price * 0.5;
+                if (userData.balance >= upgradeCost) {
+                    userData.balance -= upgradeCost;
+                    userData.businessLevels[businessId] = currentLevel + 1;
+                    await saveUserData();
+                    updateCardUI();
+                    renderBusinesses();
+                    renderMyBusinesses();
+                    showNotification(`✅ ${business.name} улучшен до ${currentLevel + 1} уровня!`, 'success');
+                } else { 
+                    showNotification(`❌ Не хватает ${upgradeCost.toLocaleString()}₽ для улучшения`, 'error');
+                }
+            };
+            
+            function renderMyBusinesses() {
+                const container = document.getElementById('myBusinessesList');
+                if (!container) return;
+                if (!userData?.businesses || userData.businesses.length === 0) {
+                    container.innerHTML = '<p>У вас пока нет бизнесов. Купите первый!</p>';
+                    return;
+                }
+                let totalIncome = 0;
+                const businessesHtml = userData.businesses.map(bid => {
+                    const biz = businessesList.find(b => b.id === bid);
+                    const level = userData.businessLevels?.[bid] || 1;
+                    const income = biz.income * level;
+                    totalIncome += income;
+                    return `<p>🏢 ${biz.name} | Уровень ${level} | Доход: ${income.toLocaleString()} ₽/час</p>`;
+                }).join('');
+                container.innerHTML = businessesHtml + `<p style="margin-top:10px; color:#ffaa00;"><strong>💰 Общий доход с бизнесов: ${totalIncome.toLocaleString()} ₽/час</strong></p>`;
+            }
+            
+            async function checkBusinessIncome() {
+                if (!userData || !userData.businesses || userData.businesses.length === 0) return;
+                const now = Date.now();
+                if (now - (userData.lastBusinessTime || 0) >= 3600000) {
+                    let totalIncome = 0;
+                    for (const bid of userData.businesses) {
+                        const biz = businessesList.find(b => b.id === bid);
+                        const level = userData.businessLevels?.[bid] || 1;
+                        totalIncome += biz.income * level;
+                    }
+                    userData.balance += totalIncome;
+                    userData.lastBusinessTime = now;
+                    await saveUserData();
+                    updateCardUI();
+                    renderMyBusinesses();
+                    await updateAchievements();
+                    renderAchievements();
+                    showNotification(`💰 Получен доход с бизнесов: ${totalIncome.toLocaleString()} ₽`, 'success');
+                }
+            }
+            setInterval(checkBusinessIncome, 60000);
+            
+            function renderShop() {
+                if (!userData) return;
+                const container = document.getElementById('vehicleList');
+                if (!container) return;
+                container.innerHTML = vehicles.map((v, i) => `<div class="vehicle-item"><div class="vehicle-img"><i class="${v.icon}"></i></div><div class="vehicle-info"><h4>${v.name}</h4><div class="price">💰 ${v.price.toLocaleString()} ₽</div><button class="buy-btn" onclick="buyVehicle(${i})" ${userData.garage?.includes(v.name) ? 'disabled' : ''}>${userData.garage?.includes(v.name) ? '✅ В гараже' : 'Купить'}</button></div></div>`).join('');
+                const garageDiv = document.getElementById('garageContent');
+                const garage = userData.garage || [];
+                garageDiv.innerHTML = garage.length ? garage.map(n => `<p>🚘 ${escapeHtml(n)}</p>`).join('') : '<p>У вас пока нет машин</p>';
+            }
+            
+            window.buyVehicle = async function(i) {
+                if (!userData) return;
+                const v = vehicles[i];
+                if (userData.garage?.includes(v.name)) return;
+                if (userData.balance >= v.price) {
+                    userData.balance -= v.price;
+                    if (!userData.garage) userData.garage = [];
+                    userData.garage.push(v.name);
+                    await saveUserData();
+                    updateCardUI();
+                    renderShop();
+                    await updateAchievements();
+                    renderAchievements();
+                    showNotification(`✅ Куплено: ${v.name}`, 'success');
+                } else { 
+                    showNotification(`❌ Не хватает ${v.price.toLocaleString()}₽`, 'error');
+                }
+            };
+            
+            function renderTests() {
+                if (!userData) return;
+                const container = document.getElementById('testsContainer');
+                if (!container) return;
+                container.innerHTML = '';
+                for (const [id, test] of Object.entries(testsData)) {
+                    const status = userData[id];
+                    let statusHtml = '', locked = false;
+                    if (status === 'passed') statusHtml = '<div class="test-status passed">✅ Тест сдан!</div>';
+                    else if (status?.startsWith('cooldown_')) {
+                        const end = parseInt(status.split('_')[1]);
+                        const rem = Math.max(0, end - Date.now());
+                        if (rem > 0) { statusHtml = `<div class="test-status locked">⏳ Пересдача через ${Math.floor(rem/60000)} мин</div>`; locked = true; }
+                        else { userData[id] = null; saveUserData(); statusHtml = '<div class="test-status failed">❌ Тест не сдан</div>'; }
+                    } else { statusHtml = '<div class="test-status failed">❌ Тест не сдан</div>'; }
+                    container.innerHTML += `<div class="test-card"><h3>${test.name}</h3>${statusHtml}<button class="test-btn open-test-btn" onclick="toggleQuestions('${id}')" ${locked ? 'disabled' : ''}>📋 Пройти тест</button><div class="test-questions" id="questions-${id}">${test.questions.map((q, idx) => `<div class="question"><p>${idx+1}. ${q.text}</p>${q.options.map((o, oi) => `<label><input type="radio" name="q${id}_${idx}" value="${oi}"> ${o}</label><br>`).join('')}</div>`).join('')}<button class="test-btn" onclick="submitTest('${id}')">✅ Отправить</button></div></div>`;
+                }
+            }
+            
+            window.toggleQuestions = function(id) { const div = document.getElementById(`questions-${id}`); if (div) div.style.display = div.style.display === 'none' ? 'block' : 'none'; };
+            window.submitTest = async function(id) {
+                if (!userData) return;
+                const test = testsData[id];
+                let correct = 0;
+                for (let i = 0; i < test.questions.length; i++) {
+                    const selected = document.querySelector(`input[name="q${id}_${i}"]:checked`);
+                    if (selected && parseInt(selected.value) === test.questions[i].correct) correct++;
+                }
+                if (correct >= 3) {
+                    userData[id] = 'passed';
+                    await saveUserData();
+                    await updateAchievements();
+                    renderAchievements();
+                    showNotification(`✅ Тест сдан! (${correct}/5)`, 'success');
+                    renderTests();
+                } else {
+                    userData[id] = `cooldown_${Date.now() + 30*60000}`;
+                    await saveUserData();
+                    showNotification(`❌ Тест не сдан (${correct}/5). Пересдача через 30 мин.`, 'error');
+                    renderTests();
+                }
+            };
+            
+            function renderJobStatus() {
+                if (!userData) return;
+                const salariesMap = { taxi:30000, police:35000, mechanic:25000, loader:20000, cashier:45000, mayor:80000, svoya:43000 };
+                if (userData.job) {
+                    let jobName = { taxi:'Таксист', police:'Полиция', mechanic:'Механик', loader:'Грузчик', cashier:'Инкассатор', mayor:'Мэр', svoya:'Своя' }[userData.job];
+                    document.getElementById('jobStatus').innerHTML = `✅ Работает: ${jobName} (+${salariesMap[userData.job].toLocaleString()}₽/час)`;
+                } else {
+                    document.getElementById('jobStatus').innerHTML = `❌ Профессия не выбрана`;
+                }
+            }
+            
+            const salariesMap = { taxi:30000, police:35000, mechanic:25000, loader:20000, cashier:45000, mayor:80000, svoya:43000 };
+            
+            async function checkSalary() {
+                if (!userData || !userData.job) return;
+                const now = Date.now();
+                if (now - (userData.lastPayTime || 0) >= 3600000) {
+                    userData.balance += salariesMap[userData.job];
+                    userData.lastPayTime = now;
+                    await saveUserData();
+                    updateCardUI();
+                    renderAchievements();
+                    renderJobStatus();
+                    showNotification(`💵 Получена зарплата: ${salariesMap[userData.job].toLocaleString()} ₽`, 'success');
+                }
+                if (userData.job) {
+                    const next = (userData.lastPayTime || 0) + 3600000;
+                    const rem = Math.max(0, next - now);
+                    document.getElementById('nextSalary').innerHTML = `⏱️ Следующая выплата через ${Math.floor(rem/60000)} мин`;
+                }
+            }
+            setInterval(checkSalary, 1000);
+            
+            document.querySelectorAll('.job-btn').forEach(btn => {
+                btn.onclick = async () => {
+                    if (!userData) return;
+                    const job = btn.dataset.job;
+                    let need = null;
+                    if (job === 'police') need = 'policeTest';
+                    if (job === 'cashier') need = 'cashierTest';
+                    if (job === 'mayor') need = 'mayorTest';
+                    if (need && userData[need] !== 'passed') { 
+                        showNotification(`⚠️ Сначала сдайте тест!`, 'warning'); 
+                        showSection('tests'); 
+                        return; 
+                    }
+                    userData.job = job;
+                    userData.lastPayTime = Date.now();
+                    await saveUserData();
+                    await updateAchievements();
+                    renderAchievements();
+                    renderJobStatus();
+                    showNotification(`✅ Вы выбрали профессию: ${btn.textContent.split(' ')[0]}`, 'success');
+                };
+            });
+            
+            function renderAchievements() {
+                if (!userData) return;
+                const container = document.getElementById('achievementsGrid');
+                if (!container) return;
+                const unlocked = userData.achievements || [];
+                container.innerHTML = achievementsList.map(ach => `<div class="achievement-card ${unlocked.includes(ach.id) ? 'unlocked' : ''}"><div class="achievement-icon"><i class="fas ${ach.icon}"></i></div><div class="achievement-title">${ach.title}</div><div class="achievement-desc">${ach.desc}</div>${unlocked.includes(ach.id) ? '<span style="color:#ffaa00;">✓ Получено</span>' : '<span style="color:#666;">🔒 Не выполнено</span>'}</div>`).join('');
+            }
+            
+            let unsubscribeTickets = null;
+            function loadTickets() {
+                if (unsubscribeTickets) unsubscribeTickets();
+                unsubscribeTickets = db.collection('tickets').orderBy('date', 'desc').onSnapshot((snapshot) => {
+                    const tickets = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    renderTickets(tickets);
+                });
+            }
+            
+            async function createTicket() {
+                if (!currentUser) return;
+                const title = document.getElementById('ticketTitle').value.trim();
+                const text = document.getElementById('ticketText').value.trim();
+                if (!title || !text) {
+                    showNotification('Заполните тему и текст обращения!', 'error');
+                    return;
+                }
+                await db.collection('tickets').add({ username: currentUser, title, text, date: new Date().toISOString(), replies: [] });
+                document.getElementById('ticketTitle').value = '';
+                document.getElementById('ticketText').value = '';
+                showNotification('✅ Обращение создано!', 'success');
+            }
+            
+            async function replyToTicket(ticketId) {
+                if (currentUser !== 'Yura' && currentUserRole !== 'admin' && currentUserRole !== 'moderator') {
+                    showNotification('Нет прав для ответа!', 'error');
+                    return;
+                }
+                const reply = document.getElementById(`reply-${ticketId}`).value.trim();
+                if (!reply) return;
+                const ticketRef = db.collection('tickets').doc(ticketId);
+                const ticket = (await ticketRef.get()).data();
+                const replies = ticket.replies || [];
+                replies.push({ username: currentUser, text: reply, admin: (currentUser === 'Yura' || currentUserRole === 'admin') });
+                await ticketRef.update({ replies });
+                await logAdminAction(`💬 Ответ в тикете`, `Тикет #${ticketId}`, `Ответ: ${reply.substring(0, 50)}...`);
+                document.getElementById(`reply-${ticketId}`).value = '';
+                showNotification('✅ Ответ отправлен!', 'success');
+            }
+            
+            function renderTickets(tickets) {
+                const container = document.getElementById('ticketsList');
+                if (!container) return;
+                if (currentUser === 'Yura' || currentUserRole === 'admin' || currentUserRole === 'moderator') {
+                    container.innerHTML = tickets.map(t => `<div class="ticket" id="ticket-${t.id}"><div class="ticket-header"><span>👤 ${escapeHtml(t.username)}</span><span>📅 ${new Date(t.date).toLocaleString()}</span></div><div><strong>${escapeHtml(t.title)}</strong></div><div>${escapeHtml(t.text)}</div>${(t.replies || []).map(r => `<div class="ticket-reply"><strong>${r.admin ? '⭐ Админ' : escapeHtml(r.username)}:</strong> ${escapeHtml(r.text)}</div>`).join('')}<div class="reply-form"><input type="text" id="reply-${t.id}" class="reply-input" placeholder="Ответ..."><button class="bank-btn" onclick="replyToTicket('${t.id}')" style="padding: 8px 16px;">Ответить</button></div></div>`).join('');
+                } else if (currentUser) {
+                    const userTickets = tickets.filter(t => t.username === currentUser);
+                    container.innerHTML = userTickets.map(t => `<div class="ticket"><div class="ticket-header"><span>📌 ${escapeHtml(t.title)}</span><span>📅 ${new Date(t.date).toLocaleString()}</span></div><div>${escapeHtml(t.text)}</div>${(t.replies || []).map(r => `<div class="ticket-reply"><strong>${r.admin ? '⭐ Админ' : escapeHtml(r.username)}:</strong> ${escapeHtml(r.text)}</div>`).join('')}</div>`).join('');
+                }
+            }
+            
+            function updateUI() {
+                const area = document.getElementById('userInfoArea');
+                if (currentUser) {
+                    const roleTag = currentUser === 'Yura' ? roleTags.creator : (currentUserRole === 'admin' ? roleTags.admin : (currentUserRole === 'moderator' ? roleTags.moderator : roleTags.player));
+                    area.innerHTML = `<div class="user-info">${roleTag} ${escapeHtml(currentUser)} <button class="logout-btn" onclick="logout()">Выйти</button></div>`;
+                } else {
+                    area.innerHTML = `<a onclick="showAuthModal()">Войти</a>`;
+                }
+            }
+            
+            function showSection(section) {
+                document.getElementById('mainSection').style.display = section === 'main' ? 'block' : 'none';
+                document.getElementById('documentsSection').style.display = section === 'documents' ? 'block' : 'none';
+                document.getElementById('businessesSection').style.display = section === 'businesses' ? 'block' : 'none';
+                document.getElementById('buildingsSection').style.display = section === 'buildings' ? 'block' : 'none';
+                document.getElementById('shopSection').style.display = section === 'shop' ? 'block' : 'none';
+                document.getElementById('testsSection').style.display = section === 'tests' ? 'block' : 'none';
+                document.getElementById('achievementsSection').style.display = section === 'achievements' ? 'block' : 'none';
+                document.getElementById('forumSection').style.display = section === 'forum' ? 'block' : 'none';
+                document.getElementById('chatSection').style.display = section === 'chat' ? 'block' : 'none';
+                if (section === 'buildings') renderBuildings();
+                if (section === 'businesses') { renderBusinesses(); renderMyBusinesses(); }
+                if (section === 'shop') renderShop();
+                if (section === 'tests') renderTests();
+                if (section === 'achievements') renderAchievements();
+                if (section === 'documents') renderDocuments();
+            }
+            
+            function showAuthModal() { document.getElementById('authModal').style.display = 'flex'; }
+            function closeAuthModal() { document.getElementById('authModal').style.display = 'none'; }
+            function showTransferModal() { document.getElementById('transferModal').style.display = 'flex'; }
+            function closeTransferModal() { document.getElementById('transferModal').style.display = 'none'; }
+            
+            document.getElementById('doLoginBtn').onclick = doLogin;
+            document.getElementById('doRegisterBtn').onclick = doRegister;
+            document.getElementById('showTransferBtn').onclick = showTransferModal;
+            document.getElementById('refreshBalanceBtn').onclick = () => { if (userData) updateCardUI(); };
+            document.getElementById('confirmTransferBtn').onclick = async () => {
+                const to = document.getElementById('transferTo').value.trim();
+                const amount = parseInt(document.getElementById('transferAmount').value);
+                const result = await transferMoney(to, amount);
+                showNotification(result.message, result.success ? 'success' : 'error');
+                if (result.success) { closeTransferModal(); document.getElementById('transferTo').value = ''; document.getElementById('transferAmount').value = ''; }
+            };
+            document.getElementById('createTicketBtn').onclick = createTicket;
+            document.getElementById('applyPassportBtn').onclick = showPassportModal;
+            document.getElementById('applyLicenseBtn').onclick = saveLicense;
+            document.getElementById('savePassportBtn').onclick = savePassport;
+            document.getElementById('submitPddBtn').onclick = submitPddTest;
+            document.getElementById('sendChatBtn').onclick = sendChatMessage;
+            
+            document.querySelectorAll('.admin-tab').forEach(tab => {
+                tab.onclick = () => {
+                    document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    const tabName = tab.dataset.tab;
+                    document.getElementById('playersTab').style.display = tabName === 'players' ? 'block' : 'none';
+                    document.getElementById('rolesTab').style.display = tabName === 'roles' ? 'block' : 'none';
+                    document.getElementById('moneyTab').style.display = tabName === 'money' ? 'block' : 'none';
+                    document.getElementById('worklogTab').style.display = tabName === 'worklog' ? 'block' : 'none';
+                    if (tabName === 'players') renderPlayersTable();
+                    if (tabName === 'worklog') loadWorkLog();
+                };
+            });
+            
+            document.getElementById('assignRoleBtnPanel').onclick = async () => {
+                const username = document.getElementById('roleUser').value.trim();
+                const role = document.getElementById('roleType').value;
+                await assignRole(username, role);
+            };
+            document.getElementById('removeRoleBtnPanel').onclick = async () => {
+                const username = document.getElementById('roleUser').value.trim();
+                await removeRole(username);
+            };
+            document.getElementById('giveMoneyBtnPanel').onclick = () => {
+                const user = document.getElementById('targetUser').value.trim();
+                const amount = parseInt(document.getElementById('moneyAmount').value);
+                if (user && amount > 0) giveMoney(user, amount);
+                else showNotification('Введите ник и сумму!', 'error');
+            };
+            document.getElementById('takeMoneyBtnPanel').onclick = () => {
+                const user = document.getElementById('targetUser').value.trim();
+                const amount = parseInt(document.getElementById('moneyAmount').value);
+                if (user && amount > 0) takeMoney(user, amount);
+                else showNotification('Введите ник и сумму!', 'error');
+            };
+            document.getElementById('givePropertyBtn').onclick = () => {
+                const user = document.getElementById('targetUser').value.trim();
+                const name = document.getElementById('propertyName').value.trim();
+                const type = document.getElementById('propertyType').value;
+                if (user && name) giveProperty(user, type, name);
+                else showNotification('Введите ник и название!', 'error');
+            };
+            document.getElementById('takePropertyBtn').onclick = () => {
+                const user = document.getElementById('targetUser').value.trim();
+                const name = document.getElementById('propertyName').value.trim();
+                const type = document.getElementById('propertyType').value;
+                if (user && name) takeProperty(user, type, name);
+                else showNotification('Введите ник и название!', 'error');
+            };
+            
+            window.closeRoleModal = () => {};
+            window.replyToTicket = replyToTicket;
+            window.showSection = showSection;
+            window.ifLoggedIn = (cb) => { if (currentUser) cb(); else showAuthModal(); };
+            window.logout = logout;
+            window.showAuthModal = showAuthModal;
+            window.closeTransferModal = closeTransferModal;
+            window.removeRole = removeRole;
+            
+            restoreSession();
+        }
+        
+        function initFirebase() {
+            if (typeof firebase !== 'undefined' && !db) {
+                firebase.initializeApp(firebaseConfig);
+                db = firebase.firestore();
+                console.log("Firebase инициализирован");
+                initSite();
+            } else if (typeof firebase === 'undefined') {
+                setTimeout(initFirebase, 100);
+            }
+        }
+        
+        initFirebase();
+    </script>
+</body>
+</html>
