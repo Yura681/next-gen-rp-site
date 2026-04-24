@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>NEXT GEN RP | Бизнес и Профессии</title>
+    <title>NEXT GEN RP | Бизнес и Профессии | Полная версия</title>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
@@ -47,7 +47,7 @@
         .test-btn{background:#ff3c00;padding:10px 20px;font-size:14px;color:white}
         .chat-send{background:#ff3c00;padding:12px 24px;font-size:14px;color:white}
         .download-btn{background:#2a6e3a;padding:14px 32px;font-size:18px;display:inline-block;text-decoration:none;color:white}
-        .policy-btn{background:#ff3c00;padding:12px 30px;font-size:16px;color:white}
+        .policy-btn{background:#ff3c00;padding:12px 30px;font-size:16px;color:white;cursor:pointer}
         .documents-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:30px;margin:30px 0}
         .doc-card{border-radius:16px;padding:25px;position:relative;overflow:hidden;box-shadow:0 15px 30px rgba(0,0,0,0.3);transition:transform 0.2s}
         .doc-card:hover{transform:translateY(-5px)}
@@ -178,152 +178,1040 @@
 </head>
 <body>
     <div class="bg-particles" id="particles"></div>
-    <div id="policyOverlay" class="policy-overlay"><div class="policy-box"><h2>📜 Политика конфиденциальности</h2><p>Открывая этот сайт, вы соглашаетесь с условиями:</p><p>✅ Автор не несёт ответственности за то, как лаунчер будет вести себя на вашем компьютере/ноутбуке.<br>✅ Эта игра — вымысел и не имеет отношения к реальным городам или странам.<br>✅ Сайт НЕ запрашивает пароли, логины или личные данные (кроме вводимых вами добровольно).</p><button id="acceptPolicy" class="policy-btn">Принимаю</button></div></div>
-    <div id="authModal" class="modal" style="display:none"><div class="modal-content"><h2>🔐 Вход в аккаунт</h2><input type="text" id="loginUsername" placeholder="Никнейм"><input type="password" id="loginPassword" placeholder="Пароль"><div class="checkbox-row"><input type="checkbox" id="rememberMe"><label for="rememberMe">Запомнить меня</label></div><button id="doLoginBtn" class="auth-btn">Войти</button><hr style="margin:15px 0;border-color:#333"><h2>📝 Регистрация</h2><input type="text" id="registerUsername" placeholder="Никнейм"><input type="password" id="registerPassword" placeholder="Пароль"><button id="doRegisterBtn" class="auth-btn">Зарегистрироваться</button></div></div>
-    <div id="playerDocsModal" class="modal docs-modal"><div class="modal-content"><h2 id="docsModalTitle">📋 Документы игрока</h2><div id="playerDocsContent" class="player-docs-container"></div><button class="auth-btn" onclick="closePlayerDocsModal()">Закрыть</button></div></div>
-    <div id="beatlesModal" class="modal beatles-modal"><div class="modal-content"><h2>🎸 THE BEATLES</h2><img src="https://upload.wikimedia.org/wikipedia/commons/9/9f/The_Beatles_-_Yellow_Submarine.png" alt="Yellow Submarine" class="beatles-img" onerror="this.src='https://via.placeholder.com/400x200?text=Yellow+Submarine'"><div class="beatles-text"><strong>The Beatles</strong> — легендарная британская рок-группа, основанная в Ливерпуле в 1960 году.</div><div class="yellow-submarine">🐟 🎶 We all live in a yellow submarine! 🎶 🐟</div><button class="auth-btn" onclick="closeBeatlesModal()">Закрыть</button></div></div>
-    <div id="passportModal" class="modal"><div class="modal-content"><h2>📘 Оформление паспорта РФ</h2><input type="text" id="passportFullName" placeholder="ФИО полностью"><input type="number" id="passportBirthYear" placeholder="Год рождения"><input type="text" id="passportAddress" placeholder="Место жительства"><button id="savePassportBtn" class="auth-btn">Сохранить паспорт</button></div></div>
-    <div id="pddModal" class="modal pdd-modal"><div class="modal-content" id="pddContent"><h2>🚦 Тест ПДД</h2><div id="pddQuestions"></div><button id="submitPddBtn" class="auth-btn">Сдать экзамен</button></div></div>
-    <div id="transferModal" class="modal"><div class="modal-content"><h2>💸 Перевод средств</h2><input type="text" id="transferTo" placeholder="Ник получателя"><input type="number" id="transferAmount" placeholder="Сумма перевода"><button id="confirmTransferBtn" class="bank-btn">Отправить перевод</button><div class="switch-auth" onclick="closeTransferModal()">Отмена</div></div></div>
-    <div id="renewMedicalModal" class="modal"><div class="modal-content"><h2>🏥 Переоформление медкнижки</h2><p>Стоимость переоформления: 5 000 ₽</p><p>Новая медкнижка будет действительна 1 год</p><button id="confirmRenewMedicalBtn" class="auth-btn">Переоформить</button><div class="switch-auth" onclick="closeRenewMedicalModal()">Отмена</div></div></div>
-    <div id="renewLicenseModal" class="modal"><div class="modal-content"><h2>🚗 Переоформление прав</h2><p>⚠️ Для переоформления прав нужно сдать экзамен ПДД заново!</p><p>Стоимость пересдачи: 3 000 ₽</p><button id="confirmRenewLicenseBtn" class="auth-btn">Пересдать экзамен</button><div class="switch-auth" onclick="closeRenewLicenseModal()">Отмена</div></div></div>
-    <div class="container" id="mainContent" style="display:none">
-        <div class="navbar"><div class="logo"><i class="fas fa-car-crash"></i> NEXT<span style="color:#ff5e2c;">GEN</span> RP</div><div class="nav-links" id="navLinks"><a onclick="ifLoggedIn(()=>showSection('main'))">Главная</a><a onclick="ifLoggedIn(()=>showSection('documents'))">Документы</a><a onclick="ifLoggedIn(()=>showSection('businesses'))">Бизнес</a><a onclick="ifLoggedIn(()=>showSection('buildings'))">Постройки</a><a onclick="ifLoggedIn(()=>showSection('shop'))">Магазин</a><a onclick="ifLoggedIn(()=>showSection('tests'))">Тесты</a><a onclick="ifLoggedIn(()=>showSection('achievements'))">Достижения</a><a onclick="ifLoggedIn(()=>showSection('forum'))">Форум</a><a onclick="ifLoggedIn(()=>showSection('chat'))">Чат</a><a href="https://discord.gg/S6Az9wR7P4" target="_blank">Discord</a><div id="userInfoArea"></div></div></div>
-        <div id="mainSection"><div style="text-align:center;padding:30px 0 20px"><h1 style="font-size:42px">NEXT <span style="color:#ff5e2c">GEN</span> RP</h1><p>Облачный сервер | Данные с любых устройств</p></div><div class="card-container" id="bankCardContainer"><div class="bank-card"><div class="card-chip"><i class="fas fa-microchip chip-icon"></i><span class="card-network">VISTA</span></div><div class="card-number" id="cardNumberDisplay">**** **** **** ****</div><div class="card-details"><div><div class="card-label">ДЕРЖАТЕЛЬ</div><div class="card-value" id="cardHolder">НЕ АВТОРИЗОВАН</div></div><div><div class="card-label">ДЕЙСТВУЕТ ДО</div><div class="card-value" id="cardExpiry">**/**</div></div></div><div class="card-brand">KISA</div></div></div><div class="balance-amount" id="balanceDisplay">0 ₽</div><div class="bank-actions" style="display:flex;gap:10px;justify-content:center;margin:20px 0"><button class="bank-btn" id="showTransferBtn"><i class="fas fa-exchange-alt"></i> Перевести</button><button class="bank-btn" id="refreshBalanceBtn"><i class="fas fa-sync-alt"></i> Обновить</button></div><div class="download-section"><i class="fas fa-download" style="font-size:40px;color:#ff5e2c"></i><h2>Скачай лаунчер</h2><a href="https://drive.google.com/file/d/133lQwtyCNkqBmtg8fglZzhhH30d2kfnt/view?usp=drive_link" class="download-btn" target="_blank">📦 СКАЧАТЬ ЛАУНЧЕР (EXE)</a></div><div class="job-section" id="jobSection"><h3>Выбери профессию</h3><div class="job-buttons"><button class="job-btn" data-job="taxi">🚖 Таксист (+30 000₽/час)</button><button class="job-btn" data-job="police">👮 Полиция (+35 000₽/час)</button><button class="job-btn" data-job="mechanic">🔧 Механик (+25 000₽/час)</button><button class="job-btn" data-job="loader">📦 Грузчик (+20 000₽/час)</button><button class="job-btn" data-job="cashier">💰 Инкассатор (+45 000₽/час)</button><button class="job-btn" data-job="mayor">🏛️ Мэр (+80 000₽/час)</button><button class="job-btn" data-job="svoya">⭐ Своя (+43 000₽/час)</button></div><div class="salary-info" id="salaryInfo"><p id="jobStatus">Профессия не выбрана</p><p id="nextSalary">—</p></div></div><div style="background:#1a1e2a;border-radius:30px;padding:15px;text-align:center;margin:20px 0">📦 <strong>Наши моды:</strong> <a href="#" target="_blank">BrickMountains</a> | <a href="#" target="_blank">EternityRP</a> | <a href="#" target="_blank">RandomClothes</a></div></div>
-        <div id="documentsSection" style="display:none"><div class="section-title">📋 Мои <span>документы</span></div><div id="documentsGrid" class="documents-grid"></div><div style="text-align:center;margin-top:20px"><button id="applyPassportBtn" class="doc-btn">📘 Оформить паспорт</button><button id="applyLicenseBtn" class="doc-btn" style="margin-left:10px">🚗 Сдать на права</button></div></div>
-        <div id="businessesSection" style="display:none"><div class="section-title">🏢 Купить <span>бизнес</span></div><div class="businesses-grid" id="businessesGrid"></div><div style="margin-top:20px;padding:18px;background:#0f131c;border-radius:20px"><h3>📊 Мои бизнесы</h3><div id="myBusinessesList"></div></div></div>
-        <div id="buildingsSection" style="display:none"><div class="section-title">🏗️ Популярные <span>постройки</span></div><div class="showcase-grid" id="buildingsGrid"></div></div>
-        <div id="shopSection" style="display:none"><div class="section-title">🏪 Магазин <span>транспорта</span></div><div class="vehicles-grid" id="vehicleList"></div><div style="margin-top:20px;padding:18px;background:#0f131c;border-radius:20px"><h3>🚗 Мой гараж</h3><div id="garageContent"></div></div></div>
-        <div id="testsSection" style="display:none"><div class="section-title">📝 Квалификационные <span>тесты</span></div><div class="tests-grid" id="testsContainer"></div></div>
-        <div id="achievementsSection" style="display:none"><div class="section-title">🏆 Ваши <span>достижения</span></div><div class="achievements-grid" id="achievementsGrid"></div></div>
-        <div id="forumSection" style="display:none"><div class="section-title">💬 Форум поддержки</div><div class="forum-section"><div class="create-ticket"><h3>Создать обращение</h3><textarea id="ticketTitle" placeholder="Тема" rows="2"></textarea><textarea id="ticketText" placeholder="Опишите проблему..." rows="3"></textarea><button id="createTicketBtn" class="bank-btn">Отправить</button></div><div id="ticketsList" class="tickets-list"></div></div></div>
-        <div id="chatSection" style="display:none"><div class="section-title">💬 Общий <span>чат</span></div><div class="chat-section"><div id="pinnedMessages" class="pinned-messages"></div><div class="chat-messages" id="chatMessages"></div><div class="chat-input-area"><input type="text" id="messageInput" class="chat-input" placeholder="Сообщение..."><button id="sendChatBtn" class="chat-send">Отправить</button></div></div></div>
-        <div id="adminPanel" style="display:none"><div class="section-title">👑 Админ-панель</div><div class="admin-panel"><div class="admin-tabs"><div class="admin-tab active" data-tab="players">Игроки</div><div class="admin-tab" data-tab="roles">Роли</div><div class="admin-tab" data-tab="money">Управление</div><div class="admin-tab" data-tab="worklog">Лог работы</div></div><div id="playersTab"><h3>Список игроков</h3><div style="overflow-x:auto"><table class="players-table" id="playersTable"><thead><tr><th>Ник</th><th>Роль</th><th>Баланс</th><th>Машины</th><th>Бизнесы</th><th>Профессия</th><th>Действия</th></tr></thead><tbody id="playersList"></tbody></table></div></div><div id="rolesTab" style="display:none"><h3>Назначение ролей (только для создателя Yura)</h3><div class="admin-input-group"><input type="text" id="roleUser" placeholder="Никнейм игрока"><select id="roleType"><option value="player">Игрок</option><option value="moderator">Модератор</option><option value="admin">Администратор</option></select><button id="assignRoleBtnPanel" class="admin-btn">Назначить роль</button><button id="removeRoleBtnPanel" class="admin-btn" style="background:#8b0000">Снять роль</button></div><div id="roleResult"></div></div><div id="moneyTab" style="display:none"><h3>Управление деньгами и имуществом</h3><div class="admin-input-group"><input type="text" id="targetUser" placeholder="Никнейм игрока"><input type="number" id="moneyAmount" placeholder="Сумма"><button id="giveMoneyBtnPanel" class="admin-btn">Выдать деньги</button><button id="takeMoneyBtnPanel" class="admin-btn">Забрать деньги</button></div><div class="admin-input-group"><select id="propertyType"><option value="car">Машина</option><option value="business">Бизнес</option></select><input type="text" id="propertyName" placeholder="Название машины/бизнеса"><button id="givePropertyBtn" class="admin-btn">Выдать имущество</button><button id="takePropertyBtn" class="admin-btn">Забрать имущество</button></div><div id="moneyResult"></div></div><div id="worklogTab" style="display:none"><h3>📋 Лог работы администрации</h3><div class="work-log" id="workLogContainer"></div></div></div></div>
-        <footer><p>NEXT GEN RP Community — неофициальный проект. По вопросам: bossofgoose@gmail.com</p><p>Облачный сервер Firebase | Лаунчер версия 2.0 | © 2026</p></footer>
+    
+    <!-- Политика конфиденциальности -->
+    <div id="policyOverlay" class="policy-overlay">
+        <div class="policy-box">
+            <h2>📜 Политика конфиденциальности</h2>
+            <p>Открывая этот сайт, вы соглашаетесь с условиями:</p>
+            <p>✅ Автор не несёт ответственности за то, как лаунчер будет вести себя на вашем компьютере/ноутбуке.<br>
+            ✅ Эта игра — вымысел и не имеет отношения к реальным городам или странам.<br>
+            ✅ Сайт НЕ запрашивает пароли, логины или личные данные (кроме вводимых вами добровольно).</p>
+            <button id="acceptPolicyBtn" class="policy-btn">Принимаю</button>
+        </div>
     </div>
+
+    <!-- Модальное окно авторизации -->
+    <div id="authModal" class="modal" style="display:none">
+        <div class="modal-content">
+            <h2>🔐 Вход в аккаунт</h2>
+            <input type="text" id="loginUsername" placeholder="Никнейм">
+            <input type="password" id="loginPassword" placeholder="Пароль">
+            <div class="checkbox-row"><input type="checkbox" id="rememberMe"><label for="rememberMe">Запомнить меня</label></div>
+            <button id="doLoginBtn" class="auth-btn">Войти</button>
+            <hr style="margin:15px 0;border-color:#333">
+            <h2>📝 Регистрация</h2>
+            <input type="text" id="registerUsername" placeholder="Никнейм">
+            <input type="password" id="registerPassword" placeholder="Пароль">
+            <button id="doRegisterBtn" class="auth-btn">Зарегистрироваться</button>
+        </div>
+    </div>
+
+    <!-- Модальное окно документов игрока -->
+    <div id="playerDocsModal" class="modal docs-modal">
+        <div class="modal-content">
+            <h2 id="docsModalTitle">📋 Документы игрока</h2>
+            <div id="playerDocsContent" class="player-docs-container"></div>
+            <button class="auth-btn" onclick="closePlayerDocsModal()">Закрыть</button>
+        </div>
+    </div>
+
+    <!-- Модальное окно The Beatles -->
+    <div id="beatlesModal" class="modal beatles-modal">
+        <div class="modal-content">
+            <h2>🎸 THE BEATLES</h2>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/9/9f/The_Beatles_-_Yellow_Submarine.png" alt="Yellow Submarine" class="beatles-img" onerror="this.src='https://via.placeholder.com/400x200?text=Yellow+Submarine'">
+            <div class="beatles-text"><strong>The Beatles</strong> — легендарная британская рок-группа, основанная в Ливерпуле в 1960 году.</div>
+            <div class="yellow-submarine">🐟 🎶 We all live in a yellow submarine! 🎶 🐟</div>
+            <button class="auth-btn" onclick="closeBeatlesModal()">Закрыть</button>
+        </div>
+    </div>
+
+    <!-- Модальное окно паспорта -->
+    <div id="passportModal" class="modal">
+        <div class="modal-content">
+            <h2>📘 Оформление паспорта РФ</h2>
+            <input type="text" id="passportFullName" placeholder="ФИО полностью">
+            <input type="number" id="passportBirthYear" placeholder="Год рождения">
+            <input type="text" id="passportAddress" placeholder="Место жительства">
+            <button id="savePassportBtn" class="auth-btn">Сохранить паспорт</button>
+        </div>
+    </div>
+
+    <!-- Модальное окно теста ПДД -->
+    <div id="pddModal" class="modal pdd-modal">
+        <div class="modal-content" id="pddContent">
+            <h2>🚦 Тест ПДД</h2>
+            <div id="pddQuestions"></div>
+            <button id="submitPddBtn" class="auth-btn">Сдать экзамен</button>
+        </div>
+    </div>
+
+    <!-- Модальное окно перевода -->
+    <div id="transferModal" class="modal">
+        <div class="modal-content">
+            <h2>💸 Перевод средств</h2>
+            <input type="text" id="transferTo" placeholder="Ник получателя">
+            <input type="number" id="transferAmount" placeholder="Сумма перевода">
+            <button id="confirmTransferBtn" class="bank-btn">Отправить перевод</button>
+            <div class="switch-auth" onclick="closeTransferModal()">Отмена</div>
+        </div>
+    </div>
+
+    <!-- Модальное окно переоформления медкнижки -->
+    <div id="renewMedicalModal" class="modal">
+        <div class="modal-content">
+            <h2>🏥 Переоформление медкнижки</h2>
+            <p>Стоимость переоформления: 5 000 ₽</p>
+            <p>Новая медкнижка будет действительна 1 год</p>
+            <button id="confirmRenewMedicalBtn" class="auth-btn">Переоформить</button>
+            <div class="switch-auth" onclick="closeRenewMedicalModal()">Отмена</div>
+        </div>
+    </div>
+
+    <!-- Модальное окно переоформления прав -->
+    <div id="renewLicenseModal" class="modal">
+        <div class="modal-content">
+            <h2>🚗 Переоформление прав</h2>
+            <p>⚠️ Для переоформления прав нужно сдать экзамен ПДД заново!</p>
+            <p>Стоимость пересдачи: 3 000 ₽</p>
+            <button id="confirmRenewLicenseBtn" class="auth-btn">Пересдать экзамен</button>
+            <div class="switch-auth" onclick="closeRenewLicenseModal()">Отмена</div>
+        </div>
+    </div>
+
+    <!-- Основной контейнер -->
+    <div class="container" id="mainContent" style="display:none">
+        <div class="navbar">
+            <div class="logo"><i class="fas fa-car-crash"></i> NEXT<span style="color:#ff5e2c;">GEN</span> RP</div>
+            <div class="nav-links" id="navLinks">
+                <a onclick="ifLoggedIn(()=>showSection('main'))">Главная</a>
+                <a onclick="ifLoggedIn(()=>showSection('documents'))">Документы</a>
+                <a onclick="ifLoggedIn(()=>showSection('businesses'))">Бизнес</a>
+                <a onclick="ifLoggedIn(()=>showSection('buildings'))">Постройки</a>
+                <a onclick="ifLoggedIn(()=>showSection('shop'))">Магазин</a>
+                <a onclick="ifLoggedIn(()=>showSection('tests'))">Тесты</a>
+                <a onclick="ifLoggedIn(()=>showSection('achievements'))">Достижения</a>
+                <a onclick="ifLoggedIn(()=>showSection('forum'))">Форум</a>
+                <a onclick="ifLoggedIn(()=>showSection('chat'))">Чат</a>
+                <a href="https://discord.gg/S6Az9wR7P4" target="_blank">Discord</a>
+                <div id="userInfoArea"></div>
+            </div>
+        </div>
+
+        <!-- Главная секция -->
+        <div id="mainSection">
+            <div style="text-align:center;padding:30px 0 20px">
+                <h1 style="font-size:42px">NEXT <span style="color:#ff5e2c">GEN</span> RP</h1>
+                <p>Облачный сервер | Данные с любых устройств</p>
+            </div>
+            <div class="card-container" id="bankCardContainer">
+                <div class="bank-card">
+                    <div class="card-chip"><i class="fas fa-microchip chip-icon"></i><span class="card-network">VISTA</span></div>
+                    <div class="card-number" id="cardNumberDisplay">**** **** **** ****</div>
+                    <div class="card-details">
+                        <div><div class="card-label">ДЕРЖАТЕЛЬ</div><div class="card-value" id="cardHolder">НЕ АВТОРИЗОВАН</div></div>
+                        <div><div class="card-label">ДЕЙСТВУЕТ ДО</div><div class="card-value" id="cardExpiry">**/**</div></div>
+                    </div>
+                    <div class="card-brand">KISA</div>
+                </div>
+            </div>
+            <div class="balance-amount" id="balanceDisplay">0 ₽</div>
+            <div class="bank-actions" style="display:flex;gap:10px;justify-content:center;margin:20px 0">
+                <button class="bank-btn" id="showTransferBtn"><i class="fas fa-exchange-alt"></i> Перевести</button>
+                <button class="bank-btn" id="refreshBalanceBtn"><i class="fas fa-sync-alt"></i> Обновить</button>
+            </div>
+            <div class="download-section">
+                <i class="fas fa-download" style="font-size:40px;color:#ff5e2c"></i>
+                <h2>Скачай лаунчер</h2>
+                <a href="https://drive.google.com/file/d/133lQwtyCNkqBmtg8fglZzhhH30d2kfnt/view?usp=drive_link" class="download-btn" target="_blank">📦 СКАЧАТЬ ЛАУНЧЕР (EXE)</a>
+            </div>
+            <div class="job-section" id="jobSection">
+                <h3>Выбери профессию</h3>
+                <div class="job-buttons">
+                    <button class="job-btn" data-job="taxi">🚖 Таксист (+30 000₽/час)</button>
+                    <button class="job-btn" data-job="police">👮 Полиция (+35 000₽/час)</button>
+                    <button class="job-btn" data-job="mechanic">🔧 Механик (+25 000₽/час)</button>
+                    <button class="job-btn" data-job="loader">📦 Грузчик (+20 000₽/час)</button>
+                    <button class="job-btn" data-job="cashier">💰 Инкассатор (+45 000₽/час)</button>
+                    <button class="job-btn" data-job="mayor">🏛️ Мэр (+80 000₽/час)</button>
+                    <button class="job-btn" data-job="svoya">⭐ Своя (+43 000₽/час)</button>
+                </div>
+                <div class="salary-info" id="salaryInfo">
+                    <p id="jobStatus">Профессия не выбрана</p>
+                    <p id="nextSalary">—</p>
+                </div>
+            </div>
+            <div style="background:#1a1e2a;border-radius:30px;padding:15px;text-align:center;margin:20px 0">
+                📦 <strong>Наши моды:</strong> <a href="#" target="_blank">BrickMountains</a> | <a href="#" target="_blank">EternityRP</a> | <a href="#" target="_blank">RandomClothes</a>
+            </div>
+        </div>
+
+        <!-- Секция документов -->
+        <div id="documentsSection" style="display:none">
+            <div class="section-title">📋 Мои <span>документы</span></div>
+            <div id="documentsGrid" class="documents-grid"></div>
+            <div style="text-align:center;margin-top:20px">
+                <button id="applyPassportBtn" class="doc-btn">📘 Оформить паспорт</button>
+                <button id="applyLicenseBtn" class="doc-btn" style="margin-left:10px">🚗 Сдать на права</button>
+            </div>
+        </div>
+
+        <!-- Секция бизнесов -->
+        <div id="businessesSection" style="display:none">
+            <div class="section-title">🏢 Купить <span>бизнес</span></div>
+            <div class="businesses-grid" id="businessesGrid"></div>
+            <div style="margin-top:20px;padding:18px;background:#0f131c;border-radius:20px">
+                <h3>📊 Мои бизнесы</h3>
+                <div id="myBusinessesList"></div>
+            </div>
+        </div>
+
+        <!-- Секция построек -->
+        <div id="buildingsSection" style="display:none">
+            <div class="section-title">🏗️ Популярные <span>постройки</span></div>
+            <div class="showcase-grid" id="buildingsGrid"></div>
+        </div>
+
+        <!-- Секция магазина -->
+        <div id="shopSection" style="display:none">
+            <div class="section-title">🏪 Магазин <span>транспорта</span></div>
+            <div class="vehicles-grid" id="vehicleList"></div>
+            <div style="margin-top:20px;padding:18px;background:#0f131c;border-radius:20px">
+                <h3>🚗 Мой гараж</h3>
+                <div id="garageContent"></div>
+            </div>
+        </div>
+
+        <!-- Секция тестов -->
+        <div id="testsSection" style="display:none">
+            <div class="section-title">📝 Квалификационные <span>тесты</span></div>
+            <div class="tests-grid" id="testsContainer"></div>
+        </div>
+
+        <!-- Секция достижений -->
+        <div id="achievementsSection" style="display:none">
+            <div class="section-title">🏆 Ваши <span>достижения</span></div>
+            <div class="achievements-grid" id="achievementsGrid"></div>
+        </div>
+
+        <!-- Секция форума (поддержка) -->
+        <div id="forumSection" style="display:none">
+            <div class="section-title">💬 Форум поддержки</div>
+            <div class="forum-section">
+                <div class="create-ticket">
+                    <h3>Создать обращение</h3>
+                    <textarea id="ticketTitle" placeholder="Тема" rows="2"></textarea>
+                    <textarea id="ticketText" placeholder="Опишите проблему..." rows="3"></textarea>
+                    <button id="createTicketBtn" class="bank-btn">Отправить</button>
+                </div>
+                <div id="ticketsList" class="tickets-list"></div>
+            </div>
+        </div>
+
+        <!-- Секция чата -->
+        <div id="chatSection" style="display:none">
+            <div class="section-title">💬 Общий <span>чат</span></div>
+            <div class="chat-section">
+                <div id="pinnedMessages" class="pinned-messages"></div>
+                <div class="chat-messages" id="chatMessages"></div>
+                <div class="chat-input-area">
+                    <input type="text" id="messageInput" class="chat-input" placeholder="Сообщение...">
+                    <button id="sendChatBtn" class="chat-send">Отправить</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Админ-панель -->
+        <div id="adminPanel" style="display:none">
+            <div class="section-title">👑 Админ-панель</div>
+            <div class="admin-panel">
+                <div class="admin-tabs">
+                    <div class="admin-tab active" data-tab="players">Игроки</div>
+                    <div class="admin-tab" data-tab="roles">Роли</div>
+                    <div class="admin-tab" data-tab="money">Управление</div>
+                    <div class="admin-tab" data-tab="worklog">Лог работы</div>
+                </div>
+                <div id="playersTab">
+                    <h3>Список игроков</h3>
+                    <div style="overflow-x:auto">
+                        <table class="players-table" id="playersTable">
+                            <thead>
+                                <tr><th>Ник</th><th>Роль</th><th>Баланс</th><th>Машины</th><th>Бизнесы</th><th>Профессия</th><th>Действия</th></tr>
+                            </thead>
+                            <tbody id="playersList"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div id="rolesTab" style="display:none">
+                    <h3>Назначение ролей (только для создателя Yura)</h3>
+                    <div class="admin-input-group">
+                        <input type="text" id="roleUser" placeholder="Никнейм игрока">
+                        <select id="roleType">
+                            <option value="player">Игрок</option>
+                            <option value="moderator">Модератор</option>
+                            <option value="admin">Администратор</option>
+                        </select>
+                        <button id="assignRoleBtnPanel" class="admin-btn">Назначить роль</button>
+                        <button id="removeRoleBtnPanel" class="admin-btn" style="background:#8b0000">Снять роль</button>
+                    </div>
+                    <div id="roleResult"></div>
+                </div>
+                <div id="moneyTab" style="display:none">
+                    <h3>Управление деньгами и имуществом</h3>
+                    <div class="admin-input-group">
+                        <input type="text" id="targetUser" placeholder="Никнейм игрока">
+                        <input type="number" id="moneyAmount" placeholder="Сумма">
+                        <button id="giveMoneyBtnPanel" class="admin-btn">Выдать деньги</button>
+                        <button id="takeMoneyBtnPanel" class="admin-btn">Забрать деньги</button>
+                    </div>
+                    <div class="admin-input-group">
+                        <select id="propertyType"><option value="car">Машина</option><option value="business">Бизнес</option></select>
+                        <input type="text" id="propertyName" placeholder="Название">
+                        <button id="givePropertyBtn" class="admin-btn">Выдать</button>
+                        <button id="takePropertyBtn" class="admin-btn">Забрать</button>
+                    </div>
+                    <div id="moneyResult"></div>
+                </div>
+                <div id="worklogTab" style="display:none">
+                    <h3>📋 Лог работы администрации</h3>
+                    <div class="work-log" id="workLogContainer"></div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>NEXT GEN RP Community — неофициальный проект. По вопросам: bossofgoose@gmail.com</p>
+            <p>Облачный сервер Firebase | Лаунчер версия 2.0 | © 2026</p>
+        </footer>
+    </div>
+
     <script>
-        // ========== ПОЛНЫЙ JavaScript КОД ==========
-        async function hashPassword(p){const e=new TextEncoder,n=e.encode(p),t=await crypto.subtle.digest('SHA-256',n);return Array.from(new Uint8Array(t)).map(b=>b.toString(16).padStart(2,'0')).join('')}
-        function showNotification(m,t){t=t||'success';const n=document.createElement('div');n.className='notification '+t;n.textContent=m;document.body.appendChild(n);setTimeout(function(){n.remove()},3000)}
-        function escapeHtml(t){const e=document.createElement('div');e.textContent=t;return e.innerHTML}
-        async function logAdminAction(a,t,d){if(!currentUser)return;await db.collection('adminLogs').add({admin:currentUser,action:a,target:t,details:d,timestamp:Date.now(),date:new Date().toLocaleString()});if(currentUser==='Yura'||currentUserRole==='admin')loadWorkLog()}
-        async function loadWorkLog(){const s=await db.collection('adminLogs').orderBy('timestamp','desc').limit(50).get(),l=s.docs.map(function(d){return d.data()}),c=document.getElementById('workLogContainer');if(!c)return;if(l.length===0){c.innerHTML='<div class="work-log-entry">📭 Лог действий пуст</div>';return}c.innerHTML=l.map(function(l){return'<div class="work-log-entry"><span class="date">📅 '+l.date+'</span><br><span>👤 '+escapeHtml(l.admin)+'</span><br><span>⚡ '+escapeHtml(l.action)+'</span><br><span>🎯 '+escapeHtml(l.target)+'</span><br><span>📝 '+escapeHtml(l.details)+'</span><hr style="margin-top:5px;border-color:#333"></div>'}).join('')}
-        for(var i=0;i<80;i++){var p=document.createElement('span');p.style.left=Math.random()*100+'%';p.style.animationDelay=Math.random()*20+'s';p.style.animationDuration=8+Math.random()*15+'s';p.style.width=p.style.height=(2+Math.random()*5)+'px';document.getElementById('particles').appendChild(p)}
-        if(localStorage.getItem('policyAccepted')==='true'){document.getElementById('policyOverlay').style.display='none';document.getElementById('authModal').style.display='flex'}
-        document.addEventListener('DOMContentLoaded',function(){var a=document.getElementById('acceptPolicy');if(a){a.onclick=function(){localStorage.setItem('policyAccepted','true');document.getElementById('policyOverlay').style.display='none';document.getElementById('authModal').style.display='flex'}}});
-        function showBeatlesModal(){document.getElementById('beatlesModal').style.display='flex'}
-        function closeBeatlesModal(){document.getElementById('beatlesModal').style.display='none'}
-        function isDocumentExpired(e){if(!e)return false;var t=new Date,n=new Date(e);return t>n}
-        function isExpiringSoon(e,d){d=d||7;if(!e)return false;var t=new Date,n=new Date(e),i=n-t,r=Math.ceil(i/(1000*60*60*24));return r>0&&r<=d}
-        function getDaysUntilExpiry(e){if(!e)return null;var t=new Date,n=new Date(e),i=n-t;return Math.ceil(i/(1000*60*60*24))}
-        async function checkDocumentExpiry(){if(!userData)return;var r=false;if(userData.medicalCard&&userData.medicalCard.expiryDate){if(isDocumentExpired(userData.medicalCard.expiryDate)){userData.medicalCard=null;r=true;showNotification('⚠️ Срок действия медицинской книжки истёк! Оформите новую.','warning')}else if(isExpiringSoon(userData.medicalCard.expiryDate,3)){var d=getDaysUntilExpiry(userData.medicalCard.expiryDate);showNotification('⚠️ Медицинская книжка истекает через '+d+' дня(ей)! Переоформите её.','warning')}}if(userData.license&&userData.license.expiryDate){if(isDocumentExpired(userData.license.expiryDate)){userData.license=null;userData.licenseCooldown=null;r=true;showNotification('⚠️ Срок действия водительских прав истёк! Пересдайте экзамен.','warning')}else if(isExpiringSoon(userData.license.expiryDate,30)){var d=getDaysUntilExpiry(userData.license.expiryDate);showNotification('⚠️ Водительские права истекают через '+d+' дня(ей)! Переоформите их.','warning')}}if(r){await saveUserData();renderDocuments();renderAchievements()}}
-        async function renewMedicalCard(){if(!userData)return;if(!userData.passport){showNotification('❌ Сначала оформите паспорт!','error');return}var p=5000;if(userData.balance<p){showNotification('❌ Не хватает '+p.toLocaleString()+' ₽ для переоформления!','error');return}userData.balance-=p;var e=new Date;e.setFullYear(e.getFullYear()+1);userData.medicalCard={id:generateRandomId(),passportId:userData.passport.id,issueDate:new Date().toLocaleDateString(),expiryDate:e.toLocaleDateString()};await saveUserData();renderDocuments();updateCardUI();showNotification('✅ Медицинская книжка переоформлена! Действительна до '+e.toLocaleDateString(),'success');closeRenewMedicalModal()}
-        async function renewLicense(){if(!userData)return;if(!userData.passport){showNotification('❌ Сначала оформите паспорт!','error');return}var p=3000;if(userData.balance<p){showNotification('❌ Не хватает '+p.toLocaleString()+' ₽ для пересдачи!','error');return}userData.balance-=p;closeRenewLicenseModal();isRenewMode=true;showPddModal()}
-        function showPlayerDocsModal(u,d){document.getElementById('docsModalTitle').innerHTML='📋 Документы игрока: '+escapeHtml(u);var h='';if(d.passport){h+='<div class="player-doc-card" style="background:linear-gradient(145deg,#e8f0fe 0%,#d0e0f5 100%)"><h4>📘 ПАСПОРТ РФ</h4><div class="doc-field"><span class="doc-label">ФИО:</span><span class="doc-value">'+escapeHtml(d.passport.fullName||'—')+'</span></div><div class="doc-field"><span class="doc-label">Год рождения:</span><span class="doc-value">'+(d.passport.birthYear||'—')+'</span></div><div class="doc-field"><span class="doc-label">Место жительства:</span><span class="doc-value">'+escapeHtml(d.passport.address||'—')+'</span></div><div class="doc-field"><span class="doc-label">Номер паспорта:</span><span class="doc-value">'+(d.passport.id||'—')+'</span></div><div class="doc-field"><span class="doc-label">Дата выдачи:</span><span class="doc-value">'+(d.passport.issuedDate||'—')+'</span></div><div class="doc-stamp">✓ Действителен (бессрочно)</div></div>'}else{h+='<div class="player-doc-card" style="opacity:0.7"><h4>📘 ПАСПОРТ РФ</h4><div class="doc-field">❌ Паспорт не оформлен</div></div>'}
-        if(d.passport){var m=d.medicalCard?.id||generateRandomId(),ex=d.medicalCard?.expiryDate||new Date(new Date().setFullYear(new Date().getFullYear()+1)).toLocaleDateString(),ie=isDocumentExpired(ex);h+='<div class="player-doc-card" style="background:linear-gradient(145deg,#fde8f0 0%,#f5d0e0 100%)"><h4>⚕️ МЕДИЦИНСКАЯ КНИЖКА</h4><div class="doc-field"><span class="doc-label">Номер:</span><span class="doc-value">'+m+'</span></div><div class="doc-field"><span class="doc-label">Привязана к паспорту:</span><span class="doc-value">'+d.passport.id+'</span></div><div class="doc-field"><span class="doc-label">Годен до:</span><span class="doc-value" style="color:'+(ie?'red':'green')+'">'+ex+' '+(ie?'❌ ИСТЕКЛО':'✓')+'</span></div><div class="doc-stamp">'+(ie?'❌ Требуется переоформление':'✓ Действительна')+'</div></div>'}else{h+='<div class="player-doc-card" style="opacity:0.7"><h4>⚕️ МЕДИЦИНСКАЯ КНИЖКА</h4><div class="doc-field">❌ Требуется паспорт</div></div>'}
-        if(d.license){var ex=d.license.expiryDate||new Date(new Date().setFullYear(new Date().getFullYear()+10)).toLocaleDateString(),ie=isDocumentExpired(ex);h+='<div class="player-doc-card" style="background:linear-gradient(145deg,#fde8f0 0%,#f5d0e0 100%)"><h4>🚗 ВОДИТЕЛЬСКОЕ УДОСТОВЕРЕНИЕ</h4><div class="doc-field"><span class="doc-label">Номер ВУ:</span><span class="doc-value">'+(d.license.id||'—')+'</span></div><div class="doc-field"><span class="doc-label">Категории:</span><span class="doc-value"><span class="category-badge">A</span><span class="category-badge">B</span><span class="category-badge">C</span><span class="category-badge">M</span></span></div><div class="doc-field"><span class="doc-label">Дата выдачи:</span><span class="doc-value">'+(d.license.issueDate||'—')+'</span></div><div class="doc-field"><span class="doc-label">Годен до:</span><span class="doc-value" style="color:'+(ie?'red':'green')+'">'+ex+' '+(ie?'❌ ИСТЕКЛО':'✓')+'</span></div><div class="doc-stamp">'+(ie?'❌ Требуется пересдача экзамена':'✓ Действительно')+'</div></div>'}else{h+='<div class="player-doc-card" style="opacity:0.7"><h4>🚗 ВОДИТЕЛЬСКОЕ УДОСТОВЕРЕНИЕ</h4><div class="doc-field">❌ Не получено</div></div>'}
-        h+='<div class="player-doc-card" style="background:#0a0c12"><h4>📝 КВАЛИФИКАЦИОННЫЕ ТЕСТЫ</h4><div class="doc-field"><span class="doc-label">Тест полицейского:</span><span class="doc-value">'+(d.policeTest==='passed'?'✅ Сдан':'❌ Не сдан')+'</span></div><div class="doc-field"><span class="doc-label">Тест инкассатора:</span><span class="doc-value">'+(d.cashierTest==='passed'?'✅ Сдан':'❌ Не сдан')+'</span></div><div class="doc-field"><span class="doc-label">Тест мэра:</span><span class="doc-value">'+(d.mayorTest==='passed'?'✅ Сдан':'❌ Не сдан')+'</span></div></div>';document.getElementById('playerDocsContent').innerHTML=h;document.getElementById('playerDocsModal').style.display='flex'}
-        function closePlayerDocsModal(){document.getElementById('playerDocsModal').style.display='none'}
-        function showRenewMedicalModal(){document.getElementById('renewMedicalModal').style.display='flex'}
-        function closeRenewMedicalModal(){document.getElementById('renewMedicalModal').style.display='none'}
-        function showRenewLicenseModal(){document.getElementById('renewLicenseModal').style.display='flex'}
-        function closeRenewLicenseModal(){document.getElementById('renewLicenseModal').style.display='none'}
+        // ========== ОСНОВНЫЕ ФУНКЦИИ ==========
+        async function hashPassword(p){
+            const e=new TextEncoder,n=e.encode(p);
+            const t=await crypto.subtle.digest('SHA-256',n);
+            return Array.from(new Uint8Array(t)).map(b=>b.toString(16).padStart(2,'0')).join('');
+        }
         
-        var pinnedMessages=[]
-        async function loadPinnedMessages(){try{var s=await db.collection('pinnedMessages').orderBy('timestamp','asc').get();pinnedMessages=s.docs.map(function(d){return{id:d.id, name:d.data().name, text:d.data().text}});renderPinnedMessages()}catch(e){console.error(e)}}
-        function renderPinnedMessages(){var c=document.getElementById('pinnedMessages');if(!c)return;if(pinnedMessages.length===0){c.innerHTML='<div style="color:#ffaa00;">📌 Закреплённых сообщений нет</div>';return}var h='<div style="color:#ffaa00; margin-bottom:5px;">📌 ЗАКРЕПЛЁННЫЕ СООБЩЕНИЯ:</div>';for(var i=0;i<pinnedMessages.length;i++){var m=pinnedMessages[i];var en=escapeHtml(m.name),et=escapeHtml(m.text),mid=m.id;h+='<div class="pinned-message-item" id="pinned-'+mid+'"><div class="pinned-message-text"><strong>'+en+'</strong>: '+et+'</div>';if(currentUser==='Yura'||currentUserRole==='admin'){h+='<button class="unpin-btn" onclick="unpinMessage(\''+mid+'\',\''+en.replace(/'/g,"\\'")+'\',\''+et.replace(/'/g,"\\'")+'\')">❌ Открепить</button>'}h+='</div>'}c.innerHTML=h}
-        window.unpinMessage=async function(mid,name,text){console.log("Открепление:",mid);if(currentUser!=='Yura'&&currentUserRole!=='admin'){showNotification('Нет прав!','error');return}try{await db.collection('pinnedMessages').doc(mid).delete();await logAdminAction('📌 Открепление сообщения','Чат','Сообщение от '+name+': '+text.substring(0,50));showNotification('✅ Сообщение откреплено!','success');await loadPinnedMessages()}catch(e){console.error(e);showNotification('Ошибка: '+e.message,'error')}}
-        async function pinMessage(mid,name,text){if(currentUser!=='Yura'&&currentUserRole!=='admin'){showNotification('Нет прав!','error');return}try{await db.collection('pinnedMessages').add({name:name,text:text,timestamp:Date.now()});await logAdminAction('📌 Закрепление сообщения','Чат','Сообщение: '+text.substring(0,50));await loadPinnedMessages();showNotification('📌 Сообщение закреплено!','success')}catch(e){showNotification('Ошибка: '+e.message,'error')}}
-        window.pinMessage=pinMessage
+        function showNotification(m,t){
+            t=t||'success';
+            const n=document.createElement('div');
+            n.className='notification '+t;
+            n.textContent=m;
+            document.body.appendChild(n);
+            setTimeout(()=>n.remove(),3000);
+        }
         
-        var firebaseConfig={apiKey:"AIzaSyAJeBC0bgStvXZlNGpF0M1J9MwUoM57yNw",authDomain:"brickrp-site.firebaseapp.com",projectId:"brickrp-site",storageBucket:"brickrp-site.firebasestorage.app",messagingSenderId:"735858740541",appId:"1:735858740541:web:54fcf2ef0c2cb60d9d4954"}
-        var db,currentUser=null,currentUserRole="player",userData=null,allUsers=[]
-        var roleTags={"creator":"👑 [создатель]","admin":"🛡️ [админ]","moderator":"📋 [модератор]","player":"🎮 [игрок]"}
-        function generateRandomId(){return Math.floor(Math.random()*9000000000+1000000000).toString()}
-        async function fixCreatorAccount(){var u="Yura",p="5638Yura",e=await db.collection('users').doc(u).get();if(e.exists){var d=e.data();if(!d.medicalCard||!d.license||!d.license.expiryDate){var f10=new Date;f10.setFullYear(f10.getFullYear()+10);var f1=new Date;f1.setFullYear(f1.getFullYear()+1);await db.collection('users').doc(u).update({medicalCard:{id:"MED987654321",expiryDate:f1.toLocaleDateString()},license:{id:"098765432109",issueDate:new Date().toLocaleDateString(),expiryDate:f10.toLocaleDateString()}})}return}var h=await hashPassword(p),f10=new Date;f10.setFullYear(f10.getFullYear()+10);var f1=new Date;f1.setFullYear(f1.getFullYear()+1),c={username:u,password:h,balance:999999999,garage:["🚗 Bugatti Chiron","🚁 Private Jet","🏍️ Ducati V4","🚤 Yacht"],businesses:["auto","restaurant","hotel","club","gas","svoy"],businessLevels:{auto:5,restaurant:5,hotel:5,club:5,gas:5,svoy:5},job:"mayor",lastPayTime:Date.now(),lastBusinessTime:Date.now(),policeTest:'passed',cashierTest:'passed',mayorTest:'passed',achievements:["first_car","first_business","first_passport","first_license","million","test_master","job_master","collector","rich","business_magnate"],isBanned:false,passport:{fullName:"Юра Создатель",birthYear:1990,address:"Москва, Кремль",id:"123456789012",issuedDate:new Date().toLocaleDateString()},license:{id:"098765432109",issueDate:new Date().toLocaleDateString(),expiryDate:f10.toLocaleDateString()},medicalCard:{id:"MED987654321",expiryDate:f1.toLocaleDateString()},licenseCooldown:null,role:'creator'};await db.collection('users').doc(u).set(c);console.log("Аккаунт создателя создан")}
-        var pddQuestions=[{text:"Что означает красный сигнал светофора?",options:["Движение разрешено","Движение запрещено","Приготовиться к движению","Уступить дорогу"],correct:1},{text:"Что означает жёлтый сигнал светофора?",options:["Движение запрещено","Движение разрешено","Предупреждение о смене сигнала","Стоп-линия"],correct:2},{text:"Разрешено ли обгонять на пешеходном переходе?",options:["Да","Нет","Только если нет пешеходов","Разрешено, если не создаёт помех"],correct:1},{text:"Что такое «опасный груз»?",options:["Крупногабаритный груз","Взрывчатые, легковоспламеняющиеся вещества","Тяжёлый груз","Груз, мешающий обзору"],correct:1},{text:"Кто должен уступить дорогу при одновременном перестроении?",options:["Тот, кто слева","Тот, кто справа","Тот, кто быстрее","Тот, кто первый начал манёвр"],correct:1},{text:"Можно ли перевозить детей до 12 лет на переднем сиденье?",options:["Да, всегда","Нет, только на заднем","Да, только в специальном кресле","Нет, запрещено"],correct:2},{text:"Что означает знак «Кирпич»?",options:["Въезд запрещён","Стоянка запрещена","Одностороннее движение","Тупик"],correct:0},{text:"Какой документ даёт право управления транспортным средством?",options:["Паспорт","Водительское удостоверение","Медицинская книжка","Свидетельство о регистрации"],correct:1},{text:"При каком уровне алкоголя в крови запрещено вождение?",options:["Любое содержание алкоголя","Более 0.1 промилле","Более 0.5 промилле","Более 1 промилле"],correct:0},{text:"Что нужно сделать при ДТП?",options:["Уехать с места аварии","Остановиться, включить аварийку, вызвать ГИБДД","Позвонить друзьям","Продолжить движение"],correct:1}]
-        var businessesList=[{id:"auto",name:"Автосалон",icon:"fa-car",price:500000,income:25000,level:1},{id:"restaurant",name:"Ресторан",icon:"fa-utensils",price:300000,income:15000,level:1},{id:"hotel",name:"Отель",icon:"fa-hotel",price:800000,income:40000,level:1},{id:"club",name:"Ночной клуб",icon:"fa-music",price:600000,income:30000,level:1},{id:"gas",name:"АЗС",icon:"fa-gas-pump",price:400000,income:20000,level:1},{id:"svoy",name:"⭐ Свой бизнес",icon:"fa-star",price:2000000,income:100000,level:1}]
-        var buildings=[{name:"Небоскрёб Downtown",image:"https://steamuserimages-a.akamaihd.net/ugc/1767174607894012903/",desc:"Центральный деловой район"},{name:"АЗС Shell",image:"https://steamuserimages-a.akamaihd.net/ugc/1767174607894012345/",desc:"Заправка с автомойкой"},{name:"Полицейский участок",image:"https://steamuserimages-a.akamaihd.net/ugc/1767174607894011789/",desc:"Отдел LSPD"},{name:"Больница",image:"https://steamuserimages-a.akamaihd.net/ugc/1767174607894011234/",desc:"Скорая помощь"},{name:"Автосалон",image:"https://steamuserimages-a.akamaihd.net/ugc/1767174607894010678/",desc:"Покупка машин"},{name:"Ресторан KISA",image:"https://steamuserimages-a.akamaihd.net/ugc/1767174607894010123/",desc:"VIP-место встреч"}]
-        var vehicles=[{name:"ТАС-Дом на колёсах",price:1200000,icon:"fas fa-home"},{name:"RAH 270 Vapor VIP Helicopter",price:5000000,icon:"fas fa-helicopter"},{name:"2019 Lada Granta FL",price:1000000,icon:"fas fa-car"},{name:"Kawasaki Ninja red",price:900000,icon:"fas fa-motorcycle"},{name:"Mercedes-Benz C63 AMG",price:2100000,icon:"fas fa-car-side"},{name:"2020 BMW M8 Coupe",price:2500000,icon:"fas fa-car"}]
-        var testsData={policeTest:{name:"👮 Тест полицейского",jobName:"Полиция",questions:[{text:"Что делать при ограблении банка?",options:["Ждать подкрепления","Врываться в одиночку","Игнорировать","Уйти в отпуск"],correct:0},{text:"Можно ли стрелять в безоружного?",options:["Да","Нет, если нет угрозы","Всегда","Только в спину"],correct:1},{text:"Что такое FearRP?",options:["Страх за свою жизнь","Название машины","Команда","Оружие"],correct:0},{text:"Как обращаться к мэру?",options:["На ты","Господин мэр","Просто по имени","Молчать"],correct:1},{text:"Что делать с уликами?",options:["Уничтожить","Продать","Сохранить и передать","Спрятать"],correct:2}]},cashierTest:{name:"💰 Тест инкассатора",jobName:"Инкассатор",questions:[{text:"Что самое важное при перевозке денег?",options:["Скорость","Безопасность","Красивая машина","Музыка"],correct:1},{text:"Что делать при нападении?",options:["Сдаться","Убегать","Оказать сопротивление и вызвать помощь","Выбросить деньги"],correct:2},{text:"Кто может остановить инкассатора?",options:["Любой игрок","Только полиция","Друзья","Бандиты"],correct:1},{text:"Что такое броневик?",options:["Обычная машина","Машина с бронёй","Мотоцикл","Вертолёт"],correct:1},{text:"Куда сдавать деньги?",options:["Домой","В банк","В гараж","Друзьям"],correct:1}]},mayorTest:{name:"🏛️ Тест мэра",jobName:"Мэр",questions:[{text:"Кто назначает мэра?",options:["Игроки","Администрация","Президент","Народ"],correct:1},{text:"Что входит в обязанности мэра?",options:["Водить такси","Управлять городом","Воевать","Гонять"],correct:1},{text:"Можно ли мэру нарушать закон?",options:["Да, он главный","Нет, он тоже подчиняется","Только ночью","С разрешения полиции"],correct:1},{text:"Как повысить бюджет города?",options:["Печатать деньги","Налоги и штрафы","Продать машины","Никак"],correct:1},{text:"Что делать с жалобами граждан?",options:["Игнорировать","Рассмотреть и решить","Удалить","Посмеяться"],correct:1}]}}
-        var achievementsList=[{id:"first_car",title:"Первый автомобиль",desc:"Купить первую машину",icon:"fa-car",check:function(d){return d.garage?.length>0}},{id:"first_business",title:"Первый бизнес",desc:"Купить первый бизнес",icon:"fa-store",check:function(d){return d.businesses?.length>0}},{id:"first_passport",title:"Гражданин РФ",desc:"Получить паспорт",icon:"fa-passport",check:function(d){return d.passport!==null}},{id:"first_license",title:"Водитель",desc:"Получить водительские права",icon:"fa-id-card",check:function(d){return d.license!==null}},{id:"million",title:"Миллионер",desc:"Накопить 1 000 000 ₽",icon:"fa-coins",check:function(d){return d.balance>=1000000}},{id:"test_master",title:"Мастер тестов",desc:"Сдать все три теста",icon:"fa-graduation-cap",check:function(d){return d.policeTest==='passed'&&d.cashierTest==='passed'&&d.mayorTest==='passed'}},{id:"job_master",title:"Трудоголик",desc:"Устроиться на работу",icon:"fa-briefcase",check:function(d){return d.job!==null}},{id:"collector",title:"Коллекционер",desc:"Купить 3 машины",icon:"fa-car-side",check:function(d){return d.garage?.length>=3}},{id:"rich",title:"Богач",desc:"Накопить 5 000 000 ₽",icon:"fa-gem",check:function(d){return d.balance>=5000000}},{id:"business_magnate",title:"Магнат",desc:"Купить 3 бизнеса",icon:"fa-chart-line",check:function(d){return d.businesses?.length>=3}}]
-        var isRenewMode=false
+        function escapeHtml(t){
+            const e=document.createElement('div');
+            e.textContent=t;
+            return e.innerHTML;
+        }
         
-        function initSite(){if(!db)return;fixCreatorAccount();document.getElementById('bankCardContainer').addEventListener('click',showBeatlesModal)
-        async function updateAchievements(){if(!userData)return;var c=false;for(var a of achievementsList){if(!userData.achievements?.includes(a.id)&&a.check(userData)){if(!userData.achievements)userData.achievements=[];userData.achievements.push(a.id);c=true;showNotification('🏆 Получено достижение: '+a.title+'!','success')}}if(c){await db.collection('users').doc(userData.username).update({achievements:userData.achievements});renderAchievements()}}
-        async function loadAllUsers(){var s=await db.collection('users').get();allUsers=s.docs.map(function(d){return{id:d.id, username:d.data().username, role:d.data().role, balance:d.data().balance, garage:d.data().garage, businesses:d.data().businesses, job:d.data().job, isBanned:d.data().isBanned}});if(currentUser==='Yura'||currentUserRole==='admin'||currentUserRole==='moderator'||currentUser?.job==='police')renderPlayersTable()}
-        function renderPlayersTable(){var t=document.getElementById('playersList');if(!t)return;var j={taxi:'Таксист',police:'Полиция',mechanic:'Механик',loader:'Грузчик',cashier:'Инкассатор',mayor:'Мэр',svoya:'Своя'};t.innerHTML=allUsers.map(function(u){return'<tr><td>'+(u.username)+(u.username==='Yura'?' 👑':'')+'</td><td>'+(u.role||'player')+'</td><td>'+(u.balance||0).toLocaleString()+' ₽</td><td>'+(u.garage||[]).length+'</td><td>'+(u.businesses||[]).length+'</td><td>'+(u.job?j[u.job]||u.job:'❌ Нет')+'</td><td>'+(currentUser==='Yura'||currentUserRole==='admin'||currentUserRole==='moderator'||currentUser?.job==='police'?'<button class="admin-btn" onclick="viewPlayerDocs(\''+u.username+'\')" style="background:#ffaa00;color:#000">📋 Документы</button>':'')+(currentUser==='Yura'||currentUserRole==='admin')&&u.username!=='Yura'?'<button class="admin-btn" onclick="adminGiveMoney(\''+u.username+'\')">💰 Выдать</button><button class="admin-btn" onclick="adminTakeMoney(\''+u.username+'\')">💰 Забрать</button><button class="admin-btn" onclick="adminGiveCar(\''+u.username+'\')">🚗 Дать машину</button>'+(u.isBanned?'<button class="admin-btn" onclick="unbanUser(\''+u.username+'\')">✅ Разбанить</button>':'<button class="admin-btn" onclick="banUser(\''+u.username+'\')">⛔ Забанить</button>'):''+(currentUser==='Yura'&&u.username!=='Yura'?'<button class="admin-btn" onclick="openRoleModal(\''+u.username+'\')">👑 Назначить роль</button><button class="admin-btn" onclick="removeRole(\''+u.username+'\')">📋 Снять роль</button>':'')+'</td></tr>'}).join('')}
-        window.viewPlayerDocs=async function(u){if(currentUser!=='Yura'&&currentUserRole!=='admin'&&currentUserRole!=='moderator'&&currentUser?.job!=='police'){showNotification('Нет прав!','error');return}var d=await db.collection('users').doc(u).get();if(!d.exists){showNotification('Игрок не найден!','error');return}showPlayerDocsModal(u,d.data());await logAdminAction('📋 Просмотр документов',u,'Документы просмотрены')}
-        window.adminGiveMoney=async function(u){if(currentUser!=='Yura'&&currentUserRole!=='admin'){showNotification('Нет прав!','error');return}var a=parseInt(prompt("Сколько денег выдать?"));if(isNaN(a)||a<=0)return;var r=db.collection('users').doc(u);try{await db.runTransaction(async function(t){var d=await t.get(r);if(!d.exists)throw new Error('Игрок не найден');t.update(r,{balance:(d.data().balance||0)+a})});await logAdminAction('💰 Выдача денег',u,'Сумма: '+a.toLocaleString()+' ₽');showNotification('✅ Выдано '+a.toLocaleString()+' ₽ игроку '+u,'success');await loadAllUsers();if(userData&&userData.username===u){userData.balance+=a;updateCardUI()}}catch(e){showNotification(e.message,'error')}}
-        window.adminTakeMoney=async function(u){if(currentUser!=='Yura'&&currentUserRole!=='admin'){showNotification('Нет прав!','error');return}var a=parseInt(prompt("Сколько денег забрать?"));if(isNaN(a)||a<=0)return;var r=db.collection('users').doc(u);try{await db.runTransaction(async function(t){var d=await t.get(r);if(!d.exists)throw new Error('Игрок не найден');var b=Math.max(0,(d.data().balance||0)-a);t.update(r,{balance:b})});await logAdminAction('💰 Изъятие денег',u,'Сумма: '+a.toLocaleString()+' ₽');showNotification('✅ Забрано '+a.toLocaleString()+' ₽ у '+u,'success');await loadAllUsers();if(userData&&userData.username===u){userData.balance=Math.max(0,userData.balance-a);updateCardUI()}}catch(e){showNotification(e.message,'error')}}
-        window.adminGiveCar=async function(u){if(currentUser!=='Yura'&&currentUserRole!=='admin'){showNotification('Нет прав!','error');return}var c=prompt("Введите название машины:");if(!c)return;var r=db.collection('users').doc(u);try{await db.runTransaction(async function(t){var d=await t.get(r);if(!d.exists)throw new Error('Игрок не найден');var g=d.data().garage||[];g.push(c);t.update(r,{garage:g})});await logAdminAction('🚗 Выдача машины',u,'Машина: '+c);showNotification('✅ Выдана машина '+c+' игроку '+u,'success');await loadAllUsers();if(userData&&userData.username===u){if(!userData.garage)userData.garage=[];userData.garage.push(c)}}catch(e){showNotification(e.message,'error')}}
-        window.banUser=async function(u){if(currentUser!=='Yura'&&currentUserRole!=='admin'){showNotification('Нет прав!','error');return}if(u==='Yura'){showNotification('Нельзя забанить создателя!','error');return}var user=allUsers.find(function(x){return x.username===u});if(user){user.isBanned=true;await db.collection('users').doc(u).set(user);await logAdminAction('⛔ Бан игрока',u,'Причина: нарушение правил');await loadAllUsers();showNotification('✅ '+u+' забанен','success')}}
-        window.unbanUser=async function(u){if(currentUser!=='Yura'&&currentUserRole!=='admin'){showNotification('Нет прав!','error');return}var user=allUsers.find(function(x){return x.username===u});if(user){user.isBanned=false;await db.collection('users').doc(u).set(user);await logAdminAction('✅ Разбан игрока',u,'Причина: апелляция принята');await loadAllUsers();showNotification('✅ '+u+' разбанен','success')}}
-        window.openRoleModal=function(u){document.getElementById('roleUser').value=u;document.getElementById('rolesTab').style.display='block';document.querySelector('.admin-tab[data-tab="roles"]').click()}
-        async function assignRole(u,r){if(currentUser!=='Yura'){showNotification('Только Yura может назначать роли!','error');return}if(u==='Yura'){showNotification('Нельзя изменить роль создателя!','error');return}var user=allUsers.find(function(x){return x.username===u});if(user){user.role=r;await db.collection('users').doc(u).set(user);await logAdminAction('👑 Назначение роли',u,'Роль: '+r);await loadAllUsers();showNotification('✅ Игроку '+u+' назначена роль: '+r,'success')}else{showNotification('Игрок не найден!','error')}}
-        async function removeRole(u){if(currentUser!=='Yura'){showNotification('Только Yura может снимать роли!','error');return}if(u==='Yura'){showNotification('Нельзя снять роль создателя!','error');return}var user=allUsers.find(function(x){return x.username===u});if(user){user.role='player';await db.collection('users').doc(u).set(user);await logAdminAction('📋 Снятие роли',u,'Новая роль: player');await loadAllUsers();showNotification('✅ У игрока '+u+' снята роль','success')}else{showNotification('Игрок не найден!','error')}}
-        function getSignature(f){var p=f.trim().split(/\s+/);if(p.length>=2){return(p[0][0]+p[1][0]).toUpperCase()}return"XX"}
-        async function loadUserData(u){var d=await db.collection('users').doc(u).get();if(d.exists){userData=d.data();currentUserRole=userData.role||'player';if(u==='Yura')currentUserRole='creator'}else{userData={username:u,balance:50000,garage:[],businesses:[],businessLevels:{},job:null,lastPayTime:Date.now(),lastBusinessTime:Date.now(),policeTest:null,cashierTest:null,mayorTest:null,achievements:[],isBanned:false,passport:null,license:null,medicalCard:null,licenseCooldown:null,role:'player'};currentUserRole='player';await db.collection('users').doc(u).set(userData)}if(userData.isBanned&&u!=='Yura')throw new Error("BANNED");if(!userData.businesses)userData.businesses=[];if(!userData.businessLevels)userData.businessLevels={};if(!userData.lastBusinessTime)userData.lastBusinessTime=Date.now();if(!userData.passport)userData.passport=null;if(!userData.license)userData.license=null;if(!userData.medicalCard)userData.medicalCard=null;if(!userData.role)userData.role='player';updateCardUI();updateUI();renderShop();renderTests();renderAchievements();renderJobStatus();renderBusinesses();renderMyBusinesses();renderDocuments();await loadAllUsers();await loadWorkLog();checkDocumentExpiry();setInterval(checkDocumentExpiry,1800000)}
-        async function saveUserData(){if(!userData)return;await db.collection('users').doc(userData.username).set(userData)}
-        function renderDocuments(){var c=document.getElementById('documentsGrid');if(!c)return;var h='';if(userData.passport){var pid=userData.passport.id,s=pid.substring(0,4),n=pid.substring(4),sig=getSignature(userData.passport.fullName);h+='<div class="doc-card passport-card"><div class="doc-header"><i class="fas fa-passport"></i><span class="doc-title">ПАСПОРТ РФ</span></div><div class="doc-field"><span class="doc-label">ФИО:</span><span class="doc-value">'+escapeHtml(userData.passport.fullName)+'</span></div><div class="doc-field"><span class="doc-label">Год рождения:</span><span class="doc-value">'+userData.passport.birthYear+'</span></div><div class="doc-field"><span class="doc-label">Место жительства:</span><span class="doc-value">'+escapeHtml(userData.passport.address)+'</span></div><div class="doc-field"><span class="doc-label">Серия и номер:</span><span class="doc-value">'+s+' '+n+'</span></div><div class="doc-field"><span class="doc-label">Дата выдачи:</span><span class="doc-value">'+userData.passport.issuedDate+'</span></div><div class="doc-sign">Подпись: '+sig+'</div><div class="doc-stamp">✓ Действителен (бессрочно)</div></div>'}else{h+='<div class="doc-card passport-card" style="opacity:0.7"><div class="doc-header"><i class="fas fa-passport"></i><span class="doc-title">ПАСПОРТ РФ</span></div><div class="doc-field">❌ Паспорт не оформлен</div></div>'}
-        if(userData.passport){var mid=userData.medicalCard?.id||generateRandomId(),ex=userData.medicalCard?.expiryDate||new Date(new Date().setFullYear(new Date().getFullYear()+1)).toLocaleDateString(),ie=isDocumentExpired(ex),dl=getDaysUntilExpiry(ex);h+='<div class="doc-card med-card"><div class="doc-header"><i class="fas fa-notes-medical"></i><span class="doc-title">МЕДИЦИНСКАЯ КНИЖКА</span></div><div class="doc-field"><span class="doc-label">Номер:</span><span class="doc-value">'+mid+'</span></div><div class="doc-field"><span class="doc-label">Привязана к паспорту:</span><span class="doc-value">'+userData.passport.id+'</span></div><div class="doc-field"><span class="doc-label">Годен до:</span><span class="doc-value" style="color:'+(ie?'red':(dl<=7?'#ffaa00':'green'))+'">'+ex+' '+(ie?'❌ ИСТЕКЛО':(dl<=7?'⚠️ Истекает скоро':'✓'))+'</span></div><div class="doc-stamp">'+(ie?'❌ Требуется переоформление':'✓ Действительна')+'</div>'+(ie||(dl<=30)?'<button class="renew-btn" onclick="showRenewMedicalModal()">🔄 Переоформить</button>':'')+'</div>'}else{h+='<div class="doc-card med-card" style="opacity:0.7"><div class="doc-header"><i class="fas fa-notes-medical"></i><span class="doc-title">МЕДИЦИНСКАЯ КНИЖКА</span></div><div class="doc-field">❌ Требуется паспорт</div></div>'}
-        if(userData.license){var ex=userData.license.expiryDate||new Date(new Date().setFullYear(new Date().getFullYear()+10)).toLocaleDateString(),ie=isDocumentExpired(ex),dl=getDaysUntilExpiry(ex);h+='<div class="doc-card license-card"><div class="doc-header"><i class="fas fa-id-card"></i><span class="doc-title">ВОДИТЕЛЬСКОЕ УДОСТОВЕРЕНИЕ</span></div><div class="doc-field"><span class="doc-label">Номер ВУ:</span><span class="doc-value">'+userData.license.id+'</span></div><div class="doc-field"><span class="doc-label">Категории:</span><span class="doc-value"><span class="category-badge">A</span><span class="category-badge">B</span><span class="category-badge">C</span><span class="category-badge">M</span></span></div><div class="doc-field"><span class="doc-label">Дата выдачи:</span><span class="doc-value">'+userData.license.issueDate+'</span></div><div class="doc-field"><span class="doc-label">Годен до:</span><span class="doc-value" style="color:'+(ie?'red':(dl<=30?'#ffaa00':'green'))+'">'+ex+' '+(ie?'❌ ИСТЕКЛО':(dl<=30?'⚠️ Истекает скоро':'✓'))+'</span></div><div class="doc-stamp">'+(ie?'❌ Требуется пересдача экзамена':'✓ Действительно')+'</div>'+(ie||(dl<=60)?'<button class="renew-btn" onclick="showRenewLicenseModal()">🔄 Пересдать</button>':'')+'</div>'}else if(userData.licenseCooldown&&Date.now()<userData.licenseCooldown){var r=Math.ceil((userData.licenseCooldown-Date.now())/60000);h+='<div class="doc-card license-card" style="opacity:0.8"><div class="doc-header"><i class="fas fa-id-card"></i><span class="doc-title">ВОДИТЕЛЬСКОЕ УДОСТОВЕРЕНИЕ</span></div><div class="doc-field">⏳ Пересдача через '+r+' минут</div></div>'}else{h+='<div class="doc-card license-card" style="opacity:0.7"><div class="doc-header"><i class="fas fa-id-card"></i><span class="doc-title">ВОДИТЕЛЬСКОЕ УДОСТОВЕРЕНИЕ</span></div><div class="doc-field">❌ Не получено</div></div>'}
-        c.innerHTML=h}
-        async function savePassport(){if(!userData)return;var fn=document.getElementById('passportFullName').value.trim(),by=parseInt(document.getElementById('passportBirthYear').value),ad=document.getElementById('passportAddress').value.trim();if(!fn||!by||!ad){showNotification('Заполните все поля!','error');return}if(by<1920||by>2010){showNotification('Введите корректный год рождения (1920-2010)','error');return}userData.passport={fullName:fn,birthYear:by,address:ad,id:generateRandomId(),issuedDate:new Date().toLocaleDateString()};var fd=new Date;fd.setFullYear(fd.getFullYear()+1);userData.medicalCard={id:generateRandomId(),expiryDate:fd.toLocaleDateString()};await saveUserData();await updateAchievements();renderDocuments();closePassportModal();showNotification('✅ Паспорт и медкнижка успешно оформлены!','success')}
-        async function saveLicense(){if(!userData)return;if(!userData.passport){showNotification('❌ Сначала оформите паспорт!','error');return}if(userData.licenseCooldown&&Date.now()<userData.licenseCooldown){var r=Math.ceil((userData.licenseCooldown-Date.now())/60000);showNotification('⏳ Пересдача через '+r+' минут!','warning');return}isRenewMode=false;showPddModal()}
-        function showPddModal(){var c=document.getElementById('pddQuestions');c.innerHTML=pddQuestions.map(function(q,i){return'<div class="question"><p>'+(i+1)+'. '+q.text+'</p>'+q.options.map(function(o,oi){return'<label><input type="radio" name="pdd_'+i+'" value="'+oi+'"> '+o+'</label><br>'}).join('')+'</div>'}).join('');document.getElementById('pddModal').style.display='flex'}
-        async function submitPddTest(){var c=0;for(var i=0;i<pddQuestions.length;i++){var s=document.querySelector('input[name="pdd_'+i+'"]:checked');if(s&&parseInt(s.value)===pddQuestions[i].correct)c++}if(pddQuestions.length-c<=5){var fd=new Date;fd.setFullYear(fd.getFullYear()+10);if(isRenewMode){userData.license={id:generateRandomId(),passportId:userData.passport.id,issueDate:new Date().toLocaleDateString(),expiryDate:fd.toLocaleDateString(),categories:"A, B, C, M"};userData.licenseCooldown=null;await saveUserData();await updateAchievements();renderDocuments();document.getElementById('pddModal').style.display='none';showNotification('✅ Поздравляем! Вы пересдали экзамен ПДД ('+c+'/'+pddQuestions.length+' правильных). Права переоформлены на 10 лет!','success')}else{userData.license={id:generateRandomId(),passportId:userData.passport.id,issueDate:new Date().toLocaleDateString(),expiryDate:fd.toLocaleDateString(),categories:"A, B, C, M"};userData.licenseCooldown=null;await saveUserData();await updateAchievements();renderDocuments();document.getElementById('pddModal').style.display='none';showNotification('✅ Поздравляем! Вы сдали экзамен ПДД ('+c+'/'+pddQuestions.length+' правильных). Права выданы на 10 лет!','success')}}else{if(!isRenewMode){userData.licenseCooldown=Date.now()+5*60*1000;await saveUserData()}document.getElementById('pddModal').style.display='none';showNotification('❌ Экзамен не сдан! ('+c+'/'+pddQuestions.length+' правильных). Пересдача через 5 минут.','error')}isRenewMode=false}
-        function showPassportModal(){if(userData.passport){showNotification('Паспорт уже оформлен!','warning');return}document.getElementById('passportModal').style.display='flex'}
-        function closePassportModal(){document.getElementById('passportModal').style.display='none';document.getElementById('passportFullName').value='';document.getElementById('passportBirthYear').value='';document.getElementById('passportAddress').value=''}
-        function updateCardUI(){if(!userData)return;document.getElementById('balanceDisplay').innerHTML=userData.balance.toLocaleString()+' ₽';document.getElementById('cardHolder').innerHTML=userData.username.toUpperCase();document.getElementById('cardNumberDisplay').innerHTML='**** **** **** '+Math.floor(Math.random()*9000+1000);var d=new Date();document.getElementById('cardExpiry').innerHTML=(d.getMonth()+1).toString().padStart(2,'0')+'/'+(d.getFullYear()+3).toString().slice(-2)}
-        async function transferMoney(to,amount){if(!userData)return{success:false,message:'Не авторизован'};if(userData.username===to)return{success:false,message:'Нельзя перевести самому себе'};if(amount<=0)return{success:false,message:'Сумма должна быть больше 0'};if(userData.balance<amount)return{success:false,message:'Недостаточно средств'};var ur=db.collection('users').doc(userData.username),tr=db.collection('users').doc(to);try{await db.runTransaction(async function(t){var ud=await t.get(ur),td=await t.get(tr);if(!ud.exists)throw new Error('Отправитель не найден');if(!td.exists)throw new Error('Получатель не найден');var ub=ud.data().balance||0;if(ub<amount)throw new Error('Недостаточно средств');t.update(ur,{balance:ub-amount});t.update(tr,{balance:(td.data().balance||0)+amount})});userData.balance-=amount;updateCardUI();return{success:true,message:'Переведено '+amount.toLocaleString()+' ₽ игроку '+to}}catch(e){return{success:false,message:e.message}}}
-        async function doLogin(){var u=document.getElementById('loginUsername').value.trim(),p=document.getElementById('loginPassword').value,r=document.getElementById('rememberMe').checked;if(!u||!p){showNotification('Введите никнейм и пароль!','error');return}var d=await db.collection('users').doc(u).get();if(!d.exists){showNotification('❌ Пользователь не найден!','error');return}var hp=await hashPassword(p);if(d.data().password!==hp){showNotification('❌ Неверный пароль!','error');return}if(d.data().isBanned&&u!=='Yura'){showNotification('⛔ Аккаунт забанен!','error');return}currentUser=u;document.getElementById('mainContent').style.display='block';document.getElementById('authModal').style.display='none';await loadUserData(u);if(r)localStorage.setItem('rememberedUser',u);else localStorage.removeItem('rememberedUser');renderJobStatus();loadTickets();loadChat();loadPinnedMessages();if(currentUser==='Yura'||currentUserRole==='admin'){document.getElementById('adminPanel').style.display='block';renderPlayersTable()}}
-        async function doRegister(){var u=document.getElementById('registerUsername').value.trim(),p=document.getElementById('registerPassword').value;if(!u||!p){showNotification('Введите никнейм и пароль!','error');return}if(u.length<3){showNotification('Никнейм должен быть минимум 3 символа!','error');return}if(p.length<4){showNotification('Пароль должен быть минимум 4 символа!','error');return}if(u.toLowerCase()==='yura'){showNotification('Этот никнейм зарезервирован!','error');return}var d=await db.collection('users').doc(u).get();if(d.exists){showNotification('❌ Пользователь с таким ником уже существует!','error');return}var hp=await hashPassword(p);var nu={username:u,password:hp,balance:50000,garage:[],businesses:[],businessLevels:{},job:null,lastPayTime:Date.now(),lastBusinessTime:Date.now(),policeTest:null,cashierTest:null,mayorTest:null,achievements:[],isBanned:false,passport:null,license:null,medicalCard:null,licenseCooldown:null,role:'player'};await db.collection('users').doc(u).set(nu);showNotification('✅ Регистрация успешна! Теперь войдите.','success');document.getElementById('loginUsername').value=u;document.getElementById('loginPassword').value='';document.getElementById('registerUsername').value='';document.getElementById('registerPassword').value=''}
-        function logout(){currentUser=null;userData=null;currentUserRole='player';localStorage.removeItem('rememberedUser');document.getElementById('mainContent').style.display='none';document.getElementById('adminPanel').style.display='none';document.getElementById('authModal').style.display='flex';updateUI()}
-        async function restoreSession(){var r=localStorage.getItem('rememberedUser');if(r){var d=await db.collection('users').doc(r).get();if(d.exists&&!d.data().isBanned){currentUser=r;document.getElementById('mainContent').style.display='block';document.getElementById('authModal').style.display='none';await loadUserData(r);loadTickets();loadChat();loadPinnedMessages();if(currentUser==='Yura'||currentUserRole==='admin'){document.getElementById('adminPanel').style.display='block';renderPlayersTable()}return true}}return false}
-        async function giveMoney(t,a){if(currentUser!=='Yura'&&currentUserRole!=='admin'){showNotification('Нет прав!','error');return}var d=await db.collection('users').doc(t).get();if(d.exists){var data=d.data();data.balance=(data.balance||0)+a;await db.collection('users').doc(t).set(data);await logAdminAction('💰 Выдача денег (панель)',t,'Сумма: '+a.toLocaleString()+' ₽');if(currentUser===t&&userData)userData.balance=data.balance;document.getElementById('moneyResult').innerHTML='<span style="color:#8aff8a;">✅ Выдано '+a+'₽</span>';setTimeout(function(){document.getElementById('moneyResult').innerHTML=''},3000);await loadAllUsers()}else{document.getElementById('moneyResult').innerHTML='<span style="color:#ff8a8a;">❌ Игрок не найден</span>'}}
-        async function takeMoney(t,a){if(currentUser!=='Yura'&&currentUserRole!=='admin'){showNotification('Нет прав!','error');return}var d=await db.collection('users').doc(t).get();if(d.exists){var data=d.data();data.balance=Math.max(0,(data.balance||0)-a);await db.collection('users').doc(t).set(data);await logAdminAction('💰 Изъятие денег (панель)',t,'Сумма: '+a.toLocaleString()+' ₽');if(currentUser===t&&userData)userData.balance=data.balance;document.getElementById('moneyResult').innerHTML='<span style="color:#ffaa00;">✅ Забрано '+a+'₽</span>';setTimeout(function(){document.getElementById('moneyResult').innerHTML=''},3000);await loadAllUsers()}else{document.getElementById('moneyResult').innerHTML='<span style="color:#ff8a8a;">❌ Игрок не найден</span>'}}
-        async function giveProperty(t,ty,n){if(currentUser!=='Yura'&&currentUserRole!=='admin'){showNotification('Нет прав!','error');return}var d=await db.collection('users').doc(t).get();if(d.exists){var data=d.data();if(ty==='car'){if(!data.garage)data.garage=[];data.garage.push(n);await logAdminAction('🚗 Выдача машины (панель)',t,'Машина: '+n)}else if(ty==='business'){if(!data.businesses)data.businesses=[];data.businesses.push(n);await logAdminAction('🏢 Выдача бизнеса (панель)',t,'Бизнес: '+n)}await db.collection('users').doc(t).set(data);showNotification('✅ Выдано '+(ty==='car'?'авто':'бизнес')+' '+n+' игроку '+t,'success');await loadAllUsers()}else{showNotification('Игрок не найден!','error')}}
-        async function takeProperty(t,ty,n){if(currentUser!=='Yura'&&currentUserRole!=='admin'){showNotification('Нет прав!','error');return}var d=await db.collection('users').doc(t).get();if(d.exists){var data=d.data();if(ty==='car'&&data.garage){data.garage=data.garage.filter(function(c){return c!==n});await logAdminAction('🚗 Изъятие машины (панель)',t,'Машина: '+n)}else if(ty==='business'&&data.businesses){data.businesses=data.businesses.filter(function(b){return b!==n});await logAdminAction('🏢 Изъятие бизнеса (панель)',t,'Бизнес: '+n)}await db.collection('users').doc(t).set(data);showNotification('✅ Забрано '+(ty==='car'?'авто':'бизнес')+' '+n+' у '+t,'success');await loadAllUsers()}else{showNotification('Игрок не найден!','error')}}
-        async function loadChat(){var s=await db.collection('globalChat').orderBy('timestamp','asc').limit(100).get();renderChat(s.docs.map(function(d){return{id:d.id, name:d.data().name, text:d.data().text, timestamp:d.data().timestamp}}))}
-        function getRoleTag(u){if(u==='Yura')return roleTags.creator;var user=allUsers.find(function(x){return x.username===u});if(user&&user.role==='admin')return roleTags.admin;if(user&&user.role==='moderator')return roleTags.moderator;return roleTags.player}
-        function renderChat(m){var c=document.getElementById('chatMessages');if(!c)return;c.innerHTML=m.map(function(m){return'<div class="chat-message" id="msg-'+m.id+'"><div><span class="chat-name" style="color:'+(m.name==='Yura'?'#ffaa00':'#ff9a6e')+'">'+getRoleTag(m.name)+' '+escapeHtml(m.name)+'</span><span class="chat-time">'+new Date(m.timestamp).toLocaleTimeString()+'</span>'+(currentUser==='Yura'||currentUserRole==='admin'?'<button class="admin-btn" style="float:right;padding:2px 8px;" onclick="pinMessage(\''+m.id+'\',\''+escapeHtml(m.name)+'\',\''+escapeHtml(m.text).replace(/'/g,"\\'")+'\')">📌 Закрепить</button>':'')+'</div><div>'+escapeHtml(m.text)+'</div></div>'}).join('');c.scrollTop=c.scrollHeight}
-        async function sendChatMessage(){if(!currentUser)return;var t=document.getElementById('messageInput').value.trim();if(!t)return;if(t.length>200){showNotification('Сообщение слишком длинное! Максимум 200 символов','error');return}await db.collection('globalChat').add({name:currentUser,text:t,timestamp:Date.now(),role:currentUserRole});document.getElementById('messageInput').value=''}
-        function renderBuildings(){var c=document.getElementById('buildingsGrid');if(c)c.innerHTML=buildings.map(function(b){return'<div class="showcase-card"><div class="showcase-img" style="background-image:url(\''+b.image+'\');background-size:cover"></div><div class="showcase-info"><h4>'+b.name+'</h4><p>'+b.desc+'</p></div></div>'}).join('')}
-        function renderBusinesses(){var c=document.getElementById('businessesGrid');if(!c)return;c.innerHTML=businessesList.map(function(b){var o=userData?.businesses?.includes(b.id);return'<div class="business-card"><div class="business-icon"><i class="fas '+b.icon+'"></i></div><div class="business-info"><h4>'+b.name+'</h4><div class="business-income">💰 Доход: '+(b.income*(userData?.businessLevels?.[b.id]||1)).toLocaleString()+' ₽/час</div><div class="business-level">📈 Уровень: '+(userData?.businessLevels?.[b.id]||1)+'</div><div>💵 Цена: '+b.price.toLocaleString()+' ₽</div>'+(o?'<button class="business-btn" disabled>✅ Принадлежит</button>':'<button class="business-btn" onclick="buyBusiness(\''+b.id+'\')">Купить бизнес</button>')+(o&&(userData?.businessLevels?.[b.id]||1)<5?'<button class="business-btn" onclick="upgradeBusiness(\''+b.id+'\')" style="margin-top:5px;background:#ffaa00;color:#000;">📈 Улучшить ('+(b.price*0.5).toLocaleString()+'₽)</button>':'')+'</div></div>'}).join('')}
-        window.buyBusiness=async function(i){if(!userData)return;var b=businessesList.find(function(x){return x.id===i});if(userData.businesses?.includes(i))return;if(userData.balance>=b.price){userData.balance-=b.price;if(!userData.businesses)userData.businesses=[];userData.businesses.push(i);if(!userData.businessLevels)userData.businessLevels={};userData.businessLevels[i]=1;await saveUserData();updateCardUI();renderBusinesses();renderMyBusinesses();await updateAchievements();renderAchievements();showNotification('✅ Вы купили '+b.name+'!','success')}else{showNotification('❌ Не хватает '+b.price.toLocaleString()+'₽','error')}}
-        window.upgradeBusiness=async function(i){if(!userData)return;var b=businessesList.find(function(x){return x.id===i});var cl=userData.businessLevels?.[i]||1;if(cl>=5)return;var uc=b.price*0.5;if(userData.balance>=uc){userData.balance-=uc;userData.businessLevels[i]=cl+1;await saveUserData();updateCardUI();renderBusinesses();renderMyBusinesses();showNotification('✅ '+b.name+' улучшен до '+(cl+1)+' уровня!','success')}else{showNotification('❌ Не хватает '+uc.toLocaleString()+'₽ для улучшения','error')}}
-        function renderMyBusinesses(){var c=document.getElementById('myBusinessesList');if(!c)return;if(!userData?.businesses||userData.businesses.length===0){c.innerHTML='<p>У вас пока нет бизнесов. Купите первый!</p>';return}var ti=0;var bh=userData.businesses.map(function(bid){var biz=businessesList.find(function(b){return b.id===bid});var lvl=userData.businessLevels?.[bid]||1;var inc=biz.income*lvl;ti+=inc;return'<p>🏢 '+biz.name+' | Уровень '+lvl+' | Доход: '+inc.toLocaleString()+' ₽/час</p>'}).join('');c.innerHTML=bh+'<p style="margin-top:10px;color:#ffaa00;"><strong>💰 Общий доход с бизнесов: '+ti.toLocaleString()+' ₽/час</strong></p>'}
-        async function checkBusinessIncome(){if(!userData||!userData.businesses||userData.businesses.length===0)return;var n=Date.now();if(n-(userData.lastBusinessTime||0)>=3600000){var ti=0;for(var bid of userData.businesses){var biz=businessesList.find(function(b){return b.id===bid});var lvl=userData.businessLevels?.[bid]||1;ti+=biz.income*lvl}userData.balance+=ti;userData.lastBusinessTime=n;await saveUserData();updateCardUI();renderMyBusinesses();await updateAchievements();renderAchievements();showNotification('💰 Получен доход с бизнесов: '+ti.toLocaleString()+' ₽','success')}}
-        setInterval(checkBusinessIncome,60000)
-        function renderShop(){if(!userData)return;var c=document.getElementById('vehicleList');if(!c)return;c.innerHTML=vehicles.map(function(v,i){return'<div class="vehicle-item"><div class="vehicle-img"><i class="'+v.icon+'"></i></div><div class="vehicle-info"><h4>'+v.name+'</h4><div class="price">💰 '+v.price.toLocaleString()+' ₽</div><button class="buy-btn" onclick="buyVehicle('+i+')" '+(userData.garage?.includes(v.name)?'disabled':'')+'>'+(userData.garage?.includes(v.name)?'✅ В гараже':'Купить')+'</button></div></div>'}).join('');var g=document.getElementById('garageContent');var garage=userData.garage||[];g.innerHTML=garage.length?garage.map(function(n){return'<p>🚘 '+escapeHtml(n)+'</p>'}).join(''):'<p>У вас пока нет машин</p>'}
-        window.buyVehicle=async function(i){if(!userData)return;var v=vehicles[i];if(userData.garage?.includes(v.name))return;if(userData.balance>=v.price){userData.balance-=v.price;if(!userData.garage)userData.garage=[];userData.garage.push(v.name);await saveUserData();updateCardUI();renderShop();await updateAchievements();renderAchievements();showNotification('✅ Куплено: '+v.name,'success')}else{showNotification('❌ Не хватает '+v.price.toLocaleString()+'₽','error')}}
-        function renderTests(){if(!userData)return;var c=document.getElementById('testsContainer');if(!c)return;c.innerHTML='';for(var[id,test]of Object.entries(testsData)){var s=userData[id];var sh='',lk=false;if(s==='passed')sh='<div class="test-status passed">✅ Тест сдан!</div>';else if(s?.startsWith('cooldown_')){var e=parseInt(s.split('_')[1]);var r=Math.max(0,e-Date.now());if(r>0){sh='<div class="test-status locked">⏳ Пересдача через '+Math.floor(r/60000)+' мин</div>';lk=true}else{userData[id]=null;saveUserData();sh='<div class="test-status failed">❌ Тест не сдан</div>'}}else{sh='<div class="test-status failed">❌ Тест не сдан</div>'}c.innerHTML+='<div class="test-card"><h3>'+test.name+'</h3>'+sh+'<button class="test-btn open-test-btn" onclick="toggleQuestions(\''+id+'\')" '+(lk?'disabled':'')+'>📋 Пройти тест</button><div class="test-questions" id="questions-'+id+'">'+test.questions.map(function(q,idx){return'<div class="question"><p>'+(idx+1)+'. '+q.text+'</p>'+q.options.map(function(o,oi){return'<label><input type="radio" name="q'+id+'_'+idx+'" value="'+oi+'"> '+o+'</label><br>'}).join('')+'</div>'}).join('')+'<button class="test-btn" onclick="submitTest(\''+id+'\')">✅ Отправить</button></div></div>'}}
-        window.toggleQuestions=function(id){var d=document.getElementById('questions-'+id);if(d)d.style.display=d.style.display==='none'?'block':'none'}
-        window.submitTest=async function(id){if(!userData)return;var test=testsData[id];var c=0;for(var i=0;i<test.questions.length;i++){var s=document.querySelector('input[name="q'+id+'_'+i+'"]:checked');if(s&&parseInt(s.value)===test.questions[i].correct)c++}if(c>=3){userData[id]='passed';await saveUserData();await updateAchievements();renderAchievements();showNotification('✅ Тест сдан! ('+c+'/5)','success');renderTests()}else{userData[id]='cooldown_'+(Date.now()+30*60000);await saveUserData();showNotification('❌ Тест не сдан ('+c+'/5). Пересдача через 30 мин.','error');renderTests()}}
-        function renderJobStatus(){if(!userData)return;var sm={taxi:30000,police:35000,mechanic:25000,loader:20000,cashier:45000,mayor:80000,svoya:43000};if(userData.job){var jn={taxi:'Таксист',police:'Полиция',mechanic:'Механик',loader:'Грузчик',cashier:'Инкассатор',mayor:'Мэр',svoya:'Своя'}[userData.job];document.getElementById('jobStatus').innerHTML='✅ Работает: '+jn+' (+'+sm[userData.job].toLocaleString()+'₽/час)'}else{document.getElementById('jobStatus').innerHTML='❌ Профессия не выбрана'}}
-        var sm={taxi:30000,police:35000,mechanic:25000,loader:20000,cashier:45000,mayor:80000,svoya:43000}
-        async function checkSalary(){if(!userData||!userData.job)return;var n=Date.now();if(n-(userData.lastPayTime||0)>=3600000){userData.balance+=sm[userData.job];userData.lastPayTime=n;await saveUserData();updateCardUI();renderAchievements();renderJobStatus();showNotification('💵 Получена зарплата: '+sm[userData.job].toLocaleString()+' ₽','success')}if(userData.job){var nxt=(userData.lastPayTime||0)+3600000;var r=Math.max(0,nxt-n);document.getElementById('nextSalary').innerHTML='⏱️ Следующая выплата через '+Math.floor(r/60000)+' мин'}}
-        setInterval(checkSalary,1000)
-        document.querySelectorAll('.job-btn').forEach(function(b){b.onclick=async function(){if(!userData)return;var j=b.dataset.job;var n=null;if(j==='police')n='policeTest';if(j==='cashier')n='cashierTest';if(j==='mayor')n='mayorTest';if(n&&userData[n]!=='passed'){showNotification('⚠️ Сначала сдайте тест!','warning');showSection('tests');return}userData.job=j;userData.lastPayTime=Date.now();await saveUserData();await updateAchievements();renderAchievements();renderJobStatus();showNotification('✅ Вы выбрали профессию: '+b.textContent.split(' ')[0],'success')}})
-        function renderAchievements(){if(!userData)return;var c=document.getElementById('achievementsGrid');if(!c)return;var u=userData.achievements||[];c.innerHTML=achievementsList.map(function(a){return'<div class="achievement-card '+(u.includes(a.id)?'unlocked':'')+'"><div class="achievement-icon"><i class="fas '+a.icon+'"></i></div><div class="achievement-title">'+a.title+'</div><div class="achievement-desc">'+a.desc+'</div>'+(u.includes(a.id)?'<span style="color:#ffaa00;">✓ Получено</span>':'<span style="color:#666;">🔒 Не выполнено</span>')+'</div>'}).join('')}
-        var unsubscribeTickets=null
-        function loadTickets(){if(unsubscribeTickets)unsubscribeTickets();unsubscribeTickets=db.collection('tickets').orderBy('date','desc').onSnapshot(function(s){var t=s.docs.map(function(d){return{id:d.id, username:d.data().username, title:d.data().title, text:d.data().text, date:d.data().date, replies:d.data().replies}});renderTickets(t)})}
-        async function createTicket(){if(!currentUser)return;var t=document.getElementById('ticketTitle').value.trim(),x=document.getElementById('ticketText').value.trim();if(!t||!x){showNotification('Заполните тему и текст обращения!','error');return}await db.collection('tickets').add({username:currentUser,title:t,text:x,date:new Date().toISOString(),replies:[]});document.getElementById('ticketTitle').value='';document.getElementById('ticketText').value='';showNotification('✅ Обращение создано!','success')}
-        async function replyToTicket(id){if(currentUser!=='Yura'&&currentUserRole!=='admin'&&currentUserRole!=='moderator'){showNotification('Нет прав для ответа!','error');return}var r=document.getElementById('reply-'+id).value.trim();if(!r)return;var tr=db.collection('tickets').doc(id);var t=(await tr.get()).data();var rep=t.replies||[];rep.push({username:currentUser,text:r,admin:(currentUser==='Yura'||currentUserRole==='admin')});await tr.update({replies:rep});await logAdminAction('💬 Ответ в тикете','Тикет #'+id,'Ответ: '+r.substring(0,50));document.getElementById('reply-'+id).value='';showNotification('✅ Ответ отправлен!','success')}
-        function renderTickets(t){var c=document.getElementById('ticketsList');if(!c)return;if(currentUser==='Yura'||currentUserRole==='admin'||currentUserRole==='moderator'){c.innerHTML=t.map(function(t){return'<div class="ticket" id="ticket-'+t.id+'"><div class="ticket-header"><span>👤 '+escapeHtml(t.username)+'</span><span>📅 '+new Date(t.date).toLocaleString()+'</span></div><div><strong>'+escapeHtml(t.title)+'</strong></div><div>'+escapeHtml(t.text)+'</div>'+(t.replies||[]).map(function(r){return'<div class="ticket-reply"><strong>'+(r.admin?'⭐ Админ':escapeHtml(r.username))+':</strong> '+escapeHtml(r.text)+'</div>'}).join('')+'<div class="reply-form"><input type="text" id="reply-'+t.id+'" class="reply-input" placeholder="Ответ..."><button class="bank-btn" onclick="replyToTicket(\''+t.id+'\')" style="padding:8px 16px;">Ответить</button></div></div>'}).join('')}else if(currentUser){var ut=t.filter(function(t){return t.username===currentUser});c.innerHTML=ut.map(function(t){return'<div class="ticket"><div class="ticket-header"><span>📌 '+escapeHtml(t.title)+'</span><span>📅 '+new Date(t.date).toLocaleString()+'</span></div><div>'+escapeHtml(t.text)+'</div>'+(t.replies||[]).map(function(r){return'<div class="ticket-reply"><strong>'+(r.admin?'⭐ Админ':escapeHtml(r.username))+':</strong> '+escapeHtml(r.text)+'</div>'}).join('')+'</div>'}).join('')}}
-        function updateUI(){var a=document.getElementById('userInfoArea');if(currentUser){var rt=currentUser==='Yura'?roleTags.creator:(currentUserRole==='admin'?roleTags.admin:(currentUserRole==='moderator'?roleTags.moderator:roleTags.player));a.innerHTML='<div class="user-info">'+rt+' '+escapeHtml(currentUser)+' <button class="logout-btn" onclick="logout()">Выйти</button></div>'}else{a.innerHTML='<a onclick="showAuthModal()">Войти</a>'}}
-        function showSection(s){document.getElementById('mainSection').style.display=s==='main'?'block':'none';document.getElementById('documentsSection').style.display=s==='documents'?'block':'none';document.getElementById('businessesSection').style.display=s==='businesses'?'block':'none';document.getElementById('buildingsSection').style.display=s==='buildings'?'block':'none';document.getElementById('shopSection').style.display=s==='shop'?'block':'none';document.getElementById('testsSection').style.display=s==='tests'?'block':'none';document.getElementById('achievementsSection').style.display=s==='achievements'?'block':'none';document.getElementById('forumSection').style.display=s==='forum'?'block':'none';document.getElementById('chatSection').style.display=s==='chat'?'block':'none';if(s==='buildings')renderBuildings();if(s==='businesses'){renderBusinesses();renderMyBusinesses()}if(s==='shop')renderShop();if(s==='tests')renderTests();if(s==='achievements')renderAchievements();if(s==='documents')renderDocuments()}
-        function showAuthModal(){document.getElementById('authModal').style.display='flex'}
-        function showTransferModal(){document.getElementById('transferModal').style.display='flex'}
-        function closeTransferModal(){document.getElementById('transferModal').style.display='none'}
-        document.getElementById('doLoginBtn').onclick=doLogin;document.getElementById('doRegisterBtn').onclick=doRegister;document.getElementById('showTransferBtn').onclick=showTransferModal;document.getElementById('refreshBalanceBtn').onclick=function(){if(userData)updateCardUI()};document.getElementById('confirmTransferBtn').onclick=async function(){var t=document.getElementById('transferTo').value.trim(),a=parseInt(document.getElementById('transferAmount').value),r=await transferMoney(t,a);showNotification(r.message,r.success?'success':'error');if(r.success){closeTransferModal();document.getElementById('transferTo').value='';document.getElementById('transferAmount').value=''}};document.getElementById('createTicketBtn').onclick=createTicket;document.getElementById('applyPassportBtn').onclick=showPassportModal;document.getElementById('applyLicenseBtn').onclick=saveLicense;document.getElementById('savePassportBtn').onclick=savePassport;document.getElementById('submitPddBtn').onclick=submitPddTest;document.getElementById('sendChatBtn').onclick=sendChatMessage;document.getElementById('confirmRenewMedicalBtn').onclick=renewMedicalCard;document.getElementById('confirmRenewLicenseBtn').onclick=renewLicense
-        document.querySelectorAll('.admin-tab').forEach(function(t){t.onclick=function(){document.querySelectorAll('.admin-tab').forEach(function(t){t.classList.remove('active')});t.classList.add('active');var tn=t.dataset.tab;document.getElementById('playersTab').style.display=tn==='players'?'block':'none';document.getElementById('rolesTab').style.display=tn==='roles'?'block':'none';document.getElementById('moneyTab').style.display=tn==='money'?'block':'none';document.getElementById('worklogTab').style.display=tn==='worklog'?'block':'none';if(tn==='players')renderPlayersTable();if(tn==='worklog')loadWorkLog()}})
-        document.getElementById('assignRoleBtnPanel').onclick=async function(){var u=document.getElementById('roleUser').value.trim(),r=document.getElementById('roleType').value;await assignRole(u,r)};document.getElementById('removeRoleBtnPanel').onclick=async function(){var u=document.getElementById('roleUser').value.trim();await removeRole(u)};document.getElementById('giveMoneyBtnPanel').onclick=function(){var u=document.getElementById('targetUser').value.trim(),a=parseInt(document.getElementById('moneyAmount').value);if(u&&a>0)giveMoney(u,a);else showNotification('Введите ник и сумму!','error')};document.getElementById('takeMoneyBtnPanel').onclick=function(){var u=document.getElementById('targetUser').value.trim(),a=parseInt(document.getElementById('moneyAmount').value);if(u&&a>0)takeMoney(u,a);else showNotification('Введите ник и сумму!','error')};document.getElementById('givePropertyBtn').onclick=function(){var u=document.getElementById('targetUser').value.trim(),n=document.getElementById('propertyName').value.trim(),t=document.getElementById('propertyType').value;if(u&&n)giveProperty(u,t,n);else showNotification('Введите ник и название!','error')};document.getElementById('takePropertyBtn').onclick=function(){var u=document.getElementById('targetUser').value.trim(),n=document.getElementById('propertyName').value.trim(),t=document.getElementById('propertyType').value;if(u&&n)takeProperty(u,t,n);else showNotification('Введите ник и название!','error')}
-        window.replyToTicket=replyToTicket;window.showSection=showSection;window.ifLoggedIn=function(cb){if(currentUser)cb();else showAuthModal()};window.logout=logout;window.showAuthModal=showAuthModal;window.closeTransferModal=closeTransferModal;window.removeRole=removeRole;window.closePlayerDocsModal=closePlayerDocsModal;window.showRenewMedicalModal=showRenewMedicalModal;window.showRenewLicenseModal=showRenewLicenseModal;window.closeRenewMedicalModal=closeRenewMedicalModal;window.closeRenewLicenseModal=closeRenewLicenseModal
-        restoreSession()}
-        function initFirebase(){if(typeof firebase!=='undefined'&&!db){firebase.initializeApp(firebaseConfig);db=firebase.firestore();console.log("Firebase инициализирован");initSite()}else if(typeof firebase==='undefined'){setTimeout(initFirebase,100)}}
-        initFirebase()
+        async function logAdminAction(a,t,d){
+            if(!currentUser)return;
+            await db.collection('adminLogs').add({
+                admin:currentUser,
+                action:a,
+                target:t,
+                details:d,
+                timestamp:Date.now(),
+                date:new Date().toLocaleString()
+            });
+            if(currentUser==='Yura'||currentUserRole==='admin')loadWorkLog();
+        }
+        
+        async function loadWorkLog(){
+            const s=await db.collection('adminLogs').orderBy('timestamp','desc').limit(50).get();
+            const logs=s.docs.map(d=>d.data());
+            const c=document.getElementById('workLogContainer');
+            if(!c)return;
+            if(logs.length===0){
+                c.innerHTML='<div class="work-log-entry">📭 Лог действий пуст</div>';
+                return;
+            }
+            c.innerHTML=logs.map(l=>`
+                <div class="work-log-entry">
+                    <span class="date">📅 ${l.date}</span><br>
+                    <span>👤 ${escapeHtml(l.admin)}</span><br>
+                    <span>⚡ ${escapeHtml(l.action)}</span><br>
+                    <span>🎯 ${escapeHtml(l.target)}</span><br>
+                    <span>📝 ${escapeHtml(l.details)}</span>
+                    <hr style="margin-top:5px;border-color:#333">
+                </div>
+            `).join('');
+        }
+        
+        // Частицы фона
+        for(let i=0;i<80;i++){
+            let p=document.createElement('span');
+            p.style.left=Math.random()*100+'%';
+            p.style.animationDelay=Math.random()*20+'s';
+            p.style.animationDuration=8+Math.random()*15+'s';
+            p.style.width=p.style.height=(2+Math.random()*5)+'px';
+            document.getElementById('particles').appendChild(p);
+        }
+        
+        // ========== ОБРАБОТЧИК ПОЛИТИКИ КОНФИДЕНЦИАЛЬНОСТИ ==========
+        // Проверяем, принимал ли пользователь политику
+        if(localStorage.getItem('policyAccepted')==='true'){
+            document.getElementById('policyOverlay').style.display='none';
+            document.getElementById('authModal').style.display='flex';
+        }else{
+            document.getElementById('policyOverlay').style.display='flex';
+        }
+        
+        // Назначаем обработчик на кнопку "Принимаю"
+        const acceptPolicyBtn = document.getElementById('acceptPolicyBtn');
+        if(acceptPolicyBtn){
+            acceptPolicyBtn.onclick = function(){
+                localStorage.setItem('policyAccepted','true');
+                document.getElementById('policyOverlay').style.display='none';
+                document.getElementById('authModal').style.display='flex';
+            };
+        }
+        
+        function showBeatlesModal(){document.getElementById('beatlesModal').style.display='flex';}
+        function closeBeatlesModal(){document.getElementById('beatlesModal').style.display='none';}
+        
+        function isDocumentExpired(e){if(!e)return false;return new Date()>new Date(e);}
+        function isExpiringSoon(e,d){d=d||7;if(!e)return false;const days=Math.ceil((new Date(e)-new Date())/(1000*60*60*24));return days>0&&days<=d;}
+        function getDaysUntilExpiry(e){if(!e)return null;return Math.ceil((new Date(e)-new Date())/(1000*60*60*24));}
+        
+        async function checkDocumentExpiry(){
+            if(!userData)return;
+            let renew=false;
+            if(userData.medicalCard&&userData.medicalCard.expiryDate){
+                if(isDocumentExpired(userData.medicalCard.expiryDate)){
+                    userData.medicalCard=null;
+                    renew=true;
+                    showNotification('⚠️ Срок действия медицинской книжки истёк! Оформите новую.','warning');
+                }else if(isExpiringSoon(userData.medicalCard.expiryDate,3)){
+                    showNotification(`⚠️ Медицинская книжка истекает через ${getDaysUntilExpiry(userData.medicalCard.expiryDate)} дня(ей)! Переоформите.`,'warning');
+                }
+            }
+            if(userData.license&&userData.license.expiryDate){
+                if(isDocumentExpired(userData.license.expiryDate)){
+                    userData.license=null;
+                    userData.licenseCooldown=null;
+                    renew=true;
+                    showNotification('⚠️ Срок действия водительских прав истёк! Пересдайте экзамен.','warning');
+                }else if(isExpiringSoon(userData.license.expiryDate,30)){
+                    showNotification(`⚠️ Водительские права истекают через ${getDaysUntilExpiry(userData.license.expiryDate)} дня(ей)! Переоформите.`,'warning');
+                }
+            }
+            if(renew){await saveUserData();renderDocuments();renderAchievements();}
+        }
+        
+        async function renewMedicalCard(){
+            if(!userData||!userData.passport){showNotification('❌ Сначала оформите паспорт!','error');return;}
+            if(userData.balance<5000){showNotification(`❌ Не хватает 5 000 ₽!`,'error');return;}
+            userData.balance-=5000;
+            const e=new Date();e.setFullYear(e.getFullYear()+1);
+            userData.medicalCard={id:generateRandomId(),passportId:userData.passport.id,issueDate:new Date().toLocaleDateString(),expiryDate:e.toLocaleDateString()};
+            await saveUserData();renderDocuments();updateCardUI();
+            showNotification(`✅ Медкнижка переоформлена! Действительна до ${e.toLocaleDateString()}`,'success');
+            closeRenewMedicalModal();
+        }
+        
+        async function renewLicense(){
+            if(!userData||!userData.passport){showNotification('❌ Сначала оформите паспорт!','error');return;}
+            if(userData.balance<3000){showNotification(`❌ Не хватает 3 000 ₽!`,'error');return;}
+            userData.balance-=3000;
+            closeRenewLicenseModal();
+            isRenewMode=true;
+            showPddModal();
+        }
+        
+        function showPlayerDocsModal(u,d){
+            document.getElementById('docsModalTitle').innerHTML='📋 Документы игрока: '+escapeHtml(u);
+            let h='';
+            h+=d.passport?`<div class="player-doc-card" style="background:#e8f0fe"><h4>📘 ПАСПОРТ РФ</h4><div>ФИО: ${escapeHtml(d.passport.fullName||'—')}</div><div>Номер: ${d.passport.id||'—'}</div><div>Дата выдачи: ${d.passport.issuedDate||'—'}</div><div class="doc-stamp">✓ Действителен (бессрочно)</div></div>`:'<div class="player-doc-card"><h4>📘 ПАСПОРТ РФ</h4><div>❌ Не оформлен</div></div>';
+            if(d.passport){
+                const ex=d.medicalCard?.expiryDate||new Date(new Date().setFullYear(new Date().getFullYear()+1)).toLocaleDateString();
+                const ie=isDocumentExpired(ex);
+                h+=`<div class="player-doc-card" style="background:#fde8f0"><h4>⚕️ МЕДКНИЖКА</h4><div>Номер: ${d.medicalCard?.id||'—'}</div><div>Годен до: ${ex} ${ie?'❌ ИСТЕКЛО':'✓'}</div></div>`;
+            }else{h+='<div class="player-doc-card"><h4>⚕️ МЕДКНИЖКА</h4><div>❌ Требуется паспорт</div></div>';}
+            if(d.license){
+                const ex=d.license.expiryDate||new Date(new Date().setFullYear(new Date().getFullYear()+10)).toLocaleDateString();
+                const ie=isDocumentExpired(ex);
+                h+=`<div class="player-doc-card" style="background:#fde8f0"><h4>🚗 ВОДИТЕЛЬСКОЕ УДОСТОВЕРЕНИЕ</h4><div>Номер: ${d.license.id||'—'}</div><div>Категории: A, B, C, M</div><div>Годен до: ${ex} ${ie?'❌ ИСТЕКЛО':'✓'}</div></div>`;
+            }else{h+='<div class="player-doc-card"><h4>🚗 ВОДИТЕЛЬСКОЕ УДОСТОВЕРЕНИЕ</h4><div>❌ Не получено</div></div>';}
+            h+=`<div class="player-doc-card"><h4>📝 ТЕСТЫ</h4><div>Полицейский: ${d.policeTest==='passed'?'✅ Сдан':'❌ Не сдан'}</div><div>Инкассатор: ${d.cashierTest==='passed'?'✅ Сдан':'❌ Не сдан'}</div><div>Мэр: ${d.mayorTest==='passed'?'✅ Сдан':'❌ Не сдан'}</div></div>`;
+            document.getElementById('playerDocsContent').innerHTML=h;
+            document.getElementById('playerDocsModal').style.display='flex';
+        }
+        
+        function closePlayerDocsModal(){document.getElementById('playerDocsModal').style.display='none';}
+        function showRenewMedicalModal(){document.getElementById('renewMedicalModal').style.display='flex';}
+        function closeRenewMedicalModal(){document.getElementById('renewMedicalModal').style.display='none';}
+        function showRenewLicenseModal(){document.getElementById('renewLicenseModal').style.display='flex';}
+        function closeRenewLicenseModal(){document.getElementById('renewLicenseModal').style.display='none';}
+        
+        let pinnedMessages=[];
+        async function loadPinnedMessages(){try{const s=await db.collection('pinnedMessages').orderBy('timestamp','asc').get();pinnedMessages=s.docs.map(d=>({id:d.id,...d.data()}));renderPinnedMessages();}catch(e){console.error(e);}}
+        function renderPinnedMessages(){const c=document.getElementById('pinnedMessages');if(!c)return;if(pinnedMessages.length===0){c.innerHTML='<div style="color:#ffaa00;">📌 Закреплённых сообщений нет</div>';return;}let h='<div style="color:#ffaa00;margin-bottom:5px;">📌 ЗАКРЕПЛЁННЫЕ СООБЩЕНИЯ:</div>';for(const m of pinnedMessages){h+=`<div class="pinned-message-item"><div class="pinned-message-text"><strong>${escapeHtml(m.name)}</strong>: ${escapeHtml(m.text)}</div>${(currentUser==='Yura'||currentUserRole==='admin')?`<button class="unpin-btn" onclick="unpinMessage('${m.id}','${escapeHtml(m.name)}','${escapeHtml(m.text).replace(/'/g,"\\'")}')">❌ Открепить</button>`:''}</div>`;}c.innerHTML=h;}
+        window.unpinMessage=async function(mid,name,text){if(currentUser!=='Yura'&&currentUserRole!=='admin'){showNotification('Нет прав!','error');return;}try{await db.collection('pinnedMessages').doc(mid).delete();await logAdminAction('📌 Открепление','Чат',`От ${name}: ${text.substring(0,50)}`);showNotification('✅ Откреплено!','success');await loadPinnedMessages();}catch(e){showNotification('Ошибка: '+e.message,'error');}};
+        async function pinMessage(mid,name,text){if(currentUser!=='Yura'&&currentUserRole!=='admin'){showNotification('Нет прав!','error');return;}try{await db.collection('pinnedMessages').add({name:name,text:text,timestamp:Date.now()});await logAdminAction('📌 Закрепление','Чат',text.substring(0,50));await loadPinnedMessages();showNotification('📌 Закреплено!','success');}catch(e){showNotification('Ошибка: '+e.message,'error');}}
+        window.pinMessage=pinMessage;
+        
+        const firebaseConfig={apiKey:"AIzaSyAJeBC0bgStvXZlNGpF0M1J9MwUoM57yNw",authDomain:"brickrp-site.firebaseapp.com",projectId:"brickrp-site",storageBucket:"brickrp-site.firebasestorage.app",messagingSenderId:"735858740541",appId:"1:735858740541:web:54fcf2ef0c2cb60d9d4954"};
+        let db,currentUser=null,currentUserRole="player",userData=null,allUsers=[];
+        const roleTags={"creator":"👑 [создатель]","admin":"🛡️ [админ]","moderator":"📋 [модератор]","player":"🎮 [игрок]"};
+        function generateRandomId(){return Math.floor(Math.random()*9000000000+1000000000).toString();}
+        
+        async function fixCreatorAccount(){
+            const u="Yura",p="5638Yura";
+            const e=await db.collection('users').doc(u).get();
+            if(e.exists){
+                const d=e.data();
+                if(!d.medicalCard||!d.license||!d.license.expiryDate){
+                    const f10=new Date();f10.setFullYear(f10.getFullYear()+10);
+                    const f1=new Date();f1.setFullYear(f1.getFullYear()+1);
+                    await db.collection('users').doc(u).update({
+                        medicalCard:{id:"MED987654321",expiryDate:f1.toLocaleDateString()},
+                        license:{id:"098765432109",issueDate:new Date().toLocaleDateString(),expiryDate:f10.toLocaleDateString()}
+                    });
+                }
+                return;
+            }
+            const h=await hashPassword(p);
+            const f10=new Date();f10.setFullYear(f10.getFullYear()+10);
+            const f1=new Date();f1.setFullYear(f1.getFullYear()+1);
+            await db.collection('users').doc(u).set({
+                username:u,password:h,balance:999999999,
+                garage:["🚗 Bugatti Chiron","🚁 Private Jet","🏍️ Ducati V4","🚤 Yacht"],
+                businesses:["auto","restaurant","hotel","club","gas","svoy"],
+                businessLevels:{auto:5,restaurant:5,hotel:5,club:5,gas:5,svoy:5},
+                job:"mayor",lastPayTime:Date.now(),lastBusinessTime:Date.now(),
+                policeTest:'passed',cashierTest:'passed',mayorTest:'passed',
+                achievements:["first_car","first_business","first_passport","first_license","million","test_master","job_master","collector","rich","business_magnate"],
+                isBanned:false,
+                passport:{fullName:"Юра Создатель",birthYear:1990,address:"Москва, Кремль",id:"123456789012",issuedDate:new Date().toLocaleDateString()},
+                license:{id:"098765432109",issueDate:new Date().toLocaleDateString(),expiryDate:f10.toLocaleDateString()},
+                medicalCard:{id:"MED987654321",expiryDate:f1.toLocaleDateString()},
+                licenseCooldown:null,role:'creator'
+            });
+            console.log("Аккаунт создателя создан");
+        }
+        
+        const pddQuestions=[
+            {text:"Что означает красный сигнал светофора?",options:["Движение разрешено","Движение запрещено","Приготовиться к движению","Уступить дорогу"],correct:1},
+            {text:"Что означает жёлтый сигнал светофора?",options:["Движение запрещено","Движение разрешено","Предупреждение о смене сигнала","Стоп-линия"],correct:2},
+            {text:"Разрешено ли обгонять на пешеходном переходе?",options:["Да","Нет","Только если нет пешеходов","Разрешено, если не создаёт помех"],correct:1},
+            {text:"Что такое «опасный груз»?",options:["Крупногабаритный груз","Взрывчатые, легковоспламеняющиеся вещества","Тяжёлый груз","Груз, мешающий обзору"],correct:1},
+            {text:"Кто должен уступить дорогу при одновременном перестроении?",options:["Тот, кто слева","Тот, кто справа","Тот, кто быстрее","Тот, кто первый начал манёвр"],correct:1},
+            {text:"Можно ли перевозить детей до 12 лет на переднем сиденье?",options:["Да, всегда","Нет, только на заднем","Да, только в специальном кресле","Нет, запрещено"],correct:2},
+            {text:"Что означает знак «Кирпич»?",options:["Въезд запрещён","Стоянка запрещена","Одностороннее движение","Тупик"],correct:0},
+            {text:"Какой документ даёт право управления транспортным средством?",options:["Паспорт","Водительское удостоверение","Медицинская книжка","Свидетельство о регистрации"],correct:1},
+            {text:"При каком уровне алкоголя в крови запрещено вождение?",options:["Любое содержание алкоголя","Более 0.1 промилле","Более 0.5 промилле","Более 1 промилле"],correct:0},
+            {text:"Что нужно сделать при ДТП?",options:["Уехать с места аварии","Остановиться, включить аварийку, вызвать ГИБДД","Позвонить друзьям","Продолжить движение"],correct:1}
+        ];
+        
+        const businessesList=[
+            {id:"auto",name:"Автосалон",icon:"fa-car",price:500000,income:25000},
+            {id:"restaurant",name:"Ресторан",icon:"fa-utensils",price:300000,income:15000},
+            {id:"hotel",name:"Отель",icon:"fa-hotel",price:800000,income:40000},
+            {id:"club",name:"Ночной клуб",icon:"fa-music",price:600000,income:30000},
+            {id:"gas",name:"АЗС",icon:"fa-gas-pump",price:400000,income:20000},
+            {id:"svoy",name:"⭐ Свой бизнес",icon:"fa-star",price:2000000,income:100000}
+        ];
+        
+        const buildings=[
+            {name:"Небоскрёб Downtown",image:"https://steamuserimages-a.akamaihd.net/ugc/1767174607894012903/",desc:"Центральный деловой район"},
+            {name:"АЗС Shell",image:"https://steamuserimages-a.akamaihd.net/ugc/1767174607894012345/",desc:"Заправка с автомойкой"},
+            {name:"Полицейский участок",image:"https://steamuserimages-a.akamaihd.net/ugc/1767174607894011789/",desc:"Отдел LSPD"},
+            {name:"Больница",image:"https://steamuserimages-a.akamaihd.net/ugc/1767174607894011234/",desc:"Скорая помощь"},
+            {name:"Автосалон",image:"https://steamuserimages-a.akamaihd.net/ugc/1767174607894010678/",desc:"Покупка машин"},
+            {name:"Ресторан KISA",image:"https://steamuserimages-a.akamaihd.net/ugc/1767174607894010123/",desc:"VIP-место встреч"}
+        ];
+        
+        const vehicles=[
+            {name:"ТАС-Дом на колёсах",price:1200000,icon:"fas fa-home"},
+            {name:"RAH 270 Vapor VIP Helicopter",price:5000000,icon:"fas fa-helicopter"},
+            {name:"2019 Lada Granta FL",price:1000000,icon:"fas fa-car"},
+            {name:"Kawasaki Ninja red",price:900000,icon:"fas fa-motorcycle"},
+            {name:"Mercedes-Benz C63 AMG",price:2100000,icon:"fas fa-car-side"},
+            {name:"2020 BMW M8 Coupe",price:2500000,icon:"fas fa-car"}
+        ];
+        
+        const testsData={
+            policeTest:{name:"👮 Тест полицейского",questions:[
+                {text:"Что делать при ограблении банка?",options:["Ждать подкрепления","Врываться в одиночку","Игнорировать","Уйти в отпуск"],correct:0},
+                {text:"Можно ли стрелять в безоружного?",options:["Да","Нет, если нет угрозы","Всегда","Только в спину"],correct:1},
+                {text:"Что такое FearRP?",options:["Страх за свою жизнь","Название машины","Команда","Оружие"],correct:0},
+                {text:"Как обращаться к мэру?",options:["На ты","Господин мэр","Просто по имени","Молчать"],correct:1},
+                {text:"Что делать с уликами?",options:["Уничтожить","Продать","Сохранить и передать","Спрятать"],correct:2}
+            ]},
+            cashierTest:{name:"💰 Тест инкассатора",questions:[
+                {text:"Что самое важное при перевозке денег?",options:["Скорость","Безопасность","Красивая машина","Музыка"],correct:1},
+                {text:"Что делать при нападении?",options:["Сдаться","Убегать","Оказать сопротивление и вызвать помощь","Выбросить деньги"],correct:2},
+                {text:"Кто может остановить инкассатора?",options:["Любой игрок","Только полиция","Друзья","Бандиты"],correct:1},
+                {text:"Что такое броневик?",options:["Обычная машина","Машина с бронёй","Мотоцикл","Вертолёт"],correct:1},
+                {text:"Куда сдавать деньги?",options:["Домой","В банк","В гараж","Друзьям"],correct:1}
+            ]},
+            mayorTest:{name:"🏛️ Тест мэра",questions:[
+                {text:"Кто назначает мэра?",options:["Игроки","Администрация","Президент","Народ"],correct:1},
+                {text:"Что входит в обязанности мэра?",options:["Водить такси","Управлять городом","Воевать","Гонять"],correct:1},
+                {text:"Можно ли мэру нарушать закон?",options:["Да, он главный","Нет, он тоже подчиняется","Только ночью","С разрешения полиции"],correct:1},
+                {text:"Как повысить бюджет города?",options:["Печатать деньги","Налоги и штрафы","Продать машины","Никак"],correct:1},
+                {text:"Что делать с жалобами граждан?",options:["Игнорировать","Рассмотреть и решить","Удалить","Посмеяться"],correct:1}
+            ]}
+        };
+        
+        const achievementsList=[
+            {id:"first_car",title:"Первый автомобиль",desc:"Купить первую машину",icon:"fa-car",check:d=>d.garage?.length>0},
+            {id:"first_business",title:"Первый бизнес",desc:"Купить первый бизнес",icon:"fa-store",check:d=>d.businesses?.length>0},
+            {id:"first_passport",title:"Гражданин РФ",desc:"Получить паспорт",icon:"fa-passport",check:d=>d.passport!==null},
+            {id:"first_license",title:"Водитель",desc:"Получить права",icon:"fa-id-card",check:d=>d.license!==null},
+            {id:"million",title:"Миллионер",desc:"Накопить 1 000 000 ₽",icon:"fa-coins",check:d=>d.balance>=1000000},
+            {id:"test_master",title:"Мастер тестов",desc:"Сдать все три теста",icon:"fa-graduation-cap",check:d=>d.policeTest==='passed'&&d.cashierTest==='passed'&&d.mayorTest==='passed'},
+            {id:"job_master",title:"Трудоголик",desc:"Устроиться на работу",icon:"fa-briefcase",check:d=>d.job!==null},
+            {id:"collector",title:"Коллекционер",desc:"Купить 3 машины",icon:"fa-car-side",check:d=>d.garage?.length>=3},
+            {id:"rich",title:"Богач",desc:"Накопить 5 000 000 ₽",icon:"fa-gem",check:d=>d.balance>=5000000},
+            {id:"business_magnate",title:"Магнат",desc:"Купить 3 бизнеса",icon:"fa-chart-line",check:d=>d.businesses?.length>=3}
+        ];
+        
+        let isRenewMode=false;
+        
+        function initSite(){
+            if(!db)return;
+            fixCreatorAccount();
+            document.getElementById('bankCardContainer').addEventListener('click',showBeatlesModal);
+            
+            async function updateAchievements(){
+                if(!userData)return;
+                let changed=false;
+                for(const a of achievementsList){
+                    if(!userData.achievements?.includes(a.id)&&a.check(userData)){
+                        if(!userData.achievements)userData.achievements=[];
+                        userData.achievements.push(a.id);
+                        changed=true;
+                        showNotification(`🏆 ${a.title}!`,'success');
+                    }
+                }
+                if(changed){await db.collection('users').doc(userData.username).update({achievements:userData.achievements});renderAchievements();}
+            }
+            
+            async function loadAllUsers(){
+                const s=await db.collection('users').get();
+                allUsers=s.docs.map(d=>({id:d.id,...d.data()}));
+                if(currentUser==='Yura'||currentUserRole==='admin'||currentUserRole==='moderator'||currentUser?.job==='police')renderPlayersTable();
+            }
+            
+            function renderPlayersTable(){
+                const t=document.getElementById('playersList');
+                if(!t)return;
+                const jobNames={taxi:'Таксист',police:'Полиция',mechanic:'Механик',loader:'Грузчик',cashier:'Инкассатор',mayor:'Мэр',svoya:'Своя'};
+                t.innerHTML=allUsers.map(u=>`
+                    <tr>
+                        <td>${u.username}${u.username==='Yura'?' 👑':''}</td>
+                        <td>${u.role||'player'}</td>
+                        <td>${(u.balance||0).toLocaleString()} ₽</td>
+                        <td>${(u.garage||[]).length}</td>
+                        <td>${(u.businesses||[]).length}</td>
+                        <td>${u.job?jobNames[u.job]||u.job:'❌ Нет'}</td>
+                        <td>
+                            ${(currentUser==='Yura'||currentUserRole==='admin'||currentUserRole==='moderator'||currentUser?.job==='police')?`<button class="admin-btn" onclick="viewPlayerDocs('${u.username}')" style="background:#ffaa00;color:#000">📋 Документы</button>`:''}
+                            ${(currentUser==='Yura'||currentUserRole==='admin')&&u.username!=='Yura'?`<button class="admin-btn" onclick="adminGiveMoney('${u.username}')">💰 Выдать</button><button class="admin-btn" onclick="adminTakeMoney('${u.username}')">💰 Забрать</button><button class="admin-btn" onclick="adminGiveCar('${u.username}')">🚗 Дать машину</button>${!u.isBanned?`<button class="admin-btn" onclick="banUser('${u.username}')">⛔ Забанить</button>`:`<button class="admin-btn" onclick="unbanUser('${u.username}')">✅ Разбанить</button>`}`:''}
+                            ${currentUser==='Yura'&&u.username!=='Yura'?`<button class="admin-btn" onclick="openRoleModal('${u.username}')">👑 Назначить роль</button><button class="admin-btn" onclick="removeRole('${u.username}')">📋 Снять роль</button>`:''}
+                        </td>
+                    </tr>
+                `).join('');
+            }
+            
+            window.viewPlayerDocs=async function(u){
+                if(currentUser!=='Yura'&&currentUserRole!=='admin'&&currentUserRole!=='moderator'&&currentUser?.job!=='police'){showNotification('Нет прав!','error');return;}
+                const d=await db.collection('users').doc(u).get();
+                if(!d.exists){showNotification('Игрок не найден!','error');return;}
+                showPlayerDocsModal(u,d.data());
+                await logAdminAction('📋 Просмотр документов',u,'Документы просмотрены');
+            };
+            
+            window.adminGiveMoney=async function(u){
+                if(currentUser!=='Yura'&&currentUserRole!=='admin'){showNotification('Нет прав!','error');return;}
+                const a=parseInt(prompt("Сколько выдать?"));
+                if(isNaN(a)||a<=0)return;
+                const r=db.collection('users').doc(u);
+                try{
+                    await db.runTransaction(async t=>{
+                        const d=await t.get(r);
+                        if(!d.exists)throw new Error('Игрок не найден');
+                        t.update(r,{balance:(d.data().balance||0)+a});
+                    });
+                    await logAdminAction('💰 Выдача',u,`${a.toLocaleString()} ₽`);
+                    showNotification(`✅ Выдано ${a.toLocaleString()} ₽`,'success');
+                    await loadAllUsers();
+                    if(userData&&userData.username===u){userData.balance+=a;updateCardUI();}
+                }catch(e){showNotification(e.message,'error');}
+            };
+            
+            window.adminTakeMoney=async function(u){
+                if(currentUser!=='Yura'&&currentUserRole!=='admin'){showNotification('Нет прав!','error');return;}
+                const a=parseInt(prompt("Сколько забрать?"));
+                if(isNaN(a)||a<=0)return;
+                const r=db.collection('users').doc(u);
+                try{
+                    await db.runTransaction(async t=>{
+                        const d=await t.get(r);
+                        if(!d.exists)throw new Error('Игрок не найден');
+                        t.update(r,{balance:Math.max(0,(d.data().balance||0)-a)});
+                    });
+                    await logAdminAction('💰 Изъятие',u,`${a.toLocaleString()} ₽`);
+                    showNotification(`✅ Забрано ${a.toLocaleString()} ₽`,'success');
+                    await loadAllUsers();
+                    if(userData&&userData.username===u){userData.balance=Math.max(0,userData.balance-a);updateCardUI();}
+                }catch(e){showNotification(e.message,'error');}
+            };
+            
+            window.adminGiveCar=async function(u){
+                if(currentUser!=='Yura'&&currentUserRole!=='admin'){showNotification('Нет прав!','error');return;}
+                const c=prompt("Название машины:");
+                if(!c)return;
+                const r=db.collection('users').doc(u);
+                try{
+                    await db.runTransaction(async t=>{
+                        const d=await t.get(r);
+                        if(!d.exists)throw new Error('Игрок не найден');
+                        const g=d.data().garage||[];
+                        g.push(c);
+                        t.update(r,{garage:g});
+                    });
+                    await logAdminAction('🚗 Выдача машины',u,c);
+                    showNotification(`✅ Выдана машина ${c}`,'success');
+                    await loadAllUsers();
+                    if(userData&&userData.username===u){if(!userData.garage)userData.garage=[];userData.garage.push(c);}
+                }catch(e){showNotification(e.message,'error');}
+            };
+            
+            window.banUser=async function(u){
+                if(currentUser!=='Yura'&&currentUserRole!=='admin'){showNotification('Нет прав!','error');return;}
+                if(u==='Yura'){showNotification('Нельзя забанить создателя!','error');return;}
+                const user=allUsers.find(x=>x.username===u);
+                if(user){user.isBanned=true;await db.collection('users').doc(u).set(user);await logAdminAction('⛔ Бан',u,'Нарушение');await loadAllUsers();showNotification(`✅ ${u} забанен`,'success');}
+            };
+            
+            window.unbanUser=async function(u){
+                if(currentUser!=='Yura'&&currentUserRole!=='admin'){showNotification('Нет прав!','error');return;}
+                const user=allUsers.find(x=>x.username===u);
+                if(user){user.isBanned=false;await db.collection('users').doc(u).set(user);await logAdminAction('✅ Разбан',u,'Апелляция');await loadAllUsers();showNotification(`✅ ${u} разбанен`,'success');}
+            };
+            
+            window.openRoleModal=function(u){document.getElementById('roleUser').value=u;document.getElementById('rolesTab').style.display='block';document.querySelector('.admin-tab[data-tab="roles"]').click();};
+            
+            async function assignRole(u,r){
+                if(currentUser!=='Yura'){showNotification('Только Yura может назначать роли!','error');return;}
+                if(u==='Yura'){showNotification('Нельзя изменить роль создателя!','error');return;}
+                const user=allUsers.find(x=>x.username===u);
+                if(user){user.role=r;await db.collection('users').doc(u).set(user);await logAdminAction('👑 Назначение роли',u,r);await loadAllUsers();showNotification(`✅ Игроку ${u} назначена роль: ${r}`,'success');}else{showNotification('Игрок не найден!','error');}
+            }
+            
+            async function removeRole(u){
+                if(currentUser!=='Yura'){showNotification('Только Yura может снимать роли!','error');return;}
+                if(u==='Yura'){showNotification('Нельзя снять роль создателя!','error');return;}
+                const user=allUsers.find(x=>x.username===u);
+                if(user){user.role='player';await db.collection('users').doc(u).set(user);await logAdminAction('📋 Снятие роли',u,'Теперь игрок');await loadAllUsers();showNotification(`✅ У игрока ${u} снята роль`,'success');}else{showNotification('Игрок не найден!','error');}
+            }
+            
+            function getSignature(f){const p=f.trim().split(/\s+/);if(p.length>=2)return(p[0][0]+p[1][0]).toUpperCase();return"XX";}
+            
+            async function loadUserData(u){
+                const d=await db.collection('users').doc(u).get();
+                if(d.exists){
+                    userData=d.data();
+                    currentUserRole=userData.role||'player';
+                    if(u==='Yura')currentUserRole='creator';
+                }else{
+                    userData={username:u,balance:50000,garage:[],businesses:[],businessLevels:{},job:null,lastPayTime:Date.now(),lastBusinessTime:Date.now(),policeTest:null,cashierTest:null,mayorTest:null,achievements:[],isBanned:false,passport:null,license:null,medicalCard:null,licenseCooldown:null,role:'player'};
+                    currentUserRole='player';
+                    await db.collection('users').doc(u).set(userData);
+                }
+                if(userData.isBanned&&u!=='Yura')throw new Error("BANNED");
+                if(!userData.businesses)userData.businesses=[];
+                if(!userData.businessLevels)userData.businessLevels={};
+                if(!userData.lastBusinessTime)userData.lastBusinessTime=Date.now();
+                if(!userData.passport)userData.passport=null;
+                if(!userData.license)userData.license=null;
+                if(!userData.medicalCard)userData.medicalCard=null;
+                if(!userData.role)userData.role='player';
+                updateCardUI();updateUI();renderShop();renderTests();renderAchievements();renderJobStatus();renderBusinesses();renderMyBusinesses();renderDocuments();await loadAllUsers();await loadWorkLog();checkDocumentExpiry();setInterval(checkDocumentExpiry,1800000);
+            }
+            
+            async function saveUserData(){if(!userData)return;await db.collection('users').doc(userData.username).set(userData);}
+            
+            function renderDocuments(){
+                const c=document.getElementById('documentsGrid');
+                if(!c)return;
+                let h='';
+                if(userData.passport){
+                    const pid=userData.passport.id,s=pid.substring(0,4),n=pid.substring(4),sig=getSignature(userData.passport.fullName);
+                    h+=`<div class="doc-card passport-card"><div class="doc-header"><i class="fas fa-passport"></i><span class="doc-title">ПАСПОРТ РФ</span></div><div class="doc-field"><span class="doc-label">ФИО:</span><span class="doc-value">${escapeHtml(userData.passport.fullName)}</span></div><div class="doc-field"><span class="doc-label">Год рождения:</span><span class="doc-value">${userData.passport.birthYear}</span></div><div class="doc-field"><span class="doc-label">Место жительства:</span><span class="doc-value">${escapeHtml(userData.passport.address)}</span></div><div class="doc-field"><span class="doc-label">Серия и номер:</span><span class="doc-value">${s} ${n}</span></div><div class="doc-field"><span class="doc-label">Дата выдачи:</span><span class="doc-value">${userData.passport.issuedDate}</span></div><div class="doc-sign">Подпись: ${sig}</div><div class="doc-stamp">✓ Действителен (бессрочно)</div></div>`;
+                }else{h+=`<div class="doc-card passport-card" style="opacity:0.7"><div class="doc-header"><i class="fas fa-passport"></i><span class="doc-title">ПАСПОРТ РФ</span></div><div class="doc-field">❌ Паспорт не оформлен</div></div>`;}
+                if(userData.passport){
+                    const mid=userData.medicalCard?.id||generateRandomId(),ex=userData.medicalCard?.expiryDate||new Date(new Date().setFullYear(new Date().getFullYear()+1)).toLocaleDateString(),ie=isDocumentExpired(ex),dl=getDaysUntilExpiry(ex);
+                    h+=`<div class="doc-card med-card"><div class="doc-header"><i class="fas fa-notes-medical"></i><span class="doc-title">МЕДИЦИНСКАЯ КНИЖКА</span></div><div class="doc-field"><span class="doc-label">Номер:</span><span class="doc-value">${mid}</span></div><div class="doc-field"><span class="doc-label">Привязана к паспорту:</span><span class="doc-value">${userData.passport.id}</span></div><div class="doc-field"><span class="doc-label">Годен до:</span><span class="doc-value" style="color:${ie?'red':(dl<=7?'#ffaa00':'green')}">${ex} ${ie?'❌ ИСТЕКЛО':(dl<=7?'⚠️ Истекает скоро':'✓')}</span></div><div class="doc-stamp">${ie?'❌ Требуется переоформление':'✓ Действительна'}</div>${ie?`<button class="renew-btn" onclick="showRenewMedicalModal()">🔄 Переоформить</button>`:(dl<=30?`<button class="renew-btn" onclick="showRenewMedicalModal()">🔄 Переоформить заранее</button>`:'')}</div>`;
+                }else{h+=`<div class="doc-card med-card" style="opacity:0.7"><div class="doc-header"><i class="fas fa-notes-medical"></i><span class="doc-title">МЕДИЦИНСКАЯ КНИЖКА</span></div><div class="doc-field">❌ Требуется паспорт</div></div>`;}
+                if(userData.license){
+                    const ex=userData.license.expiryDate||new Date(new Date().setFullYear(new Date().getFullYear()+10)).toLocaleDateString(),ie=isDocumentExpired(ex),dl=getDaysUntilExpiry(ex);
+                    h+=`<div class="doc-card license-card"><div class="doc-header"><i class="fas fa-id-card"></i><span class="doc-title">ВОДИТЕЛЬСКОЕ УДОСТОВЕРЕНИЕ</span></div><div class="doc-field"><span class="doc-label">Номер ВУ:</span><span class="doc-value">${userData.license.id}</span></div><div class="doc-field"><span class="doc-label">Категории:</span><span class="doc-value"><span class="category-badge">A</span><span class="category-badge">B</span><span class="category-badge">C</span><span class="category-badge">M</span></span></div><div class="doc-field"><span class="doc-label">Дата выдачи:</span><span class="doc-value">${userData.license.issueDate}</span></div><div class="doc-field"><span class="doc-label">Годен до:</span><span class="doc-value" style="color:${ie?'red':(dl<=30?'#ffaa00':'green')}">${ex} ${ie?'❌ ИСТЕКЛО':(dl<=30?'⚠️ Истекает скоро':'✓')}</span></div><div class="doc-stamp">${ie?'❌ Требуется пересдача экзамена':'✓ Действительно'}</div>${ie?`<button class="renew-btn" onclick="showRenewLicenseModal()">🔄 Пересдать экзамен</button>`:(dl<=60?`<button class="renew-btn" onclick="showRenewLicenseModal()">🔄 Пересдать заранее</button>`:'')}</div>`;
+                }else if(userData.licenseCooldown&&Date.now()<userData.licenseCooldown){const r=Math.ceil((userData.licenseCooldown-Date.now())/60000);h+=`<div class="doc-card license-card" style="opacity:0.8"><div class="doc-header"><i class="fas fa-id-card"></i><span class="doc-title">ВОДИТЕЛЬСКОЕ УДОСТОВЕРЕНИЕ</span></div><div class="doc-field">⏳ Пересдача через ${r} минут</div></div>`;}
+                else{h+=`<div class="doc-card license-card" style="opacity:0.7"><div class="doc-header"><i class="fas fa-id-card"></i><span class="doc-title">ВОДИТЕЛЬСКОЕ УДОСТОВЕРЕНИЕ</span></div><div class="doc-field">❌ Не получено</div></div>`;}
+                c.innerHTML=h;
+            }
+            
+            async function savePassport(){
+                if(!userData)return;
+                const fn=document.getElementById('passportFullName').value.trim(),by=parseInt(document.getElementById('passportBirthYear').value),ad=document.getElementById('passportAddress').value.trim();
+                if(!fn||!by||!ad){showNotification('Заполните все поля!','error');return;}
+                if(by<1920||by>2010){showNotification('Введите корректный год рождения (1920-2010)','error');return;}
+                userData.passport={fullName:fn,birthYear:by,address:ad,id:generateRandomId(),issuedDate:new Date().toLocaleDateString()};
+                const fd=new Date();fd.setFullYear(fd.getFullYear()+1);
+                userData.medicalCard={id:generateRandomId(),expiryDate:fd.toLocaleDateString()};
+                await saveUserData();await updateAchievements();renderDocuments();closePassportModal();showNotification('✅ Паспорт и медкнижка оформлены!','success');
+            }
+            
+            async function saveLicense(){
+                if(!userData)return;
+                if(!userData.passport){showNotification('❌ Сначала оформите паспорт!','error');return;}
+                if(userData.licenseCooldown&&Date.now()<userData.licenseCooldown){const r=Math.ceil((userData.licenseCooldown-Date.now())/60000);showNotification(`⏳ Пересдача через ${r} минут!`,'warning');return;}
+                isRenewMode=false;
+                showPddModal();
+            }
+            
+            function showPddModal(){
+                const c=document.getElementById('pddQuestions');
+                c.innerHTML=pddQuestions.map((q,i)=>`<div class="question"><p>${i+1}. ${q.text}</p>${q.options.map((o,oi)=>`<label><input type="radio" name="pdd_${i}" value="${oi}"> ${o}</label><br>`).join('')}</div>`).join('');
+                document.getElementById('pddModal').style.display='flex';
+            }
+            
+            async function submitPddTest(){
+                let c=0;
+                for(let i=0;i<pddQuestions.length;i++){const s=document.querySelector(`input[name="pdd_${i}"]:checked`);if(s&&parseInt(s.value)===pddQuestions[i].correct)c++;}
+                if(pddQuestions.length-c<=5){
+                    const fd=new Date();fd.setFullYear(fd.getFullYear()+10);
+                    if(isRenewMode){
+                        userData.license={id:generateRandomId(),passportId:userData.passport.id,issueDate:new Date().toLocaleDateString(),expiryDate:fd.toLocaleDateString(),categories:"A, B, C, M"};
+                        userData.licenseCooldown=null;
+                        await saveUserData();await updateAchievements();renderDocuments();document.getElementById('pddModal').style.display='none';
+                        showNotification(`✅ Права переоформлены на 10 лет! (${c}/${pddQuestions.length})`,'success');
+                    }else{
+                        userData.license={id:generateRandomId(),passportId:userData.passport.id,issueDate:new Date().toLocaleDateString(),expiryDate:fd.toLocaleDateString(),categories:"A, B, C, M"};
+                        userData.licenseCooldown=null;
+                        await saveUserData();await updateAchievements();renderDocuments();document.getElementById('pddModal').style.display='none';
+                        showNotification(`✅ Права выданы на 10 лет! (${c}/${pddQuestions.length})`,'success');
+                    }
+                }else{
+                    if(!isRenewMode){userData.licenseCooldown=Date.now()+5*60*1000;await saveUserData();}
+                    document.getElementById('pddModal').style.display='none';
+                    showNotification(`❌ Экзамен не сдан! (${c}/${pddQuestions.length}). Пересдача через 5 мин.`,'error');
+                }
+                isRenewMode=false;
+            }
+            
+            function showPassportModal(){if(userData.passport){showNotification('Паспорт уже оформлен!','warning');return;}document.getElementById('passportModal').style.display='flex';}
+            function closePassportModal(){document.getElementById('passportModal').style.display='none';document.getElementById('passportFullName').value='';document.getElementById('passportBirthYear').value='';document.getElementById('passportAddress').value='';}
+            function updateCardUI(){if(!userData)return;document.getElementById('balanceDisplay').innerHTML=userData.balance.toLocaleString()+' ₽';document.getElementById('cardHolder').innerHTML=userData.username.toUpperCase();document.getElementById('cardNumberDisplay').innerHTML='**** **** **** '+Math.floor(Math.random()*9000+1000);let d=new Date();document.getElementById('cardExpiry').innerHTML=`${(d.getMonth()+1).toString().padStart(2,'0')}/${(d.getFullYear()+3).toString().slice(-2)}`;}
+            
+            async function transferMoney(to,amount){
+                if(!userData)return{success:false,message:'Не авторизован'};
+                if(userData.username===to)return{success:false,message:'Нельзя себе'};
+                if(amount<=0)return{success:false,message:'Сумма > 0'};
+                if(userData.balance<amount)return{success:false,message:'Недостаточно средств'};
+                const ur=db.collection('users').doc(userData.username),tr=db.collection('users').doc(to);
+                try{
+                    await db.runTransaction(async t=>{
+                        const ud=await t.get(ur),td=await t.get(tr);
+                        if(!ud.exists)throw new Error('Отправитель не найден');
+                        if(!td.exists)throw new Error('Получатель не найден');
+                        const ub=ud.data().balance||0;
+                        if(ub<amount)throw new Error('Недостаточно средств');
+                        t.update(ur,{balance:ub-amount});
+                        t.update(tr,{balance:(td.data().balance||0)+amount});
+                    });
+                    userData.balance-=amount;
+                    updateCardUI();
+                    return{success:true,message:`Переведено ${amount.toLocaleString()} ₽`};
+                }catch(e){return{success:false,message:e.message};}
+            }
+            
+            async function doLogin(){
+                const u=document.getElementById('loginUsername').value.trim(),p=document.getElementById('loginPassword').value,r=document.getElementById('rememberMe').checked;
+                if(!u||!p){showNotification('Введите никнейм и пароль!','error');return;}
+                const d=await db.collection('users').doc(u).get();
+                if(!d.exists){showNotification('❌ Пользователь не найден!','error');return;}
+                const hp=await hashPassword(p);
+                if(d.data().password!==hp){showNotification('❌ Неверный пароль!','error');return;}
+                if(d.data().isBanned&&u!=='Yura'){showNotification('⛔ Аккаунт забанен!','error');return;}
+                currentUser=u;
+                document.getElementById('mainContent').style.display='block';
+                document.getElementById('authModal').style.display='none';
+                await loadUserData(u);
+                if(r)localStorage.setItem('rememberedUser',u);
+                else localStorage.removeItem('rememberedUser');
+                renderJobStatus();loadTickets();loadChat();loadPinnedMessages();
+                if(currentUser==='Yura'||currentUserRole==='admin'){document.getElementById('adminPanel').style.display='block';renderPlayersTable();}
+            }
+            
+            async function doRegister(){
+                const u=document.getElementById('registerUsername').value.trim(),p=document.getElementById('registerPassword').value;
+                if(!u||!p){showNotification('Введите никнейм и пароль!','error');return;}
+                if(u.length<3){showNotification('Никнейм минимум 3 символа!','error');return;}
+                if(p.length<4){showNotification('Пароль минимум 4 символа!','error');return;}
+                if(u.toLowerCase()==='yura'){showNotification('Этот никнейм зарезервирован!','error');return;}
+                const d=await db.collection('users').doc(u).get();
+                if(d.exists){showNotification('❌ Пользователь уже существует!','error');return;}
+                const hp=await hashPassword(p);
+                await db.collection('users').doc(u).set({
+                    username:u,password:hp,balance:50000,garage:[],businesses:[],businessLevels:{},job:null,
+                    lastPayTime:Date.now(),lastBusinessTime:Date.now(),policeTest:null,cashierTest:null,mayorTest:null,
+                    achievements:[],isBanned:false,passport:null,license:null,medicalCard:null,licenseCooldown:null,role:'player'
+                });
+                showNotification('✅ Регистрация успешна! Теперь войдите.','success');
+                document.getElementById('loginUsername').value=u;
+                document.getElementById('loginPassword').value='';
+                document.getElementById('registerUsername').value='';
+                document.getElementById('registerPassword').value='';
+            }
+            
+            function logout(){currentUser=null;userData=null;currentUserRole='player';localStorage.removeItem('rememberedUser');document.getElementById('mainContent').style.display='none';document.getElementById('adminPanel').style.display='none';document.getElementById('authModal').style.display='flex';updateUI();}
+            
+            async function restoreSession(){
+                const r=localStorage.getItem('rememberedUser');
+                if(r){
+                    const d=await db.collection('users').doc(r).get();
+                    if(d.exists&&!d.data().isBanned){
+                        currentUser=r;
+                        document.getElementById('mainContent').style.display='block';
+                        document.getElementById('authModal').style.display='none';
+                        await loadUserData(r);
+                        loadTickets();loadChat();loadPinnedMessages();
+                        if(currentUser==='Yura'||currentUserRole==='admin'){document.getElementById('adminPanel').style.display='block';renderPlayersTable();}
+                        return true;
+                    }
+                }
+                return false;
+            }
+            
+            async function giveMoney(t,a){
+                if(currentUser!=='Yura'&&currentUserRole!=='admin'){showNotification('Нет прав!','error');return;}
+                const d=await db.collection('users').doc(t).get();
+                if(d.exists){
+                    const data=d.data();
+                    data.balance=(data.balance||0)+a;
+                    await db.collection('users').doc(t).set(data);
+                    await logAdminAction('💰 Выдача (панель)',t,`${a.toLocaleString()} ₽`);
+                    if(currentUser===t&&userData)userData.balance=data.balance;
+                    document.getElementById('moneyResult').innerHTML=`<span style="color:#8aff8a;">✅ Выдано ${a}₽</span>`;
+                    setTimeout(()=>document.getElementById('moneyResult').innerHTML='',3000);
+                    await loadAllUsers();
+                }else{document.getElementById('moneyResult').innerHTML=`<span style="color:#ff8a8a;">❌ Игрок не найден</span>`;}
+            }
+            
+            async function takeMoney(t,a){
+                if(currentUser!=='Yura'&&currentUserRole!=='admin'){showNotification('Нет прав!','error');return;}
+                const d=await db.collection('users').doc(t).get();
+                if(d.exists){
+                    const data=d.data();
+                    data.balance=Math.max(0,(data.balance||0)-a);
+                    await db.collection('users').doc(t).set(data);
+                    await logAdminAction('💰 Изъятие (панель)',t,`${a.toLocaleString()} ₽`);
+                    if(currentUser===t&&userData)userData.balance=data.balance;
+                    document.getElementById('moneyResult').innerHTML=`<span style="color:#ffaa00;">✅ Забрано ${a}₽</span>`;
+                    setTimeout(()=>document.getElementById('moneyResult').innerHTML='',3000);
+                    await loadAllUsers();
+                }else{document.getElementById('moneyResult').innerHTML=`<span style="color:#ff8a8a;">❌ Игрок не найден</span>`;}
+            }
+            
+            async function giveProperty(t,ty,n){
+                if(currentUser!=='Yura'&&currentUserRole!=='admin'){showNotification('Нет прав!','error');return;}
+                const d=await db.collection('users').doc(t).get();
+                if(d.exists){
+                    const data=d.data();
+                    if(ty==='car'){
+                        if(!data.garage)data.garage=[];
+                        data.garage.push(n);
+                        await logAdminAction('🚗 Выдача машины',t,n);
+                    }else if(ty==='business'){
+                        if(!data.businesses)data.businesses=[];
+                        data.businesses.push(n);
+                        await logAdminAction('🏢 Выдача бизнеса',t,n);
+                    }
+                    await db.collection('users').doc(t).set(data);
+                    showNotification(`✅ Выдано ${ty==='car'?'авто':'бизнес'} ${n}`,'success');
+                    await loadAllUsers();
+                }else{showNotification('Игрок не найден!','error');}
+            }
+            
+            async function takeProperty(t,ty,n){
+                if(currentUser!=='Yura'&&currentUserRole!=='admin'){showNotification('Нет прав!','error');return;}
+                const d=await db.collection('users').doc(t).get();
+                if(d.exists){
+                    const data=d.data();
+                    if(ty==='car'&&data.garage){
+                        data.garage=data.garage.filter(c=>c!==n);
+                        await logAdminAction('🚗 Изъятие машины',t,n);
+                    }else if(ty==='business'&&data.businesses){
+                        data.businesses=data.businesses.filter(b=>b!==n);
+                        await logAdminAction('🏢 Изъятие бизнеса',t,n);
+                    }
+                    await db.collection('users').doc(t).set(data);
+                    showNotification(`✅ Забрано ${ty==='car'?'авто':'бизнес'} ${n}`,'success');
+                    await loadAllUsers();
+                }else{showNotification('Игрок не найден!','error');}
+            }
+            
+            async function loadChat(){const s=await db.collection('globalChat').orderBy('timestamp','asc').limit(100).get();renderChat(s.docs.map(d=>({id:d.id,...d.data()})));}
+            function getRoleTag(u){if(u==='Yura')return roleTags.creator;const user=allUsers.find(x=>x.username===u);if(user&&user.role==='admin')return roleTags.admin;if(user&&user.role==='moderator')return roleTags.moderator;return roleTags.player;}
+            function renderChat(m){const c=document.getElementById('chatMessages');if(!c)return;c.innerHTML=m.map(m=>`<div class="chat-message" id="msg-${m.id}"><div><span class="chat-name" style="color:${m.name==='Yura'?'#ffaa00':'#ff9a6e'}">${getRoleTag(m.name)} ${escapeHtml(m.name)}</span><span class="chat-time">${new Date(m.timestamp).toLocaleTimeString()}</span>${(currentUser==='Yura'||currentUserRole==='admin')?`<button class="admin-btn" style="float:right;padding:2px 8px;" onclick="pinMessage('${m.id}','${escapeHtml(m.name)}','${escapeHtml(m.text).replace(/'/g,"\\'")}')">📌 Закрепить</button>`:''}</div><div>${escapeHtml(m.text)}</div></div>`).join('');c.scrollTop=c.scrollHeight;}
+            async function sendChatMessage(){if(!currentUser)return;const t=document.getElementById('messageInput').value.trim();if(!t)return;if(t.length>200){showNotification('Сообщение слишком длинное! Максимум 200 символов','error');return;}await db.collection('globalChat').add({name:currentUser,text:t,timestamp:Date.now(),role:currentUserRole});document.getElementById('messageInput').value='';}
+            
+            function renderBuildings(){const c=document.getElementById('buildingsGrid');if(c)c.innerHTML=buildings.map(b=>`<div class="showcase-card"><div class="showcase-img" style="background-image:url('${b.image}');background-size:cover"></div><div class="showcase-info"><h4>${b.name}</h4><p>${b.desc}</p></div></div>`).join('');}
+            function renderBusinesses(){const c=document.getElementById('businessesGrid');if(!c)return;c.innerHTML=businessesList.map(b=>{const o=userData?.businesses?.includes(b.id);return`<div class="business-card"><div class="business-icon"><i class="fas ${b.icon}"></i></div><div class="business-info"><h4>${b.name}</h4><div class="business-income">💰 Доход: ${(b.income*(userData?.businessLevels?.[b.id]||1)).toLocaleString()} ₽/час</div><div class="business-level">📈 Уровень: ${userData?.businessLevels?.[b.id]||1}</div><div>💵 Цена: ${b.price.toLocaleString()} ₽</div>${o?'<button class="business-btn" disabled>✅ Принадлежит</button>':`<button class="business-btn" onclick="buyBusiness('${b.id}')">Купить бизнес</button>`}${o&&(userData?.businessLevels?.[b.id]||1)<5?`<button class="business-btn" onclick="upgradeBusiness('${b.id}')" style="margin-top:5px;background:#ffaa00;color:#000;">📈 Улучшить (${(b.price*0.5).toLocaleString()}₽)</button>`:''}</div></div>`;}).join('');}
+            window.buyBusiness=async function(i){if(!userData)return;const b=businessesList.find(x=>x.id===i);if(userData.businesses?.includes(i))return;if(userData.balance>=b.price){userData.balance-=b.price;if(!userData.businesses)userData.businesses=[];userData.businesses.push(i);if(!userData.businessLevels)userData.businessLevels={};userData.businessLevels[i]=1;await saveUserData();updateCardUI();renderBusinesses();renderMyBusinesses();await updateAchievements();renderAchievements();showNotification(`✅ Вы купили ${b.name}!`,'success');}else{showNotification(`❌ Не хватает ${b.price.toLocaleString()}₽`,'error');}};
+            window.upgradeBusiness=async function(i){if(!userData)return;const b=businessesList.find(x=>x.id===i);const cl=userData.businessLevels?.[i]||1;if(cl>=5)return;const uc=b.price*0.5;if(userData.balance>=uc){userData.balance-=uc;userData.businessLevels[i]=cl+1;await saveUserData();updateCardUI();renderBusinesses();renderMyBusinesses();showNotification(`✅ ${b.name} улучшен до ${cl+1} уровня!`,'success');}else{showNotification(`❌ Не хватает ${uc.toLocaleString()}₽ для улучшения`,'error');}};
+            function renderMyBusinesses(){const c=document.getElementById('myBusinessesList');if(!c)return;if(!userData?.businesses||userData.businesses.length===0){c.innerHTML='<p>У вас пока нет бизнесов. Купите первый!</p>';return;}let ti=0;const bh=userData.businesses.map(bid=>{const biz=businessesList.find(b=>b.id===bid);const lvl=userData.businessLevels?.[bid]||1;const inc=biz.income*lvl;ti+=inc;return`<p>🏢 ${biz.name} | Уровень ${lvl} | Доход: ${inc.toLocaleString()} ₽/час</p>`;}).join('');c.innerHTML=bh+`<p style="margin-top:10px;color:#ffaa00;"><strong>💰 Общий доход: ${ti.toLocaleString()} ₽/час</strong></p>`;}
+            async function checkBusinessIncome(){if(!userData||!userData.businesses||userData.businesses.length===0)return;const n=Date.now();if(n-(userData.lastBusinessTime||0)>=3600000){let ti=0;for(const bid of userData.businesses){const biz=businessesList.find(b=>b.id===bid);const lvl=userData.businessLevels?.[bid]||1;ti+=biz.income*lvl;}userData.balance+=ti;userData.lastBusinessTime=n;await saveUserData();updateCardUI();renderMyBusinesses();await updateAchievements();renderAchievements();showNotification(`💰 Доход с бизнесов: ${ti.toLocaleString()} ₽`,'success');}}
+            setInterval(checkBusinessIncome,60000);
+            function renderShop(){if(!userData)return;const c=document.getElementById('vehicleList');if(!c)return;c.innerHTML=vehicles.map((v,i)=>`<div class="vehicle-item"><div class="vehicle-img"><i class="${v.icon}"></i></div><div class="vehicle-info"><h4>${v.name}</h4><div class="price">💰 ${v.price.toLocaleString()} ₽</div><button class="buy-btn" onclick="buyVehicle(${i})" ${userData.garage?.includes(v.name)?'disabled':''}>${userData.garage?.includes(v.name)?'✅ В гараже':'Купить'}</button></div></div>`).join('');const g=document.getElementById('garageContent');const garage=userData.garage||[];g.innerHTML=garage.length?garage.map(n=>`<p>🚘 ${escapeHtml(n)}</p>`).join(''):'<p>У вас пока нет машин</p>';}
+            window.buyVehicle=async function(i){if(!userData)return;const v=vehicles[i];if(userData.garage?.includes(v.name))return;if(userData.balance>=v.price){userData.balance-=v.price;if(!userData.garage)userData.garage=[];userData.garage.push(v.name);await saveUserData();updateCardUI();renderShop();await updateAchievements();renderAchievements();showNotification(`✅ Куплено: ${v.name}`,'success');}else{showNotification(`❌ Не хватает ${v.price.toLocaleString()}₽`,'error');}};
+            function renderTests(){if(!userData)return;const c=document.getElementById('testsContainer');if(!c)return;c.innerHTML='';for(const[id,test]of Object.entries(testsData)){const s=userData[id];let sh='',lk=false;if(s==='passed')sh='<div class="test-status passed">✅ Тест сдан!</div>';else if(s?.startsWith('cooldown_')){const e=parseInt(s.split('_')[1]);const r=Math.max(0,e-Date.now());if(r>0){sh=`<div class="test-status locked">⏳ Пересдача через ${Math.floor(r/60000)} мин</div>`;lk=true;}else{userData[id]=null;saveUserData();sh='<div class="test-status failed">❌ Тест не сдан</div>';}}else{sh='<div class="test-status failed">❌ Тест не сдан</div>';}c.innerHTML+=`<div class="test-card"><h3>${test.name}</h3>${sh}<button class="test-btn open-test-btn" onclick="toggleQuestions('${id}')" ${lk?'disabled':''}>📋 Пройти тест</button><div class="test-questions" id="questions-${id}">${test.questions.map((q,idx)=>`<div class="question"><p>${idx+1}. ${q.text}</p>${q.options.map((o,oi)=>`<label><input type="radio" name="q${id}_${idx}" value="${oi}"> ${o}</label><br>`).join('')}</div>`).join('')}<button class="test-btn" onclick="submitTest('${id}')">✅ Отправить</button></div></div>`;}}
+            window.toggleQuestions=function(id){const d=document.getElementById(`questions-${id}`);if(d)d.style.display=d.style.display==='none'?'block':'none';};
+            window.submitTest=async function(id){if(!userData)return;const test=testsData[id];let c=0;for(let i=0;i<test.questions.length;i++){const s=document.querySelector(`input[name="q${id}_${i}"]:checked`);if(s&&parseInt(s.value)===test.questions[i].correct)c++;}if(c>=3){userData[id]='passed';await saveUserData();await updateAchievements();renderAchievements();showNotification(`✅ Тест сдан! (${c}/5)`,'success');renderTests();}else{userData[id]=`cooldown_${Date.now()+30*60000}`;await saveUserData();showNotification(`❌ Тест не сдан (${c}/5). Пересдача через 30 мин.`,'error');renderTests();}};
+            function renderJobStatus(){if(!userData)return;const sm={taxi:30000,police:35000,mechanic:25000,loader:20000,cashier:45000,mayor:80000,svoya:43000};if(userData.job){let jn={taxi:'Таксист',police:'Полиция',mechanic:'Механик',loader:'Грузчик',cashier:'Инкассатор',mayor:'Мэр',svoya:'Своя'}[userData.job];document.getElementById('jobStatus').innerHTML=`✅ Работает: ${jn} (+${sm[userData.job].toLocaleString()}₽/час)`;}else{document.getElementById('jobStatus').innerHTML=`❌ Профессия не выбрана`;}}
+            const sm={taxi:30000,police:35000,mechanic:25000,loader:20000,cashier:45000,mayor:80000,svoya:43000};
+            async function checkSalary(){if(!userData||!userData.job)return;const n=Date.now();if(n-(userData.lastPayTime||0)>=3600000){userData.balance+=sm[userData.job];userData.lastPayTime=n;await saveUserData();updateCardUI();renderAchievements();renderJobStatus();showNotification(`💵 Зарплата: ${sm[userData.job].toLocaleString()} ₽`,'success');}if(userData.job){const nxt=(userData.lastPayTime||0)+3600000;const r=Math.max(0,nxt-n);document.getElementById('nextSalary').innerHTML=`⏱️ Следующая выплата через ${Math.floor(r/60000)} мин`;}}
+            setInterval(checkSalary,1000);
+            document.querySelectorAll('.job-btn').forEach(btn=>{btn.onclick=async()=>{if(!userData)return;const job=btn.dataset.job;let need=null;if(job==='police')need='policeTest';if(job==='cashier')need='cashierTest';if(job==='mayor')need='mayorTest';if(need&&userData[need]!=='passed'){showNotification(`⚠️ Сначала сдайте тест!`,'warning');showSection('tests');return;}userData.job=job;userData.lastPayTime=Date.now();await saveUserData();await updateAchievements();renderAchievements();renderJobStatus();showNotification(`✅ Вы выбрали профессию!`,'success');};});
+            function renderAchievements(){if(!userData)return;const c=document.getElementById('achievementsGrid');if(!c)return;const u=userData.achievements||[];c.innerHTML=achievementsList.map(a=>`<div class="achievement-card ${u.includes(a.id)?'unlocked':''}"><div class="achievement-icon"><i class="fas ${a.icon}"></i></div><div class="achievement-title">${a.title}</div><div class="achievement-desc">${a.desc}</div>${u.includes(a.id)?'<span style="color:#ffaa00;">✓ Получено</span>':'<span style="color:#666;">🔒 Не выполнено</span>'}</div>`).join('');}
+            let unsubscribeTickets=null;
+            function loadTickets(){if(unsubscribeTickets)unsubscribeTickets();unsubscribeTickets=db.collection('tickets').orderBy('date','desc').onSnapshot(s=>{const t=s.docs.map(d=>({id:d.id,...d.data()}));renderTickets(t);});}
+            async function createTicket(){if(!currentUser)return;const t=document.getElementById('ticketTitle').value.trim(),x=document.getElementById('ticketText').value.trim();if(!t||!x){showNotification('Заполните тему и текст!','error');return;}await db.collection('tickets').add({username:currentUser,title:t,text:x,date:new Date().toISOString(),replies:[]});document.getElementById('ticketTitle').value='';document.getElementById('ticketText').value='';showNotification('✅ Обращение создано!','success');}
+            async function replyToTicket(id){if(currentUser!=='Yura'&&currentUserRole!=='admin'&&currentUserRole!=='moderator'){showNotification('Нет прав для ответа!','error');return;}const r=document.getElementById(`reply-${id}`).value.trim();if(!r)return;const tr=db.collection('tickets').doc(id);const t=(await tr.get()).data();const rep=t.replies||[];rep.push({username:currentUser,text:r,admin:(currentUser==='Yura'||currentUserRole==='admin')});await tr.update({replies:rep});await logAdminAction('💬 Ответ в тикете',`#${id}`,r.substring(0,50));document.getElementById(`reply-${id}`).value='';showNotification('✅ Ответ отправлен!','success');}
+            function renderTickets(t){const c=document.getElementById('ticketsList');if(!c)return;if(currentUser==='Yura'||currentUserRole==='admin'||currentUserRole==='moderator'){c.innerHTML=t.map(t=>`<div class="ticket" id="ticket-${t.id}"><div class="ticket-header"><span>👤 ${escapeHtml(t.username)}</span><span>📅 ${new Date(t.date).toLocaleString()}</span></div><div><strong>${escapeHtml(t.title)}</strong></div><div>${escapeHtml(t.text)}</div>${(t.replies||[]).map(r=>`<div class="ticket-reply"><strong>${r.admin?'⭐ Админ':escapeHtml(r.username)}:</strong> ${escapeHtml(r.text)}</div>`).join('')}<div class="reply-form"><input type="text" id="reply-${t.id}" class="reply-input" placeholder="Ответ..."><button class="bank-btn" onclick="replyToTicket('${t.id}')" style="padding:8px 16px;">Ответить</button></div></div>`).join('');}else if(currentUser){const ut=t.filter(t=>t.username===currentUser);c.innerHTML=ut.map(t=>`<div class="ticket"><div class="ticket-header"><span>📌 ${escapeHtml(t.title)}</span><span>📅 ${new Date(t.date).toLocaleString()}</span></div><div>${escapeHtml(t.text)}</div>${(t.replies||[]).map(r=>`<div class="ticket-reply"><strong>${r.admin?'⭐ Админ':escapeHtml(r.username)}:</strong> ${escapeHtml(r.text)}</div>`).join('')}</div>`).join('');}}
+            function updateUI(){const a=document.getElementById('userInfoArea');if(currentUser){const rt=currentUser==='Yura'?roleTags.creator:(currentUserRole==='admin'?roleTags.admin:(currentUserRole==='moderator'?roleTags.moderator:roleTags.player));a.innerHTML=`<div class="user-info">${rt} ${escapeHtml(currentUser)} <button class="logout-btn" onclick="logout()">Выйти</button></div>`;}else{a.innerHTML=`<a onclick="showAuthModal()">Войти</a>`;}}
+            function showSection(s){document.getElementById('mainSection').style.display=s==='main'?'block':'none';document.getElementById('documentsSection').style.display=s==='documents'?'block':'none';document.getElementById('businessesSection').style.display=s==='businesses'?'block':'none';document.getElementById('buildingsSection').style.display=s==='buildings'?'block':'none';document.getElementById('shopSection').style.display=s==='shop'?'block':'none';document.getElementById('testsSection').style.display=s==='tests'?'block':'none';document.getElementById('achievementsSection').style.display=s==='achievements'?'block':'none';document.getElementById('forumSection').style.display=s==='forum'?'block':'none';document.getElementById('chatSection').style.display=s==='chat'?'block':'none';if(s==='buildings')renderBuildings();if(s==='businesses'){renderBusinesses();renderMyBusinesses();}if(s==='shop')renderShop();if(s==='tests')renderTests();if(s==='achievements')renderAchievements();if(s==='documents')renderDocuments();}
+            function showAuthModal(){document.getElementById('authModal').style.display='flex';}
+            function showTransferModal(){document.getElementById('transferModal').style.display='flex';}
+            function closeTransferModal(){document.getElementById('transferModal').style.display='none';}
+            document.getElementById('doLoginBtn').onclick=doLogin;document.getElementById('doRegisterBtn').onclick=doRegister;document.getElementById('showTransferBtn').onclick=showTransferModal;document.getElementById('refreshBalanceBtn').onclick=()=>{if(userData)updateCardUI();};document.getElementById('confirmTransferBtn').onclick=async()=>{const t=document.getElementById('transferTo').value.trim(),a=parseInt(document.getElementById('transferAmount').value),r=await transferMoney(t,a);showNotification(r.message,r.success?'success':'error');if(r.success){closeTransferModal();document.getElementById('transferTo').value='';document.getElementById('transferAmount').value='';}};document.getElementById('createTicketBtn').onclick=createTicket;document.getElementById('applyPassportBtn').onclick=showPassportModal;document.getElementById('applyLicenseBtn').onclick=saveLicense;document.getElementById('savePassportBtn').onclick=savePassport;document.getElementById('submitPddBtn').onclick=submitPddTest;document.getElementById('sendChatBtn').onclick=sendChatMessage;document.getElementById('confirmRenewMedicalBtn').onclick=renewMedicalCard;document.getElementById('confirmRenewLicenseBtn').onclick=renewLicense;
+            document.querySelectorAll('.admin-tab').forEach(t=>{t.onclick=()=>{document.querySelectorAll('.admin-tab').forEach(t=>t.classList.remove('active'));t.classList.add('active');const tn=t.dataset.tab;document.getElementById('playersTab').style.display=tn==='players'?'block':'none';document.getElementById('rolesTab').style.display=tn==='roles'?'block':'none';document.getElementById('moneyTab').style.display=tn==='money'?'block':'none';document.getElementById('worklogTab').style.display=tn==='worklog'?'block':'none';if(tn==='players')renderPlayersTable();if(tn==='worklog')loadWorkLog();};});
+            document.getElementById('assignRoleBtnPanel').onclick=async()=>{const u=document.getElementById('roleUser').value.trim(),r=document.getElementById('roleType').value;await assignRole(u,r);};document.getElementById('removeRoleBtnPanel').onclick=async()=>{const u=document.getElementById('roleUser').value.trim();await removeRole(u);};document.getElementById('giveMoneyBtnPanel').onclick=()=>{const u=document.getElementById('targetUser').value.trim(),a=parseInt(document.getElementById('moneyAmount').value);if(u&&a>0)giveMoney(u,a);else showNotification('Введите ник и сумму!','error');};document.getElementById('takeMoneyBtnPanel').onclick=()=>{const u=document.getElementById('targetUser').value.trim(),a=parseInt(document.getElementById('moneyAmount').value);if(u&&a>0)takeMoney(u,a);else showNotification('Введите ник и сумму!','error');};document.getElementById('givePropertyBtn').onclick=()=>{const u=document.getElementById('targetUser').value.trim(),n=document.getElementById('propertyName').value.trim(),t=document.getElementById('propertyType').value;if(u&&n)giveProperty(u,t,n);else showNotification('Введите ник и название!','error');};document.getElementById('takePropertyBtn').onclick=()=>{const u=document.getElementById('targetUser').value.trim(),n=document.getElementById('propertyName').value.trim(),t=document.getElementById('propertyType').value;if(u&&n)takeProperty(u,t,n);else showNotification('Введите ник и название!','error');};
+            window.replyToTicket=replyToTicket;window.showSection=showSection;window.ifLoggedIn=cb=>{if(currentUser)cb();else showAuthModal();};window.logout=logout;window.showAuthModal=showAuthModal;window.closeTransferModal=closeTransferModal;window.removeRole=removeRole;window.closePlayerDocsModal=closePlayerDocsModal;window.showRenewMedicalModal=showRenewMedicalModal;window.showRenewLicenseModal=showRenewLicenseModal;window.closeRenewMedicalModal=closeRenewMedicalModal;window.closeRenewLicenseModal=closeRenewLicenseModal;
+            restoreSession();
+        }
+        
+        function initFirebase(){
+            if(typeof firebase!=='undefined'&&!db){
+                firebase.initializeApp(firebaseConfig);
+                db=firebase.firestore();
+                console.log("Firebase инициализирован");
+                initSite();
+            }else if(typeof firebase==='undefined'){
+                setTimeout(initFirebase,100);
+            }
+        }
+        initFirebase();
     </script>
 </body>
 </html>
